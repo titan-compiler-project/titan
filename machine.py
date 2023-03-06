@@ -1,6 +1,7 @@
 class Machine:
     options = []
     processed_text = []
+    files = []
 
     def __init__(self):
         pass
