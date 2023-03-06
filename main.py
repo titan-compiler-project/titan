@@ -31,7 +31,8 @@ def parse_options(machine_object):
             if file_exists:
                 machine_object.files.append(option)
             else:
-                print(f"file {option} does not exist.")
+                # print(f"file {option} does not exist.")
+                raise Exception(f"file '{option}' does not exist, exiting.", "no_file")
         else:
             raise Exception(f"unable to parse '{option}', exiting.", "parse_option_fail")
         
@@ -50,12 +51,16 @@ def main():
         try:
             parse_options(machine_object)
         except Exception as err:
-            if err.args[1] == "bad_option":
-                print(f"{err.args[0]}")
-                return -1
-            if err.args[1] == "parse_option_fail":
-                print(f"{err.args[0]}")
-                return -1
+            print(f"{err.args[0]} ({err.args[1]})")
+            return -1
+
+            # if err.args[1] == "bad_option":
+            #     print(f"{err.args[0]}")
+            #     return -1
+            # if err.args[1] == "parse_option_fail":
+            #     print(f"{err.args[0]}")
+            #     return -1
+                    
             
     # debug
     print()
