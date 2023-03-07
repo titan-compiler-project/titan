@@ -50,23 +50,28 @@ def preprocess(machine_object):
 
         ############################################################################
 
-        identifier = p.pyparsing_common.identifier
-        newline = p.lineEnd().suppress()
-        match_all = p.restOfLine + newline
-        l_br = "("
-        r_br = ")"
-        colon = ":"
-        keyword_def = p.Keyword("def")
+    # p.ParserElement.set_default_whitespace_chars(" \t")
 
-        statement = p.Forward()
-        statement << p.IndentedBlock(match_all)
+    id = p.pyparsing_common.identifier
+    l_br = "("
+    r_br = ")"
+    colon = ":"
+    keyword_def = p.Keyword("def")
+    content = p.restOfLine + p.lineEnd
+    indented_content = p.IndentedBlock(content, recursive=False)
 
-        function_declaration = keyword_def + identifier + l_br + p.Group(p.Optional(p.delimited_list(identifier))) + r_br + colon
+    func_def = keyword_def + id + l_br + p.Optional(p.Group(p.delimitedList(id))) + r_br + colon
 
-        function_definition = function_declaration + statement
+    line = p.Forward()
+    
+    # line can contain lines of content or indented blocks consisting of lines of content
+    # line = (content | indented_content)
+    line = content
 
-        module = p.OneOrMore(p.Group(function_definition))
-        
+    
+    file_structure = func_def + p.ZeroOrMore(p.Group(line), stop_on=p.LineStart())
 
-        results = module.parse_file(file)
-        results.pprint()
+
+
+    file_result = file_structure.parse_file(file)
+    file_result.pprint()
