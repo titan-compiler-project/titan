@@ -72,6 +72,17 @@ def main():
 
     parse.preprocess(machine_object)
 
+    # debug
+    print()
+    print(machine_object.options)
+    print(machine_object.files)
+    print(machine_object.processed_text)
+    print()
+
+    for file in machine_object.processed_text:
+        for line in file:
+            print(line)
+
 
 if __name__ == "__main__":
     main()  
