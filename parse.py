@@ -62,13 +62,13 @@ def preprocess(machine_object):
         for entry in bracket_positions:
             if entry.type == INDENT_ID:
                 lines.insert((entry.pos-1)+bracket_offset, "{")
-                offset += 1
+                bracket_offset += 1
             elif entry.type == DEDENT_ID:
                 lines.insert((entry.pos-1)+bracket_offset, "}")
-                offset += 1
+                bracket_offset += 1
 
         # DEBUG
-        # print()
-        # for x in range(0, len(lines)):
-        #     print(lines[x])
-        # print()
+        print()
+        for x in range(0, len(lines)):
+            print(lines[x])
+        print()
