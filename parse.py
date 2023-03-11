@@ -1,6 +1,7 @@
 import tokenize
 import machine
 from typing import NamedTuple
+import pyparsing as pp
 
 def preprocess(machine_object):
 
@@ -17,6 +18,7 @@ def preprocess(machine_object):
 
         lines = []
         bracket_positions = []
+        joined_lines = ""
 
         # read file into list
         with open(file) as f:
@@ -50,5 +52,48 @@ def preprocess(machine_object):
                 lines.insert((entry.pos-1)+bracket_offset, "}")
                 bracket_offset += 1
 
+        # converting list into string because it makes it easier when it comes to parsing stage
+        joined_lines = "".join(lines)
         # added preprocessed file to list
-        machine_object.processed_text.append(lines)
+        # machine_object.processed_text.append(lines)
+        machine_object.processed_text.append(joined_lines)
+
+# https://docs.python.org/3/library/typing.html
+def parse_processed_python(machine_object: machine.Machine):
+
+    keyword_def = pp.Keyword("def").suppress()
+    keyword_return = pp.Keyword("return").suppress()
+    keyword_None = pp.Keyword("None")
+    function_name = pp.pyparsing_common.identifier
+    variable_name = pp.pyparsing_common.identifier
+    l_br, r_br = map(pp.Literal, "()")
+    l_cbr, r_cbr = map(pp.Literal, "{}")
+    colon = pp.Literal(":").suppress()
+    number = pp.Word(pp.nums) + pp.Optional("." + pp.Word(pp.nums))
+
+    function_parameter_list = pp.Group(pp.delimitedList(variable_name)) | pp.empty
+    function_return_list = pp.Group(pp.delimitedList(variable_name | number | keyword_None))
+    function_call = function_name + l_br + function_parameter_list + r_br
+    arithmetic_expression = pp.infix_notation(variable_name | number, [
+        ('-', 1, pp.OpAssoc.RIGHT),
+        (pp.one_of("* /"), 2, pp.OpAssoc.LEFT),
+        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT)
+    ])
+    statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call)
+
+    function_definition = keyword_def + function_name + l_br.suppress() + function_parameter_list + r_br.suppress() + colon
+
+    function_body = pp.Group(pp.ZeroOrMore(statement)) + pp.Optional(keyword_return  + function_return_list)
+
+    module = function_definition + l_cbr.suppress() + function_body + r_cbr.suppress()
+
+    for entry in machine_object.processed_text:
+        # print(entry)
+        parse_result = module.parse_string(entry)
+        parse_result.pprint()
+        # machine_object.parsed_modules.append
+
+        
+
+
+    return None

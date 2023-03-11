@@ -63,27 +63,29 @@ def main():
                     
             
     # debug
-    print()
-    print(machine_object.options)
-    print(machine_object.output_options)
-    print(machine_object.files)
-    print(machine_object.processed_text)
-    print()
+    # print()
+    # print(machine_object.options)
+    # print(machine_object.output_options)
+    # print(machine_object.files)
+    # print(machine_object.processed_text)
+    # print()
 
 
     parse.preprocess(machine_object)
 
     # debug
     print()
-    print(machine_object.options)
-    print(machine_object.output_options)
-    print(machine_object.files)
-    print(machine_object.processed_text)
+    print(f"OPTIONS: {machine_object.options}")
+    print(f"OUTPUT OPTIONS: {machine_object.output_options}")
+    print(f"FILES: {machine_object.files}")
+    print(f"PROCESSED: {machine_object.processed_text}")
     print()
 
-    for file in machine_object.processed_text:
-        for line in file:
-            print(line)
+    parse.parse_processed_python(machine_object)
+
+    # for file in machine_object.processed_text:
+    #     for line in file:
+    #         print(line)
 
 
 if __name__ == "__main__":
