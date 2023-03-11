@@ -71,7 +71,7 @@ def parse_processed_python(machine_object: machine.Machine):
     colon = pp.Literal(":").suppress()
     number = pp.Word(pp.nums) + pp.Optional("." + pp.Word(pp.nums))
 
-    function_parameter_list = pp.Group(pp.delimitedList(variable_name)) | pp.empty
+    function_parameter_list = pp.delimitedList(variable_name) | pp.empty
     function_return_list = pp.Group(pp.delimitedList(variable_name | number | keyword_None))
     function_call = function_name + l_br + function_parameter_list + r_br
     arithmetic_expression = pp.infix_notation(variable_name | number, [
@@ -81,19 +81,26 @@ def parse_processed_python(machine_object: machine.Machine):
     ])
     statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call)
 
-    function_definition = keyword_def + function_name + l_br.suppress() + function_parameter_list + r_br.suppress() + colon
+    #checks for: "def function_name(param1, param2):"
+    function_definition = keyword_def + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon
 
-    function_body = pp.Group(pp.ZeroOrMore(statement)) + pp.Optional(keyword_return  + function_return_list)
+    function_body = pp.Group(pp.ZeroOrMore(statement)).set_results_name("function_statements") + pp.Optional(keyword_return  + function_return_list.set_results_name("function_returns"))
 
     module = function_definition + l_cbr.suppress() + function_body + r_cbr.suppress()
 
     for entry in machine_object.processed_text:
         # print(entry)
         parse_result = module.parse_string(entry)
+        machine_object.parsed_modules.append(parse_result)
         parse_result.pprint()
-        # machine_object.parsed_modules.append
 
-        
+        print()
+        print()
+
+        print(f"func name= {parse_result.function_name}")
+        print(f"func params= {parse_result.function_param_list}")
+        print(f"func statements= {parse_result.function_statements}")
+        print(f"func returns= {parse_result.function_returns}")
 
 
     return None
