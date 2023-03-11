@@ -15,9 +15,9 @@ def parse_options(machine_object):
             option_string = option[1:]
             match option_string:
                 case Options.OUTPUT_PREPROCESSED.value:
-                    machine_object.options.append(Options.OUTPUT_PREPROCESSED)
+                    machine_object.output_options.append(Options.OUTPUT_PREPROCESSED)
                 case Options.OUTPUT_SPIRV_ASM.value:
-                    machine_object.options.append(Options.OUTPUT_SPIRV_ASM)
+                    machine_object.output_options.append(Options.OUTPUT_SPIRV_ASM)
                 case Options.DEFINE_TOP_MODULE.value:
                     machine_object.options.append(Options.DEFINE_TOP_MODULE)
                     # TODO: how to find current pos in sys.argv and to look ahead one?
@@ -65,6 +65,7 @@ def main():
     # debug
     print()
     print(machine_object.options)
+    print(machine_object.output_options)
     print(machine_object.files)
     print(machine_object.processed_text)
     print()
@@ -75,6 +76,7 @@ def main():
     # debug
     print()
     print(machine_object.options)
+    print(machine_object.output_options)
     print(machine_object.files)
     print(machine_object.processed_text)
     print()

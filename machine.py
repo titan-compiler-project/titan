@@ -1,5 +1,6 @@
 class Machine:
     options = []
+    output_options = []
     processed_text = []
     files = []
 
