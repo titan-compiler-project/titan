@@ -3,6 +3,7 @@ class Machine:
     output_options = []
     processed_text = []
     files = []
+    parsed_modules = []
 
     def __init__(self):
         pass
