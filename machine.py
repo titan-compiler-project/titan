@@ -9,3 +9,12 @@ class Machine:
 
     def set_options(self, options):
         self.options = options
+
+class Function:
+    name = ""
+    params = []
+    body = []
+    returns = []
+
+    def __init__(self):
+        pass
