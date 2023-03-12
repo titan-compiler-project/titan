@@ -1,0 +1,33 @@
+OpCapability Shader ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#Capability
+;OpCapability Int64
+;%import_glsl = OpExtInstImport "GLSL.std.450" ; added
+OpMemoryModel Logical GLSL450 ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#Addressing_Model , https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#Memory_Model
+OpEntryPoint Fragment %main_entry_point "main" %c ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpEntryPoint
+OpExecutionMode %main_entry_point OriginUpperLeft ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpExecutionMode
+;OpSource GLSL 450 ; added
+OpName %main_entry_point "main"     ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpName
+OpName %a "a"                       ; so this OpName thing can apparently be safely removed, but this does not
+OpName %b "b"                       ; run in SPIRV-VM without it, so why is there a dependency???
+OpName %c "c"
+OpDecorate %c Location 0
+; TYPE DECLARATIONS, CONSTANTS AND GLOBAL VARIABLES
+%type_void = OpTypeVoid
+%type_int = OpTypeInt 32 1
+%type_function_void = OpTypeFunction %type_void ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpTypeFunction
+%const_int_3 = OpConstant %type_int 4 ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpConstant
+%const_int_2  = OpConstant %type_int 4
+%ptr_int_output = OpTypePointer Output %type_int ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpTypePointer , https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#Storage_Class
+%ptr_function_var = OpTypePointer Function %type_int ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#Storage_Class
+%c = OpVariable %ptr_int_output Output ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpVariable
+%main_entry_point = OpFunction %type_void None %type_function_void ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpFunction
+%func_main_block = OpLabel
+%a = OpVariable %ptr_function_var Function
+%b = OpVariable %ptr_function_var Function
+OpStore %a %const_int_3 ; https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpStore
+OpStore %b %const_int_2
+%temp_a = OpLoad %type_int %a
+%temp_b = OpLoad %type_int %b
+%temp_store_a_plus_b = OpIAdd %type_int %temp_a %temp_b
+OpStore %c %temp_store_a_plus_b
+OpReturn
+OpFunctionEnd
