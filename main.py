@@ -1,8 +1,8 @@
 import sys
 from pathlib import Path
-import machine
+# import machine
 from options_enum import Options
-import parse
+import machine, parse, generate
 
 # py -3.10-64 main.py
 
@@ -78,8 +78,8 @@ def main():
     print(f"OPTIONS: {machine_object.options}")
     print(f"OUTPUT OPTIONS: {machine_object.output_options}")
     print(f"FILES: {machine_object.files}")
-    print(f"PROCESSED: {machine_object.processed_text}")
-    print(f"MODULES: {machine_object.parsed_modules}")
+    # print(f"PROCESSED: {machine_object.processed_text}")
+    # print(f"MODULES: {machine_object.parsed_modules}")
     print()
 
     parse.parse_processed_python(machine_object)
@@ -88,10 +88,11 @@ def main():
     #     for line in file:
     #         print(line)
 
-    print(f"FUNCTIONS:")
-    for x in machine_object.functions:
-        print(x)
+    # print(f"FUNCTIONS:")
+    # for x in machine_object.functions:
+    #     print(x)
 
+    generate.generate_spirv_asm(machine_object)
 
 if __name__ == "__main__":
     main()  

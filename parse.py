@@ -1,5 +1,5 @@
 import tokenize
-import machine
+import machine, generate
 from typing import NamedTuple
 import pyparsing as pp
 
@@ -77,11 +77,12 @@ def parse_processed_python(machine_object: machine.Machine):
     function_return_list = pp.Group(pp.delimitedList(variable_name | number | keyword_None))
     function_call = function_name + l_br + function_parameter_list + r_br
     arithmetic_expression = pp.infix_notation(variable_name | number, [
-        ('-', 1, pp.OpAssoc.RIGHT),
-        (pp.one_of("* /"), 2, pp.OpAssoc.LEFT),
-        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT)
+        ('-', 1, pp.OpAssoc.RIGHT, generate.test_parse_action),
+        (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, generate.test_parse_action),
+        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, generate.test_parse_action)
     ])
-    statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call)
+    
+    statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call).set_parse_action(generate.test_parse_action_statement)
 
     #checks for: "def function_name(param1, param2):"
     function_definition = keyword_def + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon
@@ -98,10 +99,10 @@ def parse_processed_python(machine_object: machine.Machine):
         # print(entry)
         parse_result = module.parse_string(entry)
         machine_object.parsed_modules.append(parse_result)
-        parse_result.pprint()
+        # parse_result.pprint()
 
-        print()
-        print()
+        # print()
+        # print()
 
         for result in parse_result:
             machine_object.functions.append(
