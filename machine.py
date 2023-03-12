@@ -17,5 +17,8 @@ class Function:
     body = []
     returns = []
 
-    def __init__(self):
-        pass
+    def __init__(self, name, params, body, returns):
+        self.name = name
+        self.params = params
+        self.body = body
+        self.returns = returns
