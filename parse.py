@@ -24,6 +24,8 @@ def preprocess(machine_object):
         with open(file) as f:
             lines = f.read().splitlines()
 
+        # print(f"LINES FROM PARSE: {lines}")
+
         # tokenize file -- reads file again! does not use lines list defined earlier
         with tokenize.open(file) as f:
             tokens = tokenize.generate_tokens(f.readline)
@@ -53,7 +55,7 @@ def preprocess(machine_object):
                 bracket_offset += 1
 
         # converting list into string because it makes it easier when it comes to parsing stage
-        joined_lines = "".join(lines)
+        joined_lines = " ".join(lines)
         # added preprocessed file to list
         # machine_object.processed_text.append(lines)
         machine_object.processed_text.append(joined_lines)
@@ -86,7 +88,11 @@ def parse_processed_python(machine_object: machine.Machine):
 
     function_body = pp.Group(pp.ZeroOrMore(statement)).set_results_name("function_statements") + pp.Optional(keyword_return  + function_return_list.set_results_name("function_returns"))
 
-    module = function_definition + l_cbr.suppress() + function_body + r_cbr.suppress()
+    module = pp.ZeroOrMore(
+        pp.Group(
+            function_definition + l_cbr.suppress() + function_body + r_cbr.suppress()
+            )
+        )
 
     for entry in machine_object.processed_text:
         # print(entry)
@@ -97,10 +103,12 @@ def parse_processed_python(machine_object: machine.Machine):
         print()
         print()
 
-        print(f"func name= {parse_result.function_name}")
-        print(f"func params= {parse_result.function_param_list}")
-        print(f"func statements= {parse_result.function_statements}")
-        print(f"func returns= {parse_result.function_returns}")
+        for x in parse_result:
+            print(f"func name= {x.function_name}")
+            print(f"func params= {x.function_param_list}")
+            print(f"func statements= {x.function_statements}")
+            print(f"func returns= {x.function_returns}")
+            print()
 
 
     return None
