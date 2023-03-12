@@ -79,6 +79,7 @@ def main():
     print(f"OUTPUT OPTIONS: {machine_object.output_options}")
     print(f"FILES: {machine_object.files}")
     print(f"PROCESSED: {machine_object.processed_text}")
+    print(f"MODULES: {machine_object.parsed_modules}")
     print()
 
     parse.parse_processed_python(machine_object)
@@ -86,6 +87,10 @@ def main():
     # for file in machine_object.processed_text:
     #     for line in file:
     #         print(line)
+
+    print(f"FUNCTIONS:")
+    for x in machine_object.functions:
+        print(x)
 
 
 if __name__ == "__main__":
