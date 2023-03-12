@@ -4,6 +4,7 @@ class Machine:
     processed_text = []
     files = []
     parsed_modules = []
+    functions = []
 
     def __init__(self):
         pass
@@ -22,3 +23,6 @@ class Function:
         self.params = params
         self.body = body
         self.returns = returns
+
+    def __str__(self):
+        return f"{self.name}, {self.params}, {self.body}, {self.returns}"
