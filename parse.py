@@ -103,11 +103,19 @@ def parse_processed_python(machine_object: machine.Machine):
         print()
         print()
 
-        for x in parse_result:
-            print(f"func name= {x.function_name}")
-            print(f"func params= {x.function_param_list}")
-            print(f"func statements= {x.function_statements}")
-            print(f"func returns= {x.function_returns}")
+        for result in parse_result:
+            machine_object.parsed_modules.append(
+                machine.Function(
+                  name= result.function_name,
+                  params= result.function_param_list,
+                  body= result.function_statements,
+                  returns = result.function_returns
+                )
+            )
+            print(f"func name= {result.function_name}")
+            print(f"func params= {result.function_param_list}")
+            print(f"func statements= {result.function_statements}")
+            print(f"func returns= {result.function_returns}")
             print()
 
 
