@@ -1,0 +1,29 @@
+OpCapability Shader
+OpMemoryModel Logical GLSL450
+OpEntryPoint Fragment %main "main" %c
+OpExecutionMode %main OriginUpperLeft
+OpName %main "main"
+OpName %a "a"
+OpName %b "b"
+OpName %c "c"
+OpDecorate %c Location 0
+%type_void = OpTypeVoid
+%type_float = OpTypeFloat 32    ; float
+%type_function_void = OpTypeFunction %type_void
+%const_float_3 = OpConstant %type_float 3
+%const_float_2 = OpConstant %type_float 2
+%ptr_float_output = OpTypePointer Output %type_float
+%ptr_function_var = OpTypePointer Function %type_float
+%c = OpVariable %ptr_float_output Output
+%main = OpFunction %type_void None %type_function_void
+%func_main_block = OpLabel
+%a = OpVariable %ptr_function_var Function
+%b = OpVariable %ptr_function_var Function
+OpStore %a %const_float_3
+OpStore %b %const_float_2
+%temp_a = OpLoad %type_float %a
+%temp_b = OpLoad %type_float %b
+%temp_store_a_sub_b = OpFSub %type_float %temp_a %temp_b ; 3 - 2 = 1
+OpStore %c %temp_store_a_sub_b
+OpReturn
+OpFunctionEnd
