@@ -1,0 +1,42 @@
+; (a + b) - z
+; (3 + 4) - 10 = -3
+OpCapability Shader
+OpMemoryModel Logical GLSL450
+OpEntryPoint Fragment %main "main" %c
+OpExecutionMode %main OriginUpperLeft
+OpName %main "main"
+;OpName %a "a"      ; seems that only the function and output vars need to be given a name
+;OpName %b "b"      ; not sure how this works with inputs
+OpName %c "c"
+OpDecorate %c Location 0
+%type_void = OpTypeVoid
+%type_int = OpTypeInt 32 1
+%type_function_void = OpTypeFunction %type_void
+;
+;
+; VV CONSTANTS VV
+%const_int_3 = OpConstant %type_int 3
+%const_int_4 = OpConstant %type_int 4
+%const_int_10 = OpConstant %type_int 10
+;
+;
+%ptr_float_output = OpTypePointer Output %type_int
+%ptr_function_var = OpTypePointer Function %type_int
+%c = OpVariable %ptr_float_output Output
+;
+; VV - START OF FUNCTION - VV
+%main = OpFunction %type_void None %type_function_void
+%func_main_block = OpLabel
+%a = OpVariable %ptr_function_var Function
+%b = OpVariable %ptr_function_var Function
+%z = OpVariable %ptr_function_var Function
+OpStore %a %const_int_3
+OpStore %b %const_int_4
+OpStore %z %const_int_10
+%temp_a = OpLoad %type_int %a
+%temp_b = OpLoad %type_int %b
+%temp_a_add_b = OpIAdd %type_int %temp_a %temp_b    ; 3 + 4
+%temp_sub_z = OpISub %type_int %temp_a_add_b %z     ; ans - 10 = -3
+OpStore %c %temp_sub_z
+OpReturn
+OpFunctionEnd
