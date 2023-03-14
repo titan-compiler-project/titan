@@ -3,17 +3,22 @@ from typing import NamedTuple
 
 class TitanPythonGrammar(NamedTuple):
 
+    # keywords
     keyword_def = pp.Keyword("def")
     keyword_return = pp.Keyword("return")
     keyword_None = pp.Keyword("None")
+    
     function_name = pp.pyparsing_common.identifier
     variable_name = pp.pyparsing_common.identifier
+    
+    # symbols
     l_br, r_br = map(pp.Literal, "()")
     l_cbr, r_cbr = map(pp.Literal, "{}")
     colon = pp.Literal(":")
+
+    # numbers
     integer = pp.Word(pp.nums)
     float = integer + "." + pp.Word(pp.nums)
-
     number = integer | float
 
     function_parameter_list = pp.delimited_list(variable_name) | pp.empty
