@@ -1,7 +1,11 @@
 import tokenize
 import machine, generate
+from grammar import *
 from typing import NamedTuple
 import pyparsing as pp
+
+def preprocess_add_semicolon_helper(token):
+    print(token)
 
 def preprocess(machine_object):
 
@@ -54,8 +58,16 @@ def preprocess(machine_object):
                 lines.insert((entry.pos-1)+bracket_offset, "}")
                 bracket_offset += 1
 
+
         # converting list into string because it makes it easier when it comes to parsing stage
         joined_lines = " ".join(lines)
+        print(f"lines: {lines}")
+
+        variable_name = pp.pyparsing_common
+        equal_sign = pp.Literal("=")
+
+
+
         # added preprocessed file to list
         # machine_object.processed_text.append(lines)
         machine_object.processed_text.append(joined_lines)
@@ -63,43 +75,53 @@ def preprocess(machine_object):
 # https://docs.python.org/3/library/typing.html
 def parse_processed_python(machine_object: machine.Machine):
 
-    keyword_def = pp.Keyword("def").suppress()
-    keyword_return = pp.Keyword("return").suppress()
-    keyword_None = pp.Keyword("None")
-    function_name = pp.pyparsing_common.identifier
-    variable_name = pp.pyparsing_common.identifier
-    l_br, r_br = map(pp.Literal, "()")
-    l_cbr, r_cbr = map(pp.Literal, "{}")
-    colon = pp.Literal(":").suppress()
-    number = pp.Word(pp.nums) + pp.Optional("." + pp.Word(pp.nums))
+    # keyword_def = pp.Keyword("def").suppress()
+    # keyword_def = grammar.TitanPythonGrammar.keyword_def#.suppress()
+    # keyword_return = pp.Keyword("return").suppress()
+    # keyword_None = pp.Keyword("None")
+    # function_name = pp.pyparsing_common.identifier
+    # variable_name = pp.pyparsing_common.identifier
+    # l_br, r_br = map(pp.Literal, "()")
+    # l_cbr, r_cbr = map(pp.Literal, "{}")
+    # colon = pp.Literal(":").suppress()
+    # number = pp.Word(pp.nums) + pp.Optional("." + pp.Word(pp.nums))
 
-    function_parameter_list = pp.delimitedList(variable_name) | pp.empty
-    function_return_list = pp.Group(pp.delimitedList(variable_name | number | keyword_None))
-    function_call = function_name + l_br + function_parameter_list + r_br
-    arithmetic_expression = pp.infix_notation(variable_name | number, [
-        ('-', 1, pp.OpAssoc.RIGHT, generate.test_parse_action),
-        (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, generate.test_parse_action),
-        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, generate.test_parse_action)
-    ])
+    # function_parameter_list = pp.delimitedList(variable_name) | pp.empty
+    # function_return_list = pp.Group(pp.delimitedList(variable_name | number | keyword_None))
+    # function_call = function_name + l_br + function_parameter_list + r_br
+    # arithmetic_expression = pp.infix_notation(variable_name | number, [
+    #     ('-', 1, pp.OpAssoc.RIGHT, generate.test_parse_action),
+    #     (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, generate.test_parse_action),
+    #     (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, generate.test_parse_action)
+    # ])
+
+    # arithmetic_expression = pp.infix_notation(variable_name | number, [
+    #     ('-', 1, pp.OpAssoc.RIGHT),
+    #     (pp.one_of("* /"), 2, pp.OpAssoc.LEFT),
+    #     (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT)
+    # ])
     
-    statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call).set_parse_action(generate.test_parse_action_statement)
+    # statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call) #.set_parse_action(generate.test_parse_action)
 
     #checks for: "def function_name(param1, param2):"
-    function_definition = keyword_def + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon
+    # function_definition = keyword_def + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon
 
-    function_body = pp.Group(pp.ZeroOrMore(statement)).set_results_name("function_statements") + pp.Optional(keyword_return  + function_return_list.set_results_name("function_returns"))
+    # function_body = pp.Group(pp.ZeroOrMore(statement)).set_results_name("function_statements") + pp.Optional(keyword_return  + function_return_list.set_results_name("function_returns"))
 
-    module = pp.ZeroOrMore(
-        pp.Group(
-            function_definition + l_cbr.suppress() + function_body + r_cbr.suppress()
-            )
-        )
+    # module = pp.ZeroOrMore(
+    #     pp.Group(
+    #         function_definition + l_cbr.suppress() + function_body + r_cbr.suppress()
+    #         )
+    #     )
+    
+    module = TitanPythonGrammar.module
+
 
     for entry in machine_object.processed_text:
         # print(entry)
         parse_result = module.parse_string(entry)
         machine_object.parsed_modules.append(parse_result)
-        # parse_result.pprint()
+        parse_result.pprint()
 
         # print()
         # print()
@@ -113,8 +135,8 @@ def parse_processed_python(machine_object: machine.Machine):
                   returns = result.function_returns
                 )
             )
-            # print(f"func name= {result.function_name}")
-            # print(f"func params= {result.function_param_list}")
-            # print(f"func statements= {result.function_statements}")
-            # print(f"func returns= {result.function_returns}")
-            # print()
+            print(f"func name= {result.function_name}")
+            print(f"func params= {result.function_param_list}")
+            print(f"func statements= {result.function_statements}")
+            print(f"func returns= {result.function_returns}")
+            print()
