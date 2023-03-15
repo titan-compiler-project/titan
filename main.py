@@ -22,6 +22,7 @@ def parse_options(machine_object):
                     machine_object.options.append(Options.DEFINE_TOP_MODULE)
                     # TODO: how to find current pos in sys.argv and to look ahead one?
                     # this must be the top module name
+                    raise Exception(f"option {option} not yet implemented", "not_implemented")
                 case _:
                     raise Exception(f"unknown option '{option}', exiting.", "bad_option")
             
