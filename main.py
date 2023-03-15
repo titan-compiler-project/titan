@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 # import machine
-from options_enum import Options
+from options import Options
 import machine, parse, generate
 
 # py -3.10-64 main.py
