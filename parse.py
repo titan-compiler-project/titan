@@ -114,12 +114,13 @@ def parse_processed_python(machine_object: machine.Machine):
     #         )
     #     )
     
-    module = TitanPythonGrammar.module
+    # module = TitanPythonGrammar.module
 
 
     for entry in machine_object.processed_text:
         # print(entry)
-        parse_result = module.parse_string(entry)
+        # parse_result = module.parse_string(entry)
+        parse_result = TitanPythonGrammar.module.parse_string(entry)
         machine_object.parsed_modules.append(parse_result)
         parse_result.pprint()
 
