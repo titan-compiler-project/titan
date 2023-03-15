@@ -15,6 +15,7 @@ class TitanPythonGrammar(NamedTuple):
     l_br, r_br = map(pp.Literal, "()")
     l_cbr, r_cbr = map(pp.Literal, "{}")
     colon = pp.Literal(":")
+    semicolon = pp.Literal(";")
 
     # numbers
     integer = pp.Word(pp.nums)
@@ -32,9 +33,13 @@ class TitanPythonGrammar(NamedTuple):
         (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT)
     ])
 
-    statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call)
 
-    function_body = pp.Group(pp.ZeroOrMore(statement)).set_results_name("function_statements") + pp.Optional(keyword_return.suppress()  + function_return_list.set_results_name("function_returns"))
+    # an optional ";" was added to the end of the statement and function return grammars, this is so that it can still match
+    # when doing the preprocessing step, and when it comes to parsing the file itself
+    # TODO: this might cause issues, maybe split into two seperate variables?
+    statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call) + pp.Opt(semicolon.suppress())
+
+    function_body = pp.Group(pp.ZeroOrMore(statement)).set_results_name("function_statements") + pp.Optional(keyword_return.suppress()  + function_return_list.set_results_name("function_returns") + pp.Opt(semicolon.suppress()))
 
     module = pp.ZeroOrMore(
         pp.Group(

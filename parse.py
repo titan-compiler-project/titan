@@ -58,18 +58,29 @@ def preprocess(machine_object):
                 lines.insert((entry.pos-1)+bracket_offset, "}")
                 bracket_offset += 1
 
+      
+        for x in range(0, len(lines)):
+            line = lines[x]
 
+            try:
+                # we dont really care about the tokens, we just want the line that matches
+                # TODO: search_string() maybe be better in this situation, but it is not matching correctly
+                # _ = (TitanPythonGrammar.statement | TitanPythonGrammar.keyword_return + pp.rest_of_line).parse_string(line)
+                _ = (TitanPythonGrammar.statement | TitanPythonGrammar.keyword_return + pp.rest_of_line).parse_string(line)
+            except pp.exceptions.ParseException:
+                # if we get a line that doesn't match the statement grammar we just continue anyway
+                # TODO: is this really the best way to handle this?
+                continue
+            else:
+                # print(f"{line};")
+                lines[x] = line + ";" # overwrite with line + semicolon
+
+
+        # print(lines)
         # converting list into string because it makes it easier when it comes to parsing stage
         joined_lines = " ".join(lines)
-        print(f"lines: {lines}")
-
-        variable_name = pp.pyparsing_common
-        equal_sign = pp.Literal("=")
-
-
 
         # added preprocessed file to list
-        # machine_object.processed_text.append(lines)
         machine_object.processed_text.append(joined_lines)
 
 # https://docs.python.org/3/library/typing.html
