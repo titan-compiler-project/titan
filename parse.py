@@ -88,7 +88,7 @@ def parse_processed_python(machine_object: machine.Machine):
         # parse_result = module.parse_string(entry)
         parse_result = TitanPythonGrammar.module.parse_string(entry)
         machine_object.parsed_modules.append(parse_result)
-        parse_result.pprint()
+        # parse_result.pprint()
 
         for result in parse_result:
             machine_object.functions.append(
@@ -99,8 +99,8 @@ def parse_processed_python(machine_object: machine.Machine):
                   returns = result.function_returns
                 )
             )
-            print(f"func name= {result.function_name}")
-            print(f"func params= {result.function_param_list}")
-            print(f"func statements= {result.function_statements}")
-            print(f"func returns= {result.function_returns}")
-            print()
+            # print(f"func name= {result.function_name}")
+            # print(f"func params= {result.function_param_list}")
+            # print(f"func statements= {result.function_statements}")
+            # print(f"func returns= {result.function_returns}")
+            # print()

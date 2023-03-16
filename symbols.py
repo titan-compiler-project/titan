@@ -2,8 +2,8 @@ from enum import Enum
 from typing import NamedTuple, TYPE_CHECKING
 
 # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
-if TYPE_CHECKING:
-    from pyparsing import ParserElement
+# if TYPE_CHECKING:
+#     from pyparsing import ParserElement
 
 class DataType(Enum):
     NONE = 0
@@ -26,14 +26,15 @@ class Operation(Enum):
 class Information(NamedTuple):
     datatype: DataType
     operation: Operation
-    line_no = int
-    line: ParserElement
+    #line_no = int
+    #line = None #: ParserElement
 
 
 class SymbolTable():
 
-    # TODO: come up with a better storage solution -- using a dict for unique
+    # TODO: come up with a better solution -- using a dict for unique
     # variable names will not work when the scope changes
+    # OR ---- new symbol table every scope change?
     content = {}
 
     def __init__(self):

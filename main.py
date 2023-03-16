@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 # import machine
 from options import Options
-import machine, parse, generate
+import machine, parse, generate, symbols
 
 # py -3.10-64 main.py
 
@@ -44,6 +44,7 @@ def main():
     print(f"SYS ARG: {sys.argv}")
 
     machine_object = machine.Machine()
+    symbol_table = symbols.SymbolTable()
 
     # argument parse call and error handle
     if len(sys.argv[1:]) == 0:
@@ -93,7 +94,9 @@ def main():
     # for x in machine_object.functions:
     #     print(x)
 
-    generate.generate_spirv_asm(machine_object)
+    # generate.generate_spirv_asm(machine_object)
+
+    generate.generate_symbols(machine_object, symbol_table)
 
 if __name__ == "__main__":
     main()  
