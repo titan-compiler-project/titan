@@ -32,8 +32,8 @@ class Information(NamedTuple):
 
 class SymbolTable():
 
-    # python dict?
-    
+    # TODO: come up with a better storage solution -- using a dict for unique
+    # variable names will not work when the scope changes
     content = {}
 
     def __init__(self):
@@ -44,5 +44,13 @@ class SymbolTable():
         self.content.update({expression: information})
 
     # delete entry
+    def delete(self, expression):
+        del self.content[expression]
+
     # return using key
+    def get(self, expression):
+        return self.content.get(expression)
+
     # if exists bool
+    def exists(self, expression):
+        return True if expression in self.content else False
