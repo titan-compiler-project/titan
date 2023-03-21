@@ -80,11 +80,14 @@ def main():
     print(f"OPTIONS: {machine_object.options}")
     print(f"OUTPUT OPTIONS: {machine_object.output_options}")
     print(f"FILES: {machine_object.files}")
-    # print(f"PROCESSED: {machine_object.processed_text}")
-    # print(f"MODULES: {machine_object.parsed_modules}")
+
     print()
 
     parse.parse_processed_python(machine_object)
+
+    # print(f"PROCESSED: {machine_object.processed_text}")
+    # print(f"MODULES: {machine_object.parsed_modules}")
+
 
     # for file in machine_object.processed_text:
     #     for line in file:
@@ -97,6 +100,14 @@ def main():
     # generate.generate_spirv_asm(machine_object)
 
     generate.generate_symbols(machine_object, symbol_table)
+    # print(symbol_table.content)
+    # for entry in symbol_table.content:
+        # print(entry)
+
+    print()
+    for key, value in symbol_table.content.items():
+        print(f"{value[0].name} - {key} - {value[1].name}")
+
 
 if __name__ == "__main__":
     main()  
