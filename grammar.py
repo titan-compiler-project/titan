@@ -1,5 +1,6 @@
 import pyparsing as pp
 from typing import NamedTuple
+import operators as o
 
 class TitanPythonGrammar(NamedTuple):
 
@@ -18,9 +19,11 @@ class TitanPythonGrammar(NamedTuple):
     semicolon = pp.Literal(";")
 
     # numbers
-    integer = pp.Word(pp.nums)
-    float = integer + "." + pp.Word(pp.nums)
-    number = integer | float
+    integer = pp.Word(pp.nums).set_parse_action(lambda tokens: int(tokens[0]))
+    # float = (pp.Word(pp.nums) + "." + pp.Word(pp.nums)).set_parse_action(lambda tokens: float(tokens[0]))
+    float = pp.pyparsing_common.fnumber
+    # number = integer | float
+    number = pp.Or(integer, float)
 
     function_parameter_list = pp.delimited_list(variable_name) | pp.empty
     function_return_list = pp.Group(pp.delimited_list(variable_name | number | keyword_None))
@@ -28,16 +31,17 @@ class TitanPythonGrammar(NamedTuple):
     function_definition = keyword_def.suppress() + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon.suppress()
 
     arithmetic_expression = pp.infix_notation(variable_name | number, [
-        ('-', 1, pp.OpAssoc.RIGHT),
-        (pp.one_of("* /"), 2, pp.OpAssoc.LEFT),
-        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT)
+        ('-', 1, pp.OpAssoc.RIGHT, o.UnaryOp),
+        (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     ])
 
+    assignment = (variable_name + "=" + arithmetic_expression | function_call).set_results_name("assignment")
 
     # an optional ";" was added to the end of the statement and function return grammars, this is so that it can still match
     # when doing the preprocessing step, and when it comes to parsing the file itself
     # TODO: this might cause issues, maybe split into two seperate variables?
-    statement = pp.Group(variable_name + "=" + arithmetic_expression | function_call) + pp.Opt(semicolon.suppress())
+    statement = pp.Group(assignment) + pp.Opt(semicolon.suppress())
 
     function_body = pp.Group(pp.ZeroOrMore(statement)).set_results_name("function_statements") + pp.Optional(keyword_return.suppress()  + function_return_list.set_results_name("function_returns") + pp.Opt(semicolon.suppress()))
 
