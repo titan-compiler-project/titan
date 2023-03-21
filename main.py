@@ -8,7 +8,16 @@ import machine, parse, generate, symbols
 
 def parse_options(machine_object):
 
-    for option in sys.argv[1:]:
+    got_top_module = False
+    # for option in sys.argv[1:]:
+    for x in range(1, len(sys.argv)):
+
+        # need to skip over because the -t flag takes 2 params
+        if got_top_module:
+            continue
+
+        # print(f"x: {x}")
+        option = sys.argv[x]
         # print(option)
 
         if option[0] == "-":
@@ -22,7 +31,10 @@ def parse_options(machine_object):
                     machine_object.options.append(Options.DEFINE_TOP_MODULE)
                     # TODO: how to find current pos in sys.argv and to look ahead one?
                     # this must be the top module name
-                    raise Exception(f"option {option} not yet implemented", "not_implemented")
+                    # print(f"top: {sys.argv[x+1]}")
+                    machine_object.name_of_top_module = sys.argv[x + 1]
+                    got_top_module = True
+                    # raise Exception(f"option {option} not yet implemented", "not_implemented")
                 case _:
                     raise Exception(f"unknown option '{option}', exiting.", "bad_option")
             
@@ -37,6 +49,16 @@ def parse_options(machine_object):
         else:
             raise Exception(f"unable to parse '{option}', exiting.", "parse_option_fail")
         
+
+def _print_debug(machine_object: machine.Machine):
+    print("="*10)
+    print(f"Options: {machine_object.options}")
+    print(f"Output Options: {machine_object.output_options}")
+    print(f"Processed Text: {machine_object.processed_text}")
+    print(f"Parsed Modules: {machine_object.parsed_modules}")
+    print(f"Functions = {machine_object.functions}")
+    print(f"Top: {machine_object.name_of_top_module}")
+    print("="*10)
 
 
 def main():
@@ -75,15 +97,19 @@ def main():
 
     parse.preprocess(machine_object)
 
-    # debug
-    print()
-    print(f"OPTIONS: {machine_object.options}")
-    print(f"OUTPUT OPTIONS: {machine_object.output_options}")
-    print(f"FILES: {machine_object.files}")
+    # _print_debug(machine_object)
 
-    print()
+    # debug
+    # print()
+    # print(f"OPTIONS: {machine_object.options}")
+    # print(f"OUTPUT OPTIONS: {machine_object.output_options}")
+    # print(f"FILES: {machine_object.files}")
+
+    # print()
 
     parse.parse_processed_python(machine_object)
+
+    # _print_debug(machine_object)
 
     # print(f"PROCESSED: {machine_object.processed_text}")
     # print(f"MODULES: {machine_object.parsed_modules}")
@@ -100,6 +126,9 @@ def main():
     # generate.generate_spirv_asm(machine_object)
 
     generate.generate_symbols(machine_object, symbol_table)
+
+    _print_debug(machine_object)
+
     # print(symbol_table.content)
     # for entry in symbol_table.content:
         # print(entry)
