@@ -44,6 +44,7 @@ class SPIRV_ASM:
     class Sections(Enum):
         CAPABILITY_AND_EXTENSION = auto()
         ENTRY_AND_EXEC_MODES = auto()
+        DEBUG_STATEMENTS = auto()
         ANNOTATIONS = auto()
         TYPES = auto()
         FUNCTIONS = auto()
@@ -52,6 +53,7 @@ class SPIRV_ASM:
         self.generated_spirv = {
             self.Sections.CAPABILITY_AND_EXTENSION.name: [],
             self.Sections.ENTRY_AND_EXEC_MODES.name: [],
+            self.Sections.DEBUG_STATEMENTS.name: [],
             self.Sections.ANNOTATIONS.name: [],
             self.Sections.TYPES.name: [],
             self.Sections.FUNCTIONS.name: []
@@ -63,3 +65,6 @@ class SPIRV_ASM:
 
     def append_code(self, section: Sections, code):
         self.generated_spirv[section.name].append(code)
+
+    def add_id(self, id, value):
+        self.declared_ids[id] = value
