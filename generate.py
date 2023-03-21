@@ -1,15 +1,65 @@
 import machine
 import symbols as s
-def generate_spirv_asm(machine_object: machine.Machine):
+def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTable):
 
-    # for function in machine_object.functions:
-    #     for statement in function.body:
-    #         print(statement)
+    # checking if we have a top module/entry point defined
+    if machine_object.name_of_top_module == None:
+        if len(machine_object.functions) == 0:
+            raise Exception("no parsed source code to generate SPIR-V from", "no_source")
+            return -1
+        elif len(machine_object.functions) > 1:
+            raise Exception(f"undefined top module when there are {len(machine_object.functions)} modules, use the -t option to set the top.", "no_top_set")
+            return -1
+        else:
+            machine_object.name_of_top_module = machine_object.functions[0].name
+            # print(machine_object.functions[0].name)
 
-    # print()
+    spirv = machine.SPIRV_ASM()
 
-    # for results in machine_object.parsed_modules:
-    #     print(results)
+    # boilerplate
+    # TODO: this will require changing when dealing with different types of kernels/shaders etc
+    spirv.append_code(spirv.Sections.CAPABILITY_AND_EXTENSION, "OpCapability Shader")
+    spirv.append_code(spirv.Sections.CAPABILITY_AND_EXTENSION, "OpMemoryModel Logical GLSL450")
+
+    spirv.add_id(f"%{machine_object.name_of_top_module}", None)
+    entrypoint_param_list = ""
+
+    for entry in machine_object.functions:
+        for param in entry.params:
+            id = f"%{param}"
+            spirv.add_id(id, None)
+            entrypoint_param_list += f" {id}"
+
+        for returns in entry.returns:
+            id = f"%{returns}"
+            spirv.add_id(id, None)
+            entrypoint_param_list += f" {id}"
+
+
+    spirv.append_code(spirv.Sections.ENTRY_AND_EXEC_MODES, 
+                      f"OpEntryPoint Fragment %{machine_object.name_of_top_module} {entrypoint_param_list}")
+    del entrypoint_param_list
+
+    spirv.append_code(spirv.Sections.ENTRY_AND_EXEC_MODES,
+                      f"OpExecutionMode %{machine_object.name_of_top_module} OriginUpperLeft")
+
+    for symbol, info in symbol_table.content.items():
+        # print(f"{symbol}, {info.datatype} {info.operation}")
+        spirv.append_code(spirv.Sections.DEBUG_STATEMENTS, 
+                          f"OpName %{symbol} \"{symbol}\"")
+        
+        if info.operation == s.Operation.FUNCTION_OUT_VAR_PARAM:
+            spirv.append_code(spirv.Sections.ANNOTATIONS,
+                              f"OpDecorate %{symbol} Location {spirv.location}")
+            spirv.location += 1
+
+    
+
+
+    print(spirv.generated_spirv)
+    # print(spirv.declared_ids)
+    print()
+    
 
     return None
 
@@ -91,7 +141,7 @@ def generate_symbols(machine_object: machine.Machine, symbol_table: s.SymbolTabl
 
                 # checks if its an assignment, assuming that [0] is a var, [1] is = and [2] contains some operator
                 if entry[1] == "=":
-                    print(entry)
+                    # print(entry)
 
                     if not symbol_table.exists(entry[0]):
                         symbol_table.add(entry[0], s.Information(s.DataType.INTEGER, s.Operation.VARIABLE_DECLARATION))
