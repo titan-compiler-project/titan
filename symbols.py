@@ -6,16 +6,18 @@ from typing import NamedTuple, TYPE_CHECKING
 #     from pyparsing import ParserElement
 
 class DataType(Enum):
-    NONE = 0
-    INTEGER = 1
-    FLOAT = 2
-    BOOLEAN = 3
+    NONE = auto()
+    INTEGER = auto()
+    FLOAT = auto()
+    BOOLEAN = auto()
 
     
 class Operation(Enum):
     VARIABLE_DECLARATION = auto()
     CONSTANT_DECLARATION = auto()
     FUNCTION_DECLARATION = auto()
+    FUNCTION_IN_VAR_PARAM = auto()
+    FUNCTION_OUT_VAR_PARAM = auto()
     ASSIGNMENT = auto()
     ADD = auto()
     SUB = auto()
