@@ -56,7 +56,12 @@ def _print_debug(machine_object: machine.Machine):
     print(f"Output Options: {machine_object.output_options}")
     print(f"Processed Text: {machine_object.processed_text}")
     print(f"Parsed Modules: {machine_object.parsed_modules}")
-    print(f"Functions = {machine_object.functions}")
+    print(f"Functions =")
+    for entry in machine_object.functions:
+        print(f"\tname: {entry.name}")
+        print(f"\t\t - params: {entry.params}")
+        print(f"\t\t - body: {entry.body}")
+        print(f"\t\t - returns: {entry.returns}")
     print(f"Top: {machine_object.name_of_top_module}")
     print("="*10)
 
@@ -127,15 +132,16 @@ def main():
 
     generate.generate_symbols(machine_object, symbol_table)
 
-    _print_debug(machine_object)
+    # _print_debug(machine_object)
 
     # print(symbol_table.content)
     # for entry in symbol_table.content:
         # print(entry)
 
-    print()
-    for key, value in symbol_table.content.items():
-        print(f"{value[0].name} - {key} - {value[1].name}")
+    # debug print for symbol table
+    # print()
+    # for key, value in symbol_table.content.items():
+    #     print(f"{value[0].name} - {key} - {value[1].name}")
 
 
     generate.generate_spirv_asm(machine_object, symbol_table)
