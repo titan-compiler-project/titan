@@ -138,5 +138,8 @@ def main():
         print(f"{value[0].name} - {key} - {value[1].name}")
 
 
+    generate.generate_spirv_asm(machine_object, symbol_table)
+
+
 if __name__ == "__main__":
     main()  
