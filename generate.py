@@ -44,7 +44,11 @@ def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTa
                       f"OpExecutionMode %{machine_object.name_of_top_module} OriginUpperLeft")
 
     for symbol, info in symbol_table.content.items():
-        # print(f"{symbol}, {info.datatype} {info.operation}")
+        print(f"{symbol}, {info.datatype} {info.operation}")
+
+        if not spirv.type_exists(info.datatype):
+            spirv.declared_types[info.datatype] = f"%type_{info.datatype.name}"
+
         spirv.append_code(spirv.Sections.DEBUG_STATEMENTS, 
                           f"OpName %{symbol} \"{symbol}\"")
         
@@ -53,10 +57,28 @@ def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTa
                               f"OpDecorate %{symbol} Location {spirv.location}")
             spirv.location += 1
 
-    
+    # type declaration
+    # TODO: auto detect types?
+    # spirv.append_code(spirv.Sections.TYPES,
+                    #   "%type_void = OpTypeVoid")
+    # spirv.declared_types[spirv.Types.VOID] = "%"
+
+    # print(spirv.type_exists(spirv.Types.VOID))
+    # spirv.declared_types[spirv.Types.VOID] = "%type_void"
+    # print(spirv.type_exists(spirv.Types.VOID))
+
+    for type, id in spirv.declared_types.items():
+        print(type)
+        print(id)
+
+        match type:
+            case s.DataType.INTEGER:
+                spirv.append_code(spirv.Sections.TYPES,
+                                  f"{id} = O")
 
 
     print(spirv.generated_spirv)
+    # print(spirv.declared_types)
     # print(spirv.declared_ids)
     print()
     
@@ -112,7 +134,7 @@ def generate_symbols(machine_object: machine.Machine, symbol_table: s.SymbolTabl
         # check if func is already declared
         if not symbol_table.exists(function.name):
             # print(f"function '{function.name}' does not exist in symbol table")
-            symbol_table.add(function.name, s.Information(s.DataType.NONE, s.Operation.FUNCTION_DECLARATION))
+            symbol_table.add(function.name, s.Information(s.DataType.VOID, s.Operation.FUNCTION_DECLARATION))
 
             # now that the function is declared, check its input params
             if len(function.params) > 0:
