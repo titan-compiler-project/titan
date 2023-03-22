@@ -1,4 +1,5 @@
 from enum import Enum, auto
+import symbols
 
 class Machine:
 
@@ -32,14 +33,15 @@ class Function:
 
 class SPIRV_ASM:
 
-    class Types(Enum):
-        VOID = auto()
-        INT = auto()
-        CONST = auto()
-        PTR = auto()
-        OUTPUT = auto()
-        INPUT = auto()
-        VAR_FUNCTION_SCOPE = auto()
+    # TODO: DELETE AND MERGE WITH symbols.py
+    # class Types(Enum):
+    #     VOID = auto()
+    #     INT = auto()
+    #     CONST = auto()
+    #     PTR = auto()
+    #     OUTPUT = auto()
+    #     INPUT = auto()
+    #     VAR_FUNCTION_SCOPE = auto()
 
     class Sections(Enum):
         CAPABILITY_AND_EXTENSION = auto()
@@ -59,7 +61,7 @@ class SPIRV_ASM:
             self.Sections.FUNCTIONS.name: []
         }
 
-        self.declared_types = {} # id: TYPE
+        self.declared_types = {} # TYPE: void
         self.declared_ids = {} # id: ?
         self.location = 0
 
@@ -68,3 +70,9 @@ class SPIRV_ASM:
 
     def add_id(self, id, value):
         self.declared_ids[id] = value
+
+    # def type_exists(self, type: Types):
+        # return True if type in self.declared_types else False
+    
+    def type_exists(self, type: symbols.DataType):
+        return True if type in self.declared_types else False
