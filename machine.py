@@ -61,7 +61,8 @@ class SPIRV_ASM:
             self.Sections.FUNCTIONS.name: []
         }
 
-        self.declared_types = {} # TYPE: void
+        self.declared_types = {} # TYPE: id
+        self.declared_function_types = {} #TYPE: id 
         self.declared_ids = {} # id: ?
         self.location = 0
 
@@ -71,8 +72,26 @@ class SPIRV_ASM:
     def add_id(self, id, value):
         self.declared_ids[id] = value
 
+
     # def type_exists(self, type: Types):
         # return True if type in self.declared_types else False
     
     def type_exists(self, type: symbols.DataType):
         return True if type in self.declared_types else False
+    
+    def function_type_exists(self, type: symbols.DataType):
+        return True if type in self.declared_function_types else False
+    
+    def get_type_id(self, type: symbols.DataType):
+        return self.declared_types[type]
+    
+    def get_function_type_id(self, type: symbols.DataType):
+        return self.declared_function_types[type]
+
+    def print_contents(self):
+        print("-"*10)
+        for section, code in self.generated_spirv.items():
+            print(f"{section}")
+            for entry in code:
+                print(f"\t{entry}")
+        print("-"*10)

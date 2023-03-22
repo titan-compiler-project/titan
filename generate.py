@@ -44,7 +44,7 @@ def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTa
                       f"OpExecutionMode %{machine_object.name_of_top_module} OriginUpperLeft")
 
     for symbol, info in symbol_table.content.items():
-        print(f"{symbol}, {info.datatype} {info.operation}")
+        # print(f"{symbol}, {info.datatype} {info.operation}")
 
         if not spirv.type_exists(info.datatype):
             spirv.declared_types[info.datatype] = f"%type_{info.datatype.name}"
@@ -67,20 +67,45 @@ def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTa
     # spirv.declared_types[spirv.Types.VOID] = "%type_void"
     # print(spirv.type_exists(spirv.Types.VOID))
 
+    # generate types for variables
     for type, id in spirv.declared_types.items():
-        print(type)
-        print(id)
+        print(f"{type} {id}")
 
         match type:
             case s.DataType.INTEGER:
                 spirv.append_code(spirv.Sections.TYPES,
-                                  f"{id} = O")
+                                  f"{id} = OpTypeInt 32 1")
+            case s.DataType.VOID:
+                spirv.append_code(spirv.Sections.TYPES,
+                                  f"{id} = OpTypeVoid")
+            case _:
+                raise Exception("got unknown type while trying to generate SPIRV", "unknown_type")
+            
+    # need to generate function types
+    for symbol, info in symbol_table.content.items():
+
+        if info.operation == s.Operation.FUNCTION_DECLARATION:
+            # assuming that the type has already been declared by the section above
+            # we can decare the function type now
+            # print("func def")
+            
+            function_type_id = f"%type_function_{info.datatype.name}"
+
+            if not spirv.function_type_exists(info.datatype):
+                spirv.declared_function_types[info.datatype] = function_type_id
+            
+            spirv.append_code(spirv.Sections.TYPES,
+                              f"{function_type_id} = OpTypeFunction {spirv.get_type_id(info.datatype)}")
 
 
-    print(spirv.generated_spirv)
-    # print(spirv.declared_types)
-    # print(spirv.declared_ids)
-    print()
+
+    # for symbol, info in symbol_table.content.items():
+    #     print(symbol, info)
+
+    spirv.print_contents()
+    print(spirv.declared_types)
+    print(spirv.declared_function_types)
+    # print(spirv.get_type_id(s.DataType.INTEGER))
     
 
     return None
