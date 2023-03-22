@@ -69,14 +69,14 @@ def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTa
 
     # generate types for variables
     for type, id in spirv.declared_types.items():
-        print(f"{type} {id}")
+        # print(f"{type} {id}")
 
         match type:
             case s.DataType.INTEGER:
-                spirv.append_code(spirv.Sections.TYPES,
+                spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
                                   f"{id} = OpTypeInt 32 1")
             case s.DataType.VOID:
-                spirv.append_code(spirv.Sections.TYPES,
+                spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
                                   f"{id} = OpTypeVoid")
             case _:
                 raise Exception("got unknown type while trying to generate SPIRV", "unknown_type")
@@ -94,7 +94,7 @@ def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTa
             if not spirv.function_type_exists(info.datatype):
                 spirv.declared_function_types[info.datatype] = function_type_id
             
-            spirv.append_code(spirv.Sections.TYPES,
+            spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
                               f"{function_type_id} = OpTypeFunction {spirv.get_type_id(info.datatype)}")
 
 

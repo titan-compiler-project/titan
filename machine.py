@@ -48,7 +48,7 @@ class SPIRV_ASM:
         ENTRY_AND_EXEC_MODES = auto()
         DEBUG_STATEMENTS = auto()
         ANNOTATIONS = auto()
-        TYPES = auto()
+        TYPES_CONSTS_VARS = auto()
         FUNCTIONS = auto()
     
     def __init__(self):
@@ -57,7 +57,7 @@ class SPIRV_ASM:
             self.Sections.ENTRY_AND_EXEC_MODES.name: [],
             self.Sections.DEBUG_STATEMENTS.name: [],
             self.Sections.ANNOTATIONS.name: [],
-            self.Sections.TYPES.name: [],
+            self.Sections.TYPES_CONSTS_VARS.name: [],
             self.Sections.FUNCTIONS.name: []
         }
 
