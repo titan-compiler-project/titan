@@ -12,7 +12,12 @@ class DataType(Enum):
     FLOAT = auto()
     BOOLEAN = auto()
     CONSTANT = auto()
-    POINTER = auto()
+    POINTER = auto() # TODO: is there a way to make composite types?
+    PTR_INT = auto()
+    PTR_FLOAT = auto()
+    PTR_BOOL = auto()
+    PTR_CONST = auto()
+
 
     
 class Operation(Enum):

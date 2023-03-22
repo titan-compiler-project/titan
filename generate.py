@@ -83,6 +83,7 @@ def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTa
             
     # need to generate function types
     for symbol, info in symbol_table.content.items():
+        # print(f"{symbol} {info}")
 
         if info.operation == s.Operation.FUNCTION_DECLARATION:
             # assuming that the type has already been declared by the section above
@@ -97,6 +98,41 @@ def generate_spirv_asm(machine_object: machine.Machine, symbol_table: s.SymbolTa
             spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
                               f"{function_type_id} = OpTypeFunction {spirv.get_type_id(info.datatype)}")
 
+
+    # generate pointer types
+    for symbol, info in symbol_table.content.items():
+        # if info.operation == s.Operation.FUNCTION_IN_VAR_PARAM:
+            # raise Exception("not yet implemented", "not_yet_implemented")
+        # elif info.oo
+
+        match info.operation:
+            case s.Operation.FUNCTION_IN_VAR_PARAM:
+                raise Exception("not implemented", "not_implemented")
+            case s.Operation.FUNCTION_OUT_VAR_PARAM:
+
+                ptr_id = f"%ptr_output_"
+                
+                match info.datatype:
+                    case s.DataType.INTEGER:
+                        ptr_id += s.DataType.INTEGER.name
+
+                        if not spirv.type_exists(s.DataType.PTR_INT):
+                            # spirv.declared_types[s.DataType.PTR_INT] = ptr_id
+                            spirv.declared_output_types[s.DataType.PTR_INT] = ptr_id
+                            spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
+                                              f"{ptr_id} = OpTypePointer Output {spirv.get_type_id(info.datatype)}")
+                
+                    case _:
+                        raise Exception("not implemented", "not_implemented")
+                    
+            case s.Operation.VARIABLE_DECLARATION:
+                ptr_id = f"%ptr_funcvar_"
+
+                match info.datatype:
+                    case s.DataType.INTEGER:
+                        ptr_id += s.DataType.INTEGER.name
+                        # s.DataType.
+                        # if not spirv.type_exists(s.DataType.PTR_)
 
 
     # for symbol, info in symbol_table.content.items():

@@ -63,8 +63,11 @@ class SPIRV_ASM:
 
         self.declared_types = {} # TYPE: id
         self.declared_function_types = {} #TYPE: id 
-        self.declared_ids = {} # id: ?
+        self.declared_input_types = {}
+        self.declared_output_types = {}
         self.location = 0
+
+        self.declared_ids = {} # id: ?
 
     def append_code(self, section: Sections, code):
         self.generated_spirv[section.name].append(code)
