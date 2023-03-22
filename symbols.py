@@ -7,9 +7,12 @@ from typing import NamedTuple, TYPE_CHECKING
 
 class DataType(Enum):
     NONE = auto()
+    VOID = auto()
     INTEGER = auto()
     FLOAT = auto()
     BOOLEAN = auto()
+    CONSTANT = auto()
+    POINTER = auto()
 
     
 class Operation(Enum):
