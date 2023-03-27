@@ -1,5 +1,6 @@
 from enum import Enum, auto
-import symbols
+from typing import NamedTuple
+import type
 
 class Machine:
 
@@ -30,6 +31,7 @@ class Function:
     def __str__(self):
         return f"{self.name}, {self.params}, {self.body}, {self.returns}"
     
+#######################################################################
 
 class SPIRV_ASM:
 
@@ -50,6 +52,27 @@ class SPIRV_ASM:
         ANNOTATIONS = auto()
         TYPES_CONSTS_VARS = auto()
         FUNCTIONS = auto()
+
+    # class Context(Enum):
+    #     PRIMATIVE = auto()
+    #     FUNCTION_TYPE = auto()
+    #     POINTER = auto()
+    #     STORAGE_IN = auto()
+    #     STORAGE_OUT = auto()
+    #     STORAGE_FUNCTION = auto()
+
+    # class StorageType(Enum):
+    #     IN = auto()
+    #     OUT = auto()
+    #     FUNCTION_VAR = auto()
+
+    class TypeContext(NamedTuple):
+        primative_type: type.DataType
+        storage_type: type.StorageType
+        is_constant: bool
+        is_pointer: bool
+
+        
     
     def __init__(self):
         self.generated_spirv = {
@@ -79,16 +102,16 @@ class SPIRV_ASM:
     # def type_exists(self, type: Types):
         # return True if type in self.declared_types else False
     
-    def type_exists(self, type: symbols.DataType):
+    def type_exists(self, type: type.DataType):
         return True if type in self.declared_types else False
     
-    def function_type_exists(self, type: symbols.DataType):
+    def function_type_exists(self, type: type.DataType):
         return True if type in self.declared_function_types else False
     
-    def get_type_id(self, type: symbols.DataType):
+    def get_type_id(self, type: type.DataType):
         return self.declared_types[type]
     
-    def get_function_type_id(self, type: symbols.DataType):
+    def get_function_type_id(self, type: type.DataType):
         return self.declared_function_types[type]
 
     def print_contents(self):
