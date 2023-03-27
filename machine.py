@@ -1,6 +1,6 @@
 from enum import Enum, auto
-# from typing import NamedTuple, Dict
-import typing
+from typing import NamedTuple, TypedDict
+# import typing
 import type
 
 class Machine:
@@ -44,12 +44,11 @@ class SPIRV_ASM:
         TYPES_CONSTS_VARS = auto()
         FUNCTIONS = auto()
 
-    class TypeContext(typing.NamedTuple):
+    class TypeContext(NamedTuple):
         primative_type: type.DataType = None
         storage_type: type.StorageType = None
         is_constant: bool = False
         is_pointer: bool = False
-
 
     def __init__(self):
         self.generated_spirv = {
@@ -64,12 +63,16 @@ class SPIRV_ASM:
         # scuffed type hinting
         # but using typing.Dict or dict or Dict just throws numerous errors
         # https://stackoverflow.com/questions/51031757/how-to-type-hint-a-dictionary-with-values-of-different-types
-        class declared_type_dict_hint(typing.TypedDict):
+        class declared_type_dict_hint(TypedDict):
             type_context: self.TypeContext
             id: str
 
+        class declared_func_type_dict_hint(TypedDict):
+            type: type.DataType
+            id: str
+
         self.declared_types: declared_type_dict_hint = {}
-        # self.declared_functions = dict[type.DataType, str]
+        self.declared_function_types: declared_func_type_dict_hint = {}
 
         self.location = 0
 
@@ -91,8 +94,24 @@ class SPIRV_ASM:
                 print(f"\t{entry}")
         print("-"*10)
 
+
+    # ==== type helper functions ====
     def type_exists(self, type: TypeContext):
         return True if type in self.declared_types else False
+    
+    def add_type(self, type: TypeContext, id: str):
+        self.declared_types[type] = id
+
+    def get_type_id(self, type: TypeContext):
+        return self.declared_types[type]
+
+
+    # ==== function helper functions ====
+    def func_type_exists(self, type: type.DataType):
+        return True if type in self.declared_function_types else False
+
+    def add_func_type(self, type: type.DataType, id: str):
+        self.declared_function_types[type] = id
 
 
     # def add_id(self, id, value):
