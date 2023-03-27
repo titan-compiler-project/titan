@@ -1,5 +1,6 @@
 from enum import Enum, auto
-from typing import NamedTuple
+# from typing import NamedTuple, Dict
+import typing
 import type
 
 class Machine:
@@ -35,16 +36,6 @@ class Function:
 
 class SPIRV_ASM:
 
-    # TODO: DELETE AND MERGE WITH symbols.py
-    # class Types(Enum):
-    #     VOID = auto()
-    #     INT = auto()
-    #     CONST = auto()
-    #     PTR = auto()
-    #     OUTPUT = auto()
-    #     INPUT = auto()
-    #     VAR_FUNCTION_SCOPE = auto()
-
     class Sections(Enum):
         CAPABILITY_AND_EXTENSION = auto()
         ENTRY_AND_EXEC_MODES = auto()
@@ -53,27 +44,13 @@ class SPIRV_ASM:
         TYPES_CONSTS_VARS = auto()
         FUNCTIONS = auto()
 
-    # class Context(Enum):
-    #     PRIMATIVE = auto()
-    #     FUNCTION_TYPE = auto()
-    #     POINTER = auto()
-    #     STORAGE_IN = auto()
-    #     STORAGE_OUT = auto()
-    #     STORAGE_FUNCTION = auto()
+    class TypeContext(typing.NamedTuple):
+        primative_type: type.DataType = None
+        storage_type: type.StorageType = None
+        is_constant: bool = False
+        is_pointer: bool = False
 
-    # class StorageType(Enum):
-    #     IN = auto()
-    #     OUT = auto()
-    #     FUNCTION_VAR = auto()
 
-    class TypeContext(NamedTuple):
-        primative_type: type.DataType
-        storage_type: type.StorageType
-        is_constant: bool
-        is_pointer: bool
-
-        
-    
     def __init__(self):
         self.generated_spirv = {
             self.Sections.CAPABILITY_AND_EXTENSION.name: [],
@@ -84,35 +61,27 @@ class SPIRV_ASM:
             self.Sections.FUNCTIONS.name: []
         }
 
-        self.declared_types = {} # TYPE: id
-        self.declared_function_types = {} #TYPE: id 
-        self.declared_input_types = {}
-        self.declared_output_types = {}
+        # scuffed type hinting
+        # but using typing.Dict or dict or Dict just throws numerous errors
+        # https://stackoverflow.com/questions/51031757/how-to-type-hint-a-dictionary-with-values-of-different-types
+        class declared_type_dict_hint(typing.TypedDict):
+            type_context: self.TypeContext
+            id: str
+
+        self.declared_types: declared_type_dict_hint = {}
+        # self.declared_functions = dict[type.DataType, str]
+
         self.location = 0
 
-        self.declared_ids = {} # id: ?
+        # self.declared_types = {} # TYPE: id
+        # self.declared_function_types = {} #TYPE: id 
+        # self.declared_input_types = {}
+        # self.declared_output_types = {}
+        # self.declared_ids = {} # id: ?
+
 
     def append_code(self, section: Sections, code):
         self.generated_spirv[section.name].append(code)
-
-    def add_id(self, id, value):
-        self.declared_ids[id] = value
-
-
-    # def type_exists(self, type: Types):
-        # return True if type in self.declared_types else False
-    
-    def type_exists(self, type: type.DataType):
-        return True if type in self.declared_types else False
-    
-    def function_type_exists(self, type: type.DataType):
-        return True if type in self.declared_function_types else False
-    
-    def get_type_id(self, type: type.DataType):
-        return self.declared_types[type]
-    
-    def get_function_type_id(self, type: type.DataType):
-        return self.declared_function_types[type]
 
     def print_contents(self):
         print("-"*10)
@@ -121,3 +90,22 @@ class SPIRV_ASM:
             for entry in code:
                 print(f"\t{entry}")
         print("-"*10)
+
+    def type_exists(self, type: TypeContext):
+        return True if type in self.declared_types else False
+
+
+    # def add_id(self, id, value):
+    #     self.declared_ids[id] = value
+
+    # def type_exists(self, type: type.DataType):
+    #     return True if type in self.declared_types else False
+    
+    # def function_type_exists(self, type: type.DataType):
+    #     return True if type in self.declared_function_types else False
+    
+    # def get_type_id(self, type: type.DataType):
+    #     return self.declared_types[type]
+    
+    # def get_function_type_id(self, type: type.DataType):
+    #     return self.declared_function_types[type]
