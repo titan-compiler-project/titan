@@ -1,5 +1,6 @@
 import machine as m
 import symbols as s
+import type as t
 
 def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
@@ -28,7 +29,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
     spirv.append_code(
         spirv.Sections.CAPABILITY_AND_EXTENSION,
-        "Op MemoryModel Logical GLSL450"
+        "OpMemoryModel Logical GLSL450"
     )
 
     entrypoint_param_list = ""
@@ -55,129 +56,109 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
         f"OpExecutionMode %{machine_object.name_of_top_module} OriginUpperLeft"
     )
 
+    # testing
+    # spirv.add_type(spirv.TypeContext(t.DataType.INTEGER, t.StorageType.OUT, False, False), r"%id_xd")
+
     for symbol, info in symbol_table.content.items():
         print(f"{symbol} {info.datatype} {info.operation}")
 
-        # primatives only for now?
-        # if not spirv.type_exists()
-        print(spirv.type_exists(
-            spirv.TypeContext(
-                info.datatype,
-                None,
-                False,
-                False
+        t_ctx = spirv.TypeContext(info.datatype, None, False, False)
+        
+        if not spirv.type_exists(t_ctx):
+            spirv.add_type(t_ctx, f"%type_{info.datatype.name}")
+
+        spirv.append_code(
+            spirv.Sections.DEBUG_STATEMENTS,
+            f"OpName %{symbol} \"{symbol}\""
+        )
+
+        if info.operation == s.Operation.FUNCTION_OUT_VAR_PARAM:
+            spirv.append_code(
+                spirv.Sections.ANNOTATIONS,
+                f"OpDecorate %{symbol} Location {spirv.location}"
             )
-        ))
+            spirv.location += 1
 
-        # if not 
+    for t_ctx, id in spirv.declared_types.items():
+        print(f"{t_ctx}, {id}, {t_ctx.primative_type}")
 
+        match t_ctx.primative_type:
+            case t.DataType.INTEGER:
+                spirv.append_code(
+                    spirv.Sections.TYPES_CONSTS_VARS,
+                    f"{id} = OpTypeInt 32 1"
+                )
+
+            case t.DataType.VOID:
+                spirv.append_code(
+                    spirv.Sections.TYPES_CONSTS_VARS,
+                    f"{id} = OpTypeVoid"
+                )
+
+            case _:
+                raise Exception("got unknown type while trying to generate SPIR-V", "unknown_type")
+
+    for symbol, info in symbol_table.content.items():
+        if info.operation == s.Operation.FUNCTION_DECLARATION:
+            func_type_id = f"%type_function_{info.datatype.name}"
+
+            if not spirv.func_type_exists(info.datatype):
+                spirv.add_func_type(info.datatype, func_type_id)
+
+            type_id = spirv.get_type_id(spirv.TypeContext(info.datatype, None, False, False))
+            spirv.append_code(
+                spirv.Sections.TYPES_CONSTS_VARS,
+                f"{func_type_id} = OpTypeFunction {type_id}"
+            )
+
+    # generate pointer types
+    for symbol, info in symbol_table.content.items():
+        
+        match info.operation:
+            case s.Operation.FUNCTION_IN_VAR_PARAM:
+                raise Exception("not implemented", "not_implemented")
+            
+            case s.Operation.FUNCTION_OUT_VAR_PARAM:
+                ptr_id = f"%ptr_output_"
+
+                match info.datatype:
+                    case t.DataType.INTEGER:
+                        # check if ptr int exists as datatype
+                        ptr_id += info.datatype.name
+                        t_ctx = spirv.TypeContext(t.DataType.INTEGER, t.StorageType.OUT, False, True)
+                        if not spirv.type_exists(t_ctx):
+                            spirv.add_type(t_ctx, ptr_id)
+                            spirv.append_code(
+                                spirv.Sections.TYPES_CONSTS_VARS,
+                                f"{ptr_id} = OpTypePointer Output {spirv.get_type_id(spirv.TypeContext(info.datatype, None, False, False))}"
+                            )
+                    case _:
+                        raise Exception("not implemented", "not_implemented")
+                    
+            case s.Operation.VARIABLE_DECLARATION:
+                ptr_id = f"%ptr_funcvar_"
+
+                match info.datatype:
+                    case t.DataType.INTEGER:
+                        ptr_id += info.datatype.name
+                        t_ctx = spirv.TypeContext(t.DataType.INTEGER, t.StorageType.FUNCTION_VAR, False, True)
+
+                        if not spirv.type_exists(t_ctx):
+                            spirv.add_type(t_ctx, ptr_id)
+                            spirv.append_code(
+                                spirv.Sections.TYPES_CONSTS_VARS,
+                                f"{ptr_id} = OpTypePointer Function {spirv.get_type_id(spirv.TypeContext(info.datatype))}"
+                            )
+                    case _:
+                        raise Exception("not implemented", "not_implemented")
 
 
     spirv.print_contents()
-
-
-#     for symbol, info in symbol_table.content.items():
-#         # print(f"{symbol}, {info.datatype} {info.operation}")
-
-#         if not spirv.type_exists(info.datatype):
-#             spirv.declared_types[info.datatype] = f"%type_{info.datatype.name}"
-
-#         spirv.append_code(spirv.Sections.DEBUG_STATEMENTS, 
-#                           f"OpName %{symbol} \"{symbol}\"")
-        
-#         if info.operation == s.Operation.FUNCTION_OUT_VAR_PARAM:
-#             spirv.append_code(spirv.Sections.ANNOTATIONS,
-#                               f"OpDecorate %{symbol} Location {spirv.location}")
-#             spirv.location += 1
-
-#     # type declaration
-#     # TODO: auto detect types?
-#     # spirv.append_code(spirv.Sections.TYPES,
-#                     #   "%type_void = OpTypeVoid")
-#     # spirv.declared_types[spirv.Types.VOID] = "%"
-
-#     # print(spirv.type_exists(spirv.Types.VOID))
-#     # spirv.declared_types[spirv.Types.VOID] = "%type_void"
-#     # print(spirv.type_exists(spirv.Types.VOID))
-
-#     # generate types for variables
-#     for type, id in spirv.declared_types.items():
-#         # print(f"{type} {id}")
-
-#         match type:
-#             case s.DataType.INTEGER:
-#                 spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
-#                                   f"{id} = OpTypeInt 32 1")
-#             case s.DataType.VOID:
-#                 spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
-#                                   f"{id} = OpTypeVoid")
-#             case _:
-#                 raise Exception("got unknown type while trying to generate SPIRV", "unknown_type")
-            
-#     # need to generate function types
-#     for symbol, info in symbol_table.content.items():
-#         # print(f"{symbol} {info}")
-
-#         if info.operation == s.Operation.FUNCTION_DECLARATION:
-#             # assuming that the type has already been declared by the section above
-#             # we can decare the function type now
-#             # print("func def")
-            
-#             function_type_id = f"%type_function_{info.datatype.name}"
-
-#             if not spirv.function_type_exists(info.datatype):
-#                 spirv.declared_function_types[info.datatype] = function_type_id
-            
-#             spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
-#                               f"{function_type_id} = OpTypeFunction {spirv.get_type_id(info.datatype)}")
-
-
-#     # generate pointer types
-#     for symbol, info in symbol_table.content.items():
-#         # if info.operation == s.Operation.FUNCTION_IN_VAR_PARAM:
-#             # raise Exception("not yet implemented", "not_yet_implemented")
-#         # elif info.oo
-
-#         match info.operation:
-#             case s.Operation.FUNCTION_IN_VAR_PARAM:
-#                 raise Exception("not implemented", "not_implemented")
-#             case s.Operation.FUNCTION_OUT_VAR_PARAM:
-
-#                 ptr_id = f"%ptr_output_"
-                
-#                 match info.datatype:
-#                     case s.DataType.INTEGER:
-#                         ptr_id += s.DataType.INTEGER.name
-
-#                         if not spirv.type_exists(s.DataType.PTR_INT):
-#                             # spirv.declared_types[s.DataType.PTR_INT] = ptr_id
-#                             spirv.declared_output_types[s.DataType.PTR_INT] = ptr_id
-#                             spirv.append_code(spirv.Sections.TYPES_CONSTS_VARS,
-#                                               f"{ptr_id} = OpTypePointer Output {spirv.get_type_id(info.datatype)}")
-                
-#                     case _:
-#                         raise Exception("not implemented", "not_implemented")
-                    
-#             case s.Operation.VARIABLE_DECLARATION:
-#                 ptr_id = f"%ptr_funcvar_"
-
-#                 match info.datatype:
-#                     case s.DataType.INTEGER:
-#                         ptr_id += s.DataType.INTEGER.name
-#                         # s.DataType.
-#                         # if not spirv.type_exists(s.DataType.PTR_)
-
-
-#     # for symbol, info in symbol_table.content.items():
-#     #     print(symbol, info)
-
-#     spirv.print_contents()
-#     print(spirv.declared_types)
-#     print(spirv.declared_function_types)
-#     # print(spirv.get_type_id(s.DataType.INTEGER))
+    print()
+    print(f"types: {spirv.declared_types}")
+    print()
+    print(f"functions: {spirv.declared_function_types}")
     
-
-#     return None
 
 def test_parse_action(tokens):
     # print(f"CALLED {tokens}")
