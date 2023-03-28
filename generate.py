@@ -1,6 +1,7 @@
 import machine as m
 import symbols as s
 import type as t
+import operators as o
 
 def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
@@ -60,7 +61,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
     # spirv.add_type(spirv.TypeContext(t.DataType.INTEGER, t.StorageType.OUT, False, False), r"%id_xd")
 
     for symbol, info in symbol_table.content.items():
-        print(f"{symbol} {info.datatype} {info.operation}")
+        # print(f"{symbol} {info.datatype} {info.operation}")
 
         t_ctx = spirv.TypeContext(info.datatype, None, False, False)
         
@@ -80,7 +81,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             spirv.location += 1
 
     for t_ctx, id in spirv.declared_types.items():
-        print(f"{t_ctx}, {id}, {t_ctx.primative_type}")
+        # print(f"{t_ctx}, {id}, {t_ctx.primative_type}")
 
         match t_ctx.primative_type:
             case t.DataType.INTEGER:
@@ -174,12 +175,58 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         raise Exception("not implemented", "not_implemented")
 
     
+    def _eval_line(line):
+        print(f"{line} is of type {type(line)}")
+
+        if isinstance(line, o.UnaryOp):
+            # check if operator is negative
+            #   check if operand is int OR float
+            #       true: negate and overwrite the number in place
+            #             check if constant exists, create if not
+
+            type_of_operand = type(line.operands)
+
+            # TODO: redundant?
+            if line.operator == "-":
+                if type_of_operand == (int or float):
+                    line.operands = line.operands * -1
+
+                    c_ctx = spirv.ConstContext(type_of_operand, line.operands)
+                    if not spirv.const_exists(c_ctx):
+                        type_str = t.DataType(type_of_operand).name
+
+                        # splice to remove negative sign, just in case spirv doesn't like those kinds of ids
+                        spirv.add_const(c_ctx, f"%const_{type_str}_n{str(line.operands)[1:]}")
+                        spirv.append_code(
+                            spirv.Sections.TYPES_CONSTS_VARS,
+                            f"{spirv.get_const_id(c_ctx)} = OpConstant {line.operands}" 
+                        )
+                else:
+                    # TODO
+                    # use Op(S|F)Negate when dealing with variables
+                    raise Exception("got unexpected type whilst parsing arithmetic", "unexpected_type")
+            # ---- the unary op is only ever used when there is a negative value, redundant to have this here?
+            # else:
+            #     if type_of_operand == (int or float):
+            #         c_ctx = spirv.ConstContext(type_of_operand, line.operands)
+
+            #         if not spirv.const_exists(c_ctx):
+            #             type_str = t.DataType(type_of_operand).name
+            #             spirv.add_const(c_ctx, f"%const_{type_str}_{line.operands}")
+            #             spirv.append_code(
+            #                 spirv.Sections.TYPES_CONSTS_VARS,
+            #                 f"{spirv.get_const_id(c_ctx)} = OpConstant {line.operands}"
+            #             )
+            #     else:
+            #         # TODO
+            #         raise Exception("got unexpected type whilst parsing arithmetic", "unexpected_type")
+
+
+
+                
+    
     # start doing each function def and body eval
     for func in machine_object.functions:
-        print(func)
-        print(func.name)
-        print(symbol_table.get(func.name))
-        print(spirv.get_func_id(symbol_table.get(func.name).datatype))
 
         info = symbol_table.get(func.name)
 
@@ -199,13 +246,29 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             f"%func_label_{func.name} = OpLabel"
         )
 
+        for entry in func.body:
+            # testing
+            # print(type(entry[2]))
+            x = _eval_line(entry[2])
+
+            # try:
+            #     print(f"{entry[0]} {entry[1]} {entry[2]} len2: {len(entry[2].operands)}")
+            #     print(f"\t0: {entry[2].operands[0]} is of type {type(entry[2].operands[0])}")
+            #     print(f"\t1: {entry[2].operands[1]} is of type {type(entry[2].operands[1])}")
+            #     print(f"\t is second operand the binaryop class: {isinstance(entry[2].operands[1], o.BinaryOp)}")
+            #     print(f"\t is second operand the unaryop class: {isinstance(entry[2].operands[1], o.UnaryOp)}")
+            # except TypeError:
+            #     print(f"{entry[0]} {entry[1]} {entry[2]} len2: ?")
+            # except AttributeError:
+            #     print(f"{entry[0]} {entry[1]} {entry[2]} len2: ?")
+
     print()
     print()
     spirv.print_contents()
-    print()
-    print(f"types: {spirv.declared_types}")
-    print()
-    print(f"functions: {spirv.declared_function_types}")
+    # print()
+    # print(f"types: {spirv.declared_types}")
+    # print()
+    # print(f"functions: {spirv.declared_function_types}")
 
 
 def test_parse_action(tokens):
