@@ -197,10 +197,20 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
                         # splice to remove negative sign, just in case spirv doesn't like those kinds of ids
                         spirv.add_const(c_ctx, f"%const_{type_str}_n{str(line.operands)[1:]}")
+
+                        prim_t_id = spirv.get_type_id(
+                            spirv.TypeContext(
+                                t.DataType(type_of_operand),
+                                None, False, False
+                            )
+                        )
+
                         spirv.append_code(
                             spirv.Sections.TYPES_CONSTS_VARS,
-                            f"{spirv.get_const_id(c_ctx)} = OpConstant {line.operands}" 
+                            f"{spirv.get_const_id(c_ctx)} = OpConstant {prim_t_id} {line.operands}" 
                         )
+
+                        # TODO: recursive function, so return the id
                 else:
                     # TODO
                     # use Op(S|F)Negate when dealing with variables
@@ -221,9 +231,24 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             #         # TODO
             #         raise Exception("got unexpected type whilst parsing arithmetic", "unexpected_type")
 
+        if isinstance(line, int):
+            # getting an int means that its positive, cus otherwise it would have been wrapped in the UnaryOp class by the parser
+            c_ctx = spirv.ConstContext(int, line)
+            if not spirv.const_exists(c_ctx):
+                type_str = t.DataType(type(line)).name
+                prim_t_id = spirv.get_type_id(
+                    spirv.TypeContext(
+                        t.DataType(type(line)),
+                        None, False, False
+                    )
+                )
+                spirv.add_const(c_ctx, f"%const_{type_str}_{line}")
 
-
-                
+                spirv.append_code(
+                    spirv.Sections.TYPES_CONSTS_VARS,
+                    f"{spirv.get_const_id(c_ctx)} = OpConstant {prim_t_id} {line}"
+                )
+    
     
     # start doing each function def and body eval
     for func in machine_object.functions:
