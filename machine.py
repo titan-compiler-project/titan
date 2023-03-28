@@ -113,6 +113,9 @@ class SPIRV_ASM:
     def add_func_type(self, type: type.DataType, id: str):
         self.declared_function_types[type] = id
 
+    def get_func_id(self, type: type.DataType):
+        return self.declared_function_types[type]
+
 
     # def add_id(self, id, value):
     #     self.declared_ids[id] = value
