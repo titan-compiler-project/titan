@@ -152,13 +152,61 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     case _:
                         raise Exception("not implemented", "not_implemented")
 
+    # define globals
+    for func in machine_object.functions:
+        # TODO: the same for params
 
+        for returned in func.returns:
+            if symbol_table.exists(returned):
+                info = symbol_table.get(returned)
+
+                match info.datatype:
+                    case t.DataType.INTEGER:
+                        id = spirv.get_type_id(spirv.TypeContext(t.DataType.INTEGER, t.StorageType.OUT, False, True))
+
+                        # TODO: need a way to store symbols and their spirv representation (link between symbols.py and machine.SPIRV_ASM)
+                        spirv.append_code(
+                            spirv.Sections.TYPES_CONSTS_VARS,
+                            f"%{returned} = OpVariable {id} Output"
+                        )
+
+                    case _:
+                        raise Exception("not implemented", "not_implemented")
+
+    
+    # start doing each function def and body eval
+    for func in machine_object.functions:
+        print(func)
+        print(func.name)
+        print(symbol_table.get(func.name))
+        print(spirv.get_func_id(symbol_table.get(func.name).datatype))
+
+        info = symbol_table.get(func.name)
+
+        match info.datatype:
+            case t.DataType.VOID:
+                func_id = spirv.get_func_id(t.DataType.VOID)
+                type_id = spirv.get_type_id(spirv.TypeContext(t.DataType.VOID, None, False, False))
+                spirv.append_code(
+                    spirv.Sections.FUNCTIONS,
+                    f"%func_{func.name} = OpFunction {type_id} None {func_id}"
+                )
+            case _:
+                raise Exception("not implemented", "not_implemented")
+
+        spirv.append_code(
+            spirv.Sections.FUNCTIONS,
+            f"%func_label_{func.name} = OpLabel"
+        )
+
+    print()
+    print()
     spirv.print_contents()
     print()
     print(f"types: {spirv.declared_types}")
     print()
     print(f"functions: {spirv.declared_function_types}")
-    
+
 
 def test_parse_action(tokens):
     # print(f"CALLED {tokens}")
