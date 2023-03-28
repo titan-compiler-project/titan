@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from typing import NamedTuple, TypedDict
+from typing import NamedTuple, TypedDict, Union
 # import typing
 import type
 
@@ -50,6 +50,10 @@ class SPIRV_ASM:
         is_constant: bool = False
         is_pointer: bool = False
 
+    class ConstContext(NamedTuple):
+        primative_type: Union[int, float] = None
+        value: Union[int, float] = None
+
     def __init__(self):
         self.generated_spirv = {
             self.Sections.CAPABILITY_AND_EXTENSION.name: [],
@@ -71,8 +75,13 @@ class SPIRV_ASM:
             type: type.DataType
             id: str
 
+        class declared_consts_dict_hint(TypedDict):
+            type: self.ConstContext
+            id: str
+
         self.declared_types: declared_type_dict_hint = {}
         self.declared_function_types: declared_func_type_dict_hint = {}
+        self.delcared_consts: declared_type_dict_hint = {}
 
         self.location = 0
 
@@ -97,6 +106,7 @@ class SPIRV_ASM:
 
     # ==== type helper functions ====
     def type_exists(self, type: TypeContext):
+        # can this be simplified to "return type in self.declared_types" ?
         return True if type in self.declared_types else False
     
     def add_type(self, type: TypeContext, id: str):
@@ -115,6 +125,16 @@ class SPIRV_ASM:
 
     def get_func_id(self, type: type.DataType):
         return self.declared_function_types[type]
+
+    # === consts helper functions ===
+    def const_exists(self, const: ConstContext):
+        return True if const in self.delcared_consts else False
+    
+    def add_const(self, c_ctx: ConstContext, id: str):
+        self.delcared_consts[c_ctx] = id
+
+    def get_const_id(self, c_ctx: ConstContext):
+        return self.delcared_consts[c_ctx]
 
 
     # def add_id(self, id, value):
