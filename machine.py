@@ -81,9 +81,10 @@ class SPIRV_ASM:
 
         self.declared_types: declared_type_dict_hint = {}
         self.declared_function_types: declared_func_type_dict_hint = {}
-        self.delcared_consts: declared_type_dict_hint = {}
+        self.declared_consts: declared_consts_dict_hint = {}
 
         self.location = 0
+        self.id = 0
 
         # self.declared_types = {} # TYPE: id
         # self.declared_function_types = {} #TYPE: id 
@@ -128,13 +129,13 @@ class SPIRV_ASM:
 
     # === consts helper functions ===
     def const_exists(self, const: ConstContext):
-        return True if const in self.delcared_consts else False
+        return True if const in self.declared_consts else False
     
     def add_const(self, c_ctx: ConstContext, id: str):
-        self.delcared_consts[c_ctx] = id
+        self.declared_consts[c_ctx] = id
 
     def get_const_id(self, c_ctx: ConstContext):
-        return self.delcared_consts[c_ctx]
+        return self.declared_consts[c_ctx]
 
 
     # def add_id(self, id, value):
