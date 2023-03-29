@@ -176,7 +176,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
     
     def _eval_line(line):
-        print(f"{line} is of type {type(line)}")
+        # print(f"{line} is of type {type(line)}")
 
         if isinstance(line, o.UnaryOp):
             # check if operator is negative
@@ -189,14 +189,16 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             # TODO: redundant?
             if line.operator == "-":
                 if type_of_operand == (int or float):
-                    line.operands = line.operands * -1
+                    # TODO: modified in place, is this a good idea?
+                    # line.operands = line.operands * -1
+                    temp_negate = line.operands * -1 # doing this in a temp var to mess up class
 
-                    c_ctx = spirv.ConstContext(type_of_operand, line.operands)
+                    c_ctx = spirv.ConstContext(type_of_operand, temp_negate)
                     if not spirv.const_exists(c_ctx):
                         type_str = t.DataType(type_of_operand).name
 
                         # splice to remove negative sign, just in case spirv doesn't like those kinds of ids
-                        spirv.add_const(c_ctx, f"%const_{type_str}_n{str(line.operands)[1:]}")
+                        spirv.add_const(c_ctx, f"%const_{type_str}_n{str(temp_negate)[1:]}")
 
                         prim_t_id = spirv.get_type_id(
                             spirv.TypeContext(
@@ -207,10 +209,12 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
                         spirv.append_code(
                             spirv.Sections.TYPES_CONSTS_VARS,
-                            f"{spirv.get_const_id(c_ctx)} = OpConstant {prim_t_id} {line.operands}" 
+                            f"{spirv.get_const_id(c_ctx)} = OpConstant {prim_t_id} {temp_negate}" 
                         )
 
                         # TODO: recursive function, so return the id
+                    return spirv.get_const_id(c_ctx)
+
                 else:
                     # TODO
                     # use Op(S|F)Negate when dealing with variables
@@ -231,7 +235,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             #         # TODO
             #         raise Exception("got unexpected type whilst parsing arithmetic", "unexpected_type")
 
-        if isinstance(line, int):
+        elif isinstance(line, int):
             # getting an int means that its positive, cus otherwise it would have been wrapped in the UnaryOp class by the parser
             c_ctx = spirv.ConstContext(int, line)
             if not spirv.const_exists(c_ctx):
@@ -248,6 +252,47 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     spirv.Sections.TYPES_CONSTS_VARS,
                     f"{spirv.get_const_id(c_ctx)} = OpConstant {prim_t_id} {line}"
                 )
+            return spirv.get_const_id(c_ctx)
+        elif isinstance(line, str):
+            # gonna assume that this is a symbol
+            print(f"st: {line}")
+            if symbol_table.exists(line):
+                return f"%{line}"
+
+        elif isinstance(line, o.BinaryOp):
+            # check type of operand
+            #       if str then check if symbol exists
+            #           raise error if not
+            #       if int/float then check if const exists
+            #           make if not
+            #       if unary then self call
+            #           - get returned id
+            #       if binary then self call
+            #           - get returned id
+            #
+            #       build expression?
+            #       return id?
+
+            # for operand in line.operands:
+            #     if isinstance(operand, o.BinaryOp) or isinstance(operand, o.UnaryOp):
+            #         print(operand)
+            #         x = _eval_line(operand)
+            #         print(x)
+            #     else:
+            #         print(f"operand: {operand}")
+
+            a = _eval_line(line.operands[0])
+            b = _eval_line(line.operands[1])
+
+
+            print(f"line: {line}")
+            print(f"\toperands: 0: {line.operands[0]}\t1: {line.operands[1]}")
+            print(f"\top: {line.operator}")
+            print(f"\ta: {a}")
+            print(f"\tb: {b}")
+
+            if a is not None and b is not None:
+                return f"%testid"
     
     
     # start doing each function def and body eval
@@ -275,6 +320,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             # testing
             # print(type(entry[2]))
             x = _eval_line(entry[2])
+            # print(f"{entry} -------- {x}")
 
             # try:
             #     print(f"{entry[0]} {entry[1]} {entry[2]} len2: {len(entry[2].operands)}")
