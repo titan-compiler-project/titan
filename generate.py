@@ -318,27 +318,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 raise Exception("symbol does not exist!", "no_symbol")
 
         elif isinstance(line, o.BinaryOp):
-            # check type of operand
-            #       if str then check if symbol exists
-            #           raise error if not
-            #       if int/float then check if const exists
-            #           make if not
-            #       if unary then self call
-            #           - get returned id
-            #       if binary then self call
-            #           - get returned id
-            #
-            #       build expression?
-            #       return id?
-
-            # for operand in line.operands:
-            #     if isinstance(operand, o.BinaryOp) or isinstance(operand, o.UnaryOp):
-            #         print(operand)
-            #         x = _eval_line(operand)
-            #         print(x)
-            #     else:
-            #         print(f"operand: {operand}")
-
             id_0, info_0 = _eval_line(line.operands[0])
             id_1, info_1 = _eval_line(line.operands[1])
 
@@ -348,13 +327,12 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             if t_0 is not t_1:
                 raise Exception("type mismatch", "type_mismatch")
 
-            # print(f"line: {line}")
-            # print(f"operator: {line.operator}")
-            # print(f"\ta: {line.operands[0]} returns {id_0} with info {info_0} with type {t_0}")
-            # print(f"\tb: {line.operands[1]} returns {id_1} with info {info_1} with type {t_1}")
+            print(f"line: {line}")
+            print(f"operator: {line.operator}")
+            print(f"\ta: {line.operands[0]} returns {id_0} with info {info_0} with type {t_0}")
+            print(f"\tb: {line.operands[1]} returns {id_1} with info {info_1} with type {t_1}")
 
-            # x = spirv.id
-            line_id = f"%{spirv.id}"
+            line_id = f"%titan_id_{spirv.id}"
 
             if not spirv.line_exists(line_id):
                 spirv.add_line(line_id, t.DataType(t_0))
@@ -390,8 +368,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 else:
                     raise Exception("got unknown type when trying to generate opcode", "unknown_type")
                         
-
-                prim_t_id = spirv.get_type_id(
+                # we already checked if the types matches so it doesn't really matter if we mix its use
+                prim_t_id_0 = spirv.get_type_id(
                     spirv.TypeContext(
                         t.DataType(t_0),
                         None,
@@ -400,9 +378,30 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     )
                 )
 
+                if symbol_table.exists(id_0[1:]):
+                    print(id_0[1:])
+                    temp_id = f"%t_{id_0[1:]}"
+                    spirv.append_code(
+                        spirv.Sections.FUNCTIONS,
+                        f"{temp_id} = OpLoad {prim_t_id_0} {id_0}"
+                    )
+
+                    id_0 = temp_id
+
+                if symbol_table.exists(id_1[1:]):
+                    print(id_1[1:])
+                    temp_id = f"%t_{id_1[1:]}"
+                    spirv.append_code(
+                        spirv.Sections.FUNCTIONS,
+                        f"{temp_id} = OpLoad {prim_t_id_0} {id_1}"
+                    )
+
+                    id_1 = temp_id
+
+
                 spirv.append_code(
                     spirv.Sections.FUNCTIONS,
-                    f"{line_id} = {opcode} {prim_t_id} {id_0} {id_1}"
+                    f"{line_id} = {opcode} {prim_t_id_0} {id_0} {id_1}"
                 )
                 
 
@@ -422,7 +421,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 type_id = spirv.get_type_id(spirv.TypeContext(t.DataType.VOID, None, False, False))
                 spirv.append_code(
                     spirv.Sections.FUNCTIONS,
-                    f"%func_{func.name} = OpFunction {type_id} None {func_id}"
+                    f"%{func.name} = OpFunction {type_id} None {func_id}"
                 )
             case _:
                 raise Exception("not implemented", "not_implemented")
