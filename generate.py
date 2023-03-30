@@ -174,6 +174,59 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     case _:
                         raise Exception("not implemented", "not_implemented")
 
+
+
+
+
+    def _extract_type(info):
+
+        # print(f"\t EXTRACT TYPE: {info} is of type {type(info)}")
+
+        if info is None:
+            raise Exception("unable to extract type", "fail_type_extract")
+        else:
+            match type(info):
+                case spirv.ConstContext:
+                    return info.primative_type
+                case s.Information:
+                    return info.datatype.value
+                case _:
+                    raise Exception("got unknown type", "unknown_type_while_extracting")
+
+        # print(f"\textracting val of {a} gives type {type(a)}")
+
+        # if a != None:
+        #     match type(a):
+        #         case spirv.ConstContext:
+        #             return a.primative_type
+        #         case s.Information:
+        #             return a.datatype.value
+        #         case _:
+        #             raise Exception(f"failed to extract type {type(a)}", "failed_to_determine_type")
+        # else:
+        #     return None
+        
+    # def _glue(a, b, line):
+    #     prim_t_a = [k.primative_type for k, v in spirv.declared_consts.items() if v == a]
+    #     prim_t_b = [k.primative_type for k, v in spirv.declared_consts.items() if v == b]
+        
+        # print(f"pta: {prim_t_a}\tptb: {prim_t_b}")
+
+        # try:
+        #     print(f"prim_t_a: {prim_t_a[0]} {type(prim_t_a[0])}")
+        #     prim_t_a = prim_t_a[0]
+        # except IndexError:
+        #     pass
+
+        # try:
+        #     print(f"prim_t_b: {prim_t_b[0]} {type(prim_t_b[0])}")
+        #     prim_t_b = prim_t_b[0]
+        # except IndexError:
+        #     pass
+
+        # if prim_t_a == int and prim_t_b == int:
+        #     print("both are ints")
+
     
     def _eval_line(line):
         # print(f"{line} is of type {type(line)}")
@@ -213,7 +266,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         )
 
                         # TODO: recursive function, so return the id
-                    return spirv.get_const_id(c_ctx)
+                    return spirv.get_const_id(c_ctx), c_ctx
 
                 else:
                     # TODO
@@ -240,6 +293,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             c_ctx = spirv.ConstContext(int, line)
             if not spirv.const_exists(c_ctx):
                 type_str = t.DataType(type(line)).name
+                
                 prim_t_id = spirv.get_type_id(
                     spirv.TypeContext(
                         t.DataType(type(line)),
@@ -252,12 +306,15 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     spirv.Sections.TYPES_CONSTS_VARS,
                     f"{spirv.get_const_id(c_ctx)} = OpConstant {prim_t_id} {line}"
                 )
-            return spirv.get_const_id(c_ctx)
+            return spirv.get_const_id(c_ctx), c_ctx
+        
         elif isinstance(line, str):
             # gonna assume that this is a symbol
-            print(f"st: {line}")
+            # print(f"st: {line}")
             if symbol_table.exists(line):
-                return f"%{line}"
+                return f"%{line}", symbol_table.get(line)
+            else:
+                raise Exception("symbol does not exist!", "no_symbol")
 
         elif isinstance(line, o.BinaryOp):
             # check type of operand
@@ -281,20 +338,78 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             #     else:
             #         print(f"operand: {operand}")
 
-            a = _eval_line(line.operands[0])
-            b = _eval_line(line.operands[1])
+            id_0, info_0 = _eval_line(line.operands[0])
+            id_1, info_1 = _eval_line(line.operands[1])
 
+            t_0 = _extract_type(info_0)
+            t_1 = _extract_type(info_1)
 
-            print(f"line: {line}")
-            print(f"\toperands: 0: {line.operands[0]}\t1: {line.operands[1]}")
-            print(f"\top: {line.operator}")
-            print(f"\ta: {a}")
-            print(f"\tb: {b}")
+            if t_0 is not t_1:
+                raise Exception("type mismatch", "type_mismatch")
 
-            if a is not None and b is not None:
-                return f"%testid"
+            # print(f"line: {line}")
+            # print(f"operator: {line.operator}")
+            # print(f"\ta: {line.operands[0]} returns {id_0} with info {info_0} with type {t_0}")
+            # print(f"\tb: {line.operands[1]} returns {id_1} with info {info_1} with type {t_1}")
+
+            # x = spirv.id
+            line_id = f"%{spirv.id}"
+
+            if not spirv.line_exists(line_id):
+                spirv.add_line(line_id, t.DataType(t_0))
+
+                opcode = "Op"
+
+                if t_0 is int:
+                    opcode += "I"
+                    match line.operator:
+                        case "+":
+                            opcode += "Add"
+                        case "-":
+                            opcode += "Sub"
+                        case "*":
+                            opcode += "Mul"
+                        case "/":
+                            opcode = "OpSDiv"
+                        case _:
+                            raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
+                elif t_0 is float:
+                    opcode += "F"
+                    match line.operator:
+                        case "+":
+                            opcode += "Add"
+                        case "-":
+                            opcode += "Sub"
+                        case "*":
+                            opcode += "Mul"
+                        case "/":
+                            opcode += "Div"
+                        case _:
+                            raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
+                else:
+                    raise Exception("got unknown type when trying to generate opcode", "unknown_type")
+                        
+
+                prim_t_id = spirv.get_type_id(
+                    spirv.TypeContext(
+                        t.DataType(t_0),
+                        None,
+                        False,
+                        False
+                    )
+                )
+
+                spirv.append_code(
+                    spirv.Sections.FUNCTIONS,
+                    f"{line_id} = {opcode} {prim_t_id} {id_0} {id_1}"
+                )
+                
+
+            spirv.id += 1
+            # return f"%{x}", None
+            return line_id, info_0
     
-    
+
     # start doing each function def and body eval
     for func in machine_object.functions:
 
@@ -316,11 +431,48 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             f"%func_label_{func.name} = OpLabel"
         )
 
+        # define in-function variables
+        for symbol, info in symbol_table.content.items():
+            if info.operation == s.Operation.VARIABLE_DECLARATION:
+                # print(f"{symbol} is of type {info.datatype}")
+
+                type_id = spirv.get_type_id(
+                    spirv.TypeContext(
+                        info.datatype,
+                        s.StorageType.FUNCTION_VAR,
+                        False,
+                        True
+                    )
+                )
+
+                spirv.append_code(
+                    spirv.Sections.FUNCTIONS,
+                    f"%{symbol} = OpVariable {type_id} Function"
+                )
+
         for entry in func.body:
-            # testing
-            # print(type(entry[2]))
-            x = _eval_line(entry[2])
-            # print(f"{entry} -------- {x}")
+
+            line_id, _ = _eval_line(entry[2])
+            print(f"line: {entry} has final evaluation id of {line_id}")
+
+            if entry[1] == "=":
+                opcode = "OpStore"
+
+                spirv.append_code(
+                    spirv.Sections.FUNCTIONS,
+                    f"{opcode} %{entry[0]} {line_id}"
+                )
+
+
+        spirv.append_code(
+            spirv.Sections.FUNCTIONS,
+            "OpReturn"
+        )
+
+        spirv.append_code(
+            spirv.Sections.FUNCTIONS,
+            "OpFunctionEnd"
+        )
 
             # try:
             #     print(f"{entry[0]} {entry[1]} {entry[2]} len2: {len(entry[2].operands)}")
@@ -336,6 +488,15 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
     print()
     print()
     spirv.print_contents()
+    print()
+    print()
+    print(spirv.generated_lines)
+    print()
+    print()
+    print(symbol_table.content)
+
+
+    # print(spirv.declared_consts)
     # print()
     # print(f"types: {spirv.declared_types}")
     # print()
