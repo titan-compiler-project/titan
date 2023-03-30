@@ -79,9 +79,14 @@ class SPIRV_ASM:
             type: self.ConstContext
             id: str
 
+        class generated_line_dict_hint(TypedDict):
+            id: str
+            type: type.DataType
+
         self.declared_types: declared_type_dict_hint = {}
         self.declared_function_types: declared_func_type_dict_hint = {}
         self.declared_consts: declared_consts_dict_hint = {}
+        self.generated_lines: generated_line_dict_hint = {}
 
         self.location = 0
         self.id = 0
@@ -137,6 +142,15 @@ class SPIRV_ASM:
     def get_const_id(self, c_ctx: ConstContext):
         return self.declared_consts[c_ctx]
 
+    # === generated line helper functions ===
+    def line_exists(self, id: str):
+        return True if id in self.generated_lines else False
+    
+    def get_line_type(self, id: str):
+        return self.generated_lines[id]
+    
+    def add_line(self, id: str, type: type.DataType):
+        self.generated_lines[id] = type
 
     # def add_id(self, id, value):
     #     self.declared_ids[id] = value
