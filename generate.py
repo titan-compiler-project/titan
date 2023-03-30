@@ -47,7 +47,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
     spirv.append_code(
         spirv.Sections.ENTRY_AND_EXEC_MODES,
-        f"OpEntryPoint Fragment %{machine_object.name_of_top_module} {entrypoint_param_list}"
+        # TODO: this does not account for multiple functions!!!
+        f"OpEntryPoint Fragment %{machine_object.name_of_top_module} \"{machine_object.name_of_top_module}\" {entrypoint_param_list}"
     )
 
     del entrypoint_param_list
@@ -494,6 +495,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
     print()
     print()
     print(symbol_table.content)
+
+    spirv.output_to_file(machine_object.name_of_top_module)
 
 
     # print(spirv.declared_consts)
