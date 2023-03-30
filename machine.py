@@ -109,6 +109,16 @@ class SPIRV_ASM:
                 print(f"\t{entry}")
         print("-"*10)
 
+    def output_to_file(self, name):
+
+        with open(f"{name}.spvasm", "w") as f:
+            for k, v in self.generated_spirv.items():
+                print(f"writing {k}")
+                
+                for line in v:
+                    f.write(line)
+                    f.write(f"\n")
+
 
     # ==== type helper functions ====
     def type_exists(self, type: TypeContext):
