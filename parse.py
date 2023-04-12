@@ -6,7 +6,6 @@ import pyparsing as pp
 
 def preprocess(machine_object):
 
-    # tokenize IDs, got from experimentation
     # https://docs.python.org/3/library/tokenize.html
     INDENT_ID = 5
     DEDENT_ID = 6
@@ -24,8 +23,6 @@ def preprocess(machine_object):
         # read file into list
         with open(file) as f:
             lines = f.read().splitlines()
-
-        # print(f"LINES FROM PARSE: {lines}")
 
         # tokenize file -- reads file again! does not use lines list defined earlier
         with tokenize.open(file) as f:
@@ -62,18 +59,14 @@ def preprocess(machine_object):
             try:
                 # we dont really care about the tokens, we just want the line that matches
                 # TODO: search_string() maybe be better in this situation, but it is not matching correctly
-                # _ = (TitanPythonGrammar.statement | TitanPythonGrammar.keyword_return + pp.rest_of_line).parse_string(line)
                 _ = (TitanPythonGrammar.statement | TitanPythonGrammar.keyword_return + pp.rest_of_line).parse_string(line)
             except pp.exceptions.ParseException:
                 # if we get a line that doesn't match the statement grammar we just continue anyway
                 # TODO: is this really the best way to handle this?
                 continue
             else:
-                # print(f"{line};")
                 lines[x] = line + ";" # overwrite with line + semicolon
 
-
-        # print(lines)
         # converting list into string because it makes it easier when it comes to parsing stage
         joined_lines = " ".join(lines)
 
@@ -84,8 +77,6 @@ def preprocess(machine_object):
 def parse_processed_python(machine_object: machine.Machine):
 
     for entry in machine_object.processed_text:
-        # print(entry)
-        # parse_result = module.parse_string(entry)
         parse_result = TitanPythonGrammar.module.parse_string(entry)
         machine_object.parsed_modules.append(parse_result)
         # parse_result.pprint()
@@ -99,8 +90,3 @@ def parse_processed_python(machine_object: machine.Machine):
                   returns = result.function_returns
                 )
             )
-            # print(f"func name= {result.function_name}")
-            # print(f"func params= {result.function_param_list}")
-            # print(f"func statements= {result.function_statements}")
-            # print(f"func returns= {result.function_returns}")
-            # print()

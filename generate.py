@@ -12,10 +12,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
         if func_count == 0:
             raise Exception("no parsed source code to generate SPIR-V from", "no_source")
-            return -1
         elif func_count > 1:
             raise Exception(f"undefined top module when there are {func_count} modules, use the -t option to set the top.", "no_top_set")
-            return -1
         else:
             machine_object.name_of_top_module = machine_object.functions[0].name
 
@@ -58,12 +56,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
         f"OpExecutionMode %{machine_object.name_of_top_module} OriginUpperLeft"
     )
 
-    # testing
-    # spirv.add_type(spirv.TypeContext(t.DataType.INTEGER, t.StorageType.OUT, False, False), r"%id_xd")
-
     for symbol, info in symbol_table.content.items():
-        # print(f"{symbol} {info.datatype} {info.operation}")
-
         t_ctx = spirv.TypeContext(info.datatype, None, False, False)
         
         if not spirv.type_exists(t_ctx):
@@ -82,7 +75,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             spirv.location += 1
 
     for t_ctx, id in spirv.declared_types.items():
-        # print(f"{t_ctx}, {id}, {t_ctx.primative_type}")
 
         match t_ctx.primative_type:
             case t.DataType.INTEGER:
@@ -180,9 +172,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
 
     def _extract_type(info):
-
-        # print(f"\t EXTRACT TYPE: {info} is of type {type(info)}")
-
         if info is None:
             raise Exception("unable to extract type", "fail_type_extract")
         else:
@@ -194,57 +183,15 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 case _:
                     raise Exception("got unknown type", "unknown_type_while_extracting")
 
-        # print(f"\textracting val of {a} gives type {type(a)}")
-
-        # if a != None:
-        #     match type(a):
-        #         case spirv.ConstContext:
-        #             return a.primative_type
-        #         case s.Information:
-        #             return a.datatype.value
-        #         case _:
-        #             raise Exception(f"failed to extract type {type(a)}", "failed_to_determine_type")
-        # else:
-        #     return None
-        
-    # def _glue(a, b, line):
-    #     prim_t_a = [k.primative_type for k, v in spirv.declared_consts.items() if v == a]
-    #     prim_t_b = [k.primative_type for k, v in spirv.declared_consts.items() if v == b]
-        
-        # print(f"pta: {prim_t_a}\tptb: {prim_t_b}")
-
-        # try:
-        #     print(f"prim_t_a: {prim_t_a[0]} {type(prim_t_a[0])}")
-        #     prim_t_a = prim_t_a[0]
-        # except IndexError:
-        #     pass
-
-        # try:
-        #     print(f"prim_t_b: {prim_t_b[0]} {type(prim_t_b[0])}")
-        #     prim_t_b = prim_t_b[0]
-        # except IndexError:
-        #     pass
-
-        # if prim_t_a == int and prim_t_b == int:
-        #     print("both are ints")
-
     
     def _eval_line(line):
-        # print(f"{line} is of type {type(line)}")
 
         if isinstance(line, o.UnaryOp):
-            # check if operator is negative
-            #   check if operand is int OR float
-            #       true: negate and overwrite the number in place
-            #             check if constant exists, create if not
-
             type_of_operand = type(line.operands)
 
             # TODO: redundant?
             if line.operator == "-":
                 if type_of_operand == (int or float):
-                    # TODO: modified in place, is this a good idea?
-                    # line.operands = line.operands * -1
                     temp_negate = line.operands * -1 # doing this in a temp var to mess up class
 
                     c_ctx = spirv.ConstContext(type_of_operand, temp_negate)
@@ -311,7 +258,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
         
         elif isinstance(line, str):
             # gonna assume that this is a symbol
-            # print(f"st: {line}")
             if symbol_table.exists(line):
                 return f"%{line}", symbol_table.get(line)
             else:
@@ -406,7 +352,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 
 
             spirv.id += 1
-            # return f"%{x}", None
             return line_id, info_0
     
 
@@ -434,7 +379,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
         # define in-function variables
         for symbol, info in symbol_table.content.items():
             if info.operation == s.Operation.VARIABLE_DECLARATION:
-                # print(f"{symbol} is of type {info.datatype}")
 
                 type_id = spirv.get_type_id(
                     spirv.TypeContext(
@@ -474,17 +418,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             "OpFunctionEnd"
         )
 
-            # try:
-            #     print(f"{entry[0]} {entry[1]} {entry[2]} len2: {len(entry[2].operands)}")
-            #     print(f"\t0: {entry[2].operands[0]} is of type {type(entry[2].operands[0])}")
-            #     print(f"\t1: {entry[2].operands[1]} is of type {type(entry[2].operands[1])}")
-            #     print(f"\t is second operand the binaryop class: {isinstance(entry[2].operands[1], o.BinaryOp)}")
-            #     print(f"\t is second operand the unaryop class: {isinstance(entry[2].operands[1], o.UnaryOp)}")
-            # except TypeError:
-            #     print(f"{entry[0]} {entry[1]} {entry[2]} len2: ?")
-            # except AttributeError:
-            #     print(f"{entry[0]} {entry[1]} {entry[2]} len2: ?")
-
+    # debug
     print()
     print()
     spirv.print_contents()
@@ -496,13 +430,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
     print(symbol_table.content)
 
     spirv.output_to_file(machine_object.name_of_top_module)
-
-
-    # print(spirv.declared_consts)
-    # print()
-    # print(f"types: {spirv.declared_types}")
-    # print()
-    # print(f"functions: {spirv.declared_function_types}")
 
 
 def test_parse_action(tokens):
@@ -521,58 +448,24 @@ def test_parse_action_statement(tokens):
 
 
 def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
-    
-    # for x in range(0, len(machine_object.functions)):
-    #     print(f"{x}: {machine_object.functions[x]}")
-
-        # the functions parameter will always contain:
-        # - the function name
-        # - the function parameters
-        # - the body of the function
-        # - the returns
-
-        # 1. check and store function name in symbol table
-        # 2. check and store function params
-        # 3. check and store function returns
-        # 4. check, evaluate and build body symbols?
-
-        # for function in machine_object.functions:
-        #     # check if function exists
-        #     if not symbol_table.exists(function.name):
-        #         # symbol_table.add(function.name, symbols.Information(symbols.DataType.NONE, symbols.Operation.FUNCTION_DECLARATION, None))
-        #         symbol_table.add(function.name, symbols.Information(symbols.DataType.NONE, symbols.Operation.FUNCTION_DECLARATION))
-
-        #     # check function params
-        #     if len(function.params) != 0:
-        #         for x in function.params:
-        #             print(x)
-
-    #############################################################################
 
     for function in machine_object.functions:
         
         # check if func is already declared
         if not symbol_table.exists(function.name):
-            # print(f"function '{function.name}' does not exist in symbol table")
             symbol_table.add(function.name, s.Information(s.DataType.VOID, s.Operation.FUNCTION_DECLARATION))
 
             # now that the function is declared, check its input params
             if len(function.params) > 0:
                 for param in function.params:
                     if not symbol_table.exists(param):
-                        # print(f"param '{param}' does not exist in symbol table")
                         symbol_table.add(param, s.Information(s.DataType.INTEGER, s.Operation.FUNCTION_IN_VAR_PARAM))
-            # else:
-                # print("function does not have any input parameters")
 
             # check its output params
             if len(function.returns) > 0:
                 for param in function.returns:
                     if not symbol_table.exists(param):
-                        # print(f"param '{param}' does not exist in symbol table")
                         symbol_table.add(param, s.Information(s.DataType.INTEGER, s.Operation.FUNCTION_OUT_VAR_PARAM))
-            # else:
-                # print("function does not have any output parameters")
 
 
             # check body params
@@ -591,9 +484,3 @@ def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
 
                 # print(entry.get_name('assignment'))
-
-            # print(function.body)
-            # print()
-            # print(f"body: {function.body.dump()}")
-            # print()
-            # print(type(function.body))

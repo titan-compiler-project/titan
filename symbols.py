@@ -5,21 +5,6 @@ from type import *
 # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
 # if TYPE_CHECKING:
 #     from pyparsing import ParserElement
-
-# class DataType(Enum):
-#     NONE = auto()
-#     VOID = auto()
-#     INTEGER = auto()
-#     FLOAT = auto()
-#     BOOLEAN = auto()
-#     CONSTANT = auto()
-#     POINTER = auto() # TODO: is there a way to make composite types?
-#     PTR_INT = auto()
-#     PTR_FLOAT = auto()
-#     PTR_BOOL = auto()
-#     PTR_CONST = auto()
-
-
     
 class Operation(Enum):
     VARIABLE_DECLARATION = auto()

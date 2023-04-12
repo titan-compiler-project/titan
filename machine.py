@@ -14,9 +14,6 @@ class Machine:
         self.functions = []
         self.name_of_top_module = None
 
-    # def set_options(self, options):
-    #     self.options = options
-
 class Function:
     name = ""
     params = []
@@ -91,12 +88,6 @@ class SPIRV_ASM:
         self.location = 0
         self.id = 0
 
-        # self.declared_types = {} # TYPE: id
-        # self.declared_function_types = {} #TYPE: id 
-        # self.declared_input_types = {}
-        # self.declared_output_types = {}
-        # self.declared_ids = {} # id: ?
-
 
     def append_code(self, section: Sections, code):
         self.generated_spirv[section.name].append(code)
@@ -161,18 +152,3 @@ class SPIRV_ASM:
     
     def add_line(self, id: str, type: type.DataType):
         self.generated_lines[id] = type
-
-    # def add_id(self, id, value):
-    #     self.declared_ids[id] = value
-
-    # def type_exists(self, type: type.DataType):
-    #     return True if type in self.declared_types else False
-    
-    # def function_type_exists(self, type: type.DataType):
-    #     return True if type in self.declared_function_types else False
-    
-    # def get_type_id(self, type: type.DataType):
-    #     return self.declared_types[type]
-    
-    # def get_function_type_id(self, type: type.DataType):
-    #     return self.declared_function_types[type]
