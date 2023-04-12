@@ -5,7 +5,7 @@ import machine, parse, generate, symbols
 
 # py -3.10-64 main.py
 
-def parse_options(machine_object):
+def _parse_options(machine_object):
 
     got_top_module = False
     for x in range(1, len(sys.argv)):
@@ -73,7 +73,7 @@ def main():
         print(f"got no arguments")
     else:
         try:
-            parse_options(machine_object)
+            _parse_options(machine_object)
         except Exception as err:
             print(f"{err.args[0]} ({err.args[1]})")
             return -1                    
