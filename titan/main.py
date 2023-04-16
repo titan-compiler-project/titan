@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 from options import Options
 import machine, parse, generate, symbols
+from errors import TitanErrors
 
 # py -3.10-64 main.py
 
@@ -33,7 +34,8 @@ def _parse_options(machine_object):
                     machine_object.name_of_top_module = sys.argv[x + 1]
                     got_top_module = True
                 case _:
-                    raise Exception(f"unknown option '{option}', exiting.", "bad_option")
+                    # raise Exception(f"unknown option '{option}', exiting.", "bad_option")
+                    raise Exception(f"{TitanErrors.PARSE_BAD_OPTION.value} \"{option}\"", TitanErrors.PARSE_BAD_OPTION.name)
             
         elif option[-3:] == ".py":
             file_exists = Path(option).is_file()
@@ -41,9 +43,11 @@ def _parse_options(machine_object):
             if file_exists:
                 machine_object.files.append(option)
             else:
-                raise Exception(f"file '{option}' does not exist, exiting.", "no_file")
+                # raise Exception(f"file '{option}' does not exist, exiting.", "no_file")
+                raise Exception(f"{TitanErrors.NON_EXISTENT_FILE.value} \"{option}\"", TitanErrors.NON_EXISTENT_FILE.name)
         else:
-            raise Exception(f"unable to parse '{option}', exiting.", "parse_option_fail")
+            # raise Exception(f"unable to parse '{option}', exiting.", "parse_option_fail")
+            raise Exception(f"{TitanErrors.PARSE_OPTION_FAILURE.value} \"{option}\"", TitanErrors.PARSE_OPTION_FAILURE.name)
         
 
 def _print_debug(machine_object: machine.Machine):
@@ -77,7 +81,7 @@ def main():
         try:
             _parse_options(machine_object)
         except Exception as err:
-            print(f"{err.args[0]} ({err.args[1]})")
+            print(f"{err.args[0]} : ({err.args[1]})")
             return -1                    
             
     parse.preprocess(machine_object)
