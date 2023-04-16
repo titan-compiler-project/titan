@@ -1,4 +1,4 @@
-import pytest, sys
+import pytest, sys, random, string
 from unittest.mock import patch
 
 from main import _parse_options
@@ -21,7 +21,7 @@ def test_output_options(options, expected):
     else:
         test_args.append(options)
 
-    print(f"{test_args}")
+    # print(f"{test_args}")
 
     m = Machine()
 
@@ -33,7 +33,9 @@ def test_output_options(options, expected):
 
 
 @pytest.mark.parametrize("args, out_opts, opts, top_name",[
-    ([f"-{Options.DEFINE_TOP_MODULE.value}", "top_test"], [], [Options.DEFINE_TOP_MODULE], "top_test")
+    ([f"-{Options.DEFINE_TOP_MODULE.value}", "top_test"], [], [Options.DEFINE_TOP_MODULE], "top_test"),
+    ([f"-{Options.OUTPUT_PREPROCESSED.value}", f"-{Options.DEFINE_TOP_MODULE.value}", "top_test"], [Options.OUTPUT_PREPROCESSED], [Options.DEFINE_TOP_MODULE], "top_test"),
+    ([f"-{Options.DEFINE_TOP_MODULE.value}", "top_test", f"-{Options.OUTPUT_PREPROCESSED.value}"], [Options.OUTPUT_PREPROCESSED], [Options.DEFINE_TOP_MODULE], "top_test")
 ])
 def test_options_with_top_name(args, out_opts, opts, top_name):
     test_args = ["main.py"]
@@ -41,7 +43,7 @@ def test_options_with_top_name(args, out_opts, opts, top_name):
     for arg in args:
         test_args.append(arg)
 
-    print(f"{test_args}")
+    # print(f"{test_args}")
 
     m = Machine()
 
@@ -51,3 +53,26 @@ def test_options_with_top_name(args, out_opts, opts, top_name):
         assert top_name == m.name_of_top_module
         assert out_opts == m.output_options
         assert opts == m.options
+
+def test_invalid_option_throws_error():
+    # very believable argument list
+    test_args = ["main.py", "-ofugidfoighsdfgluidfbgsdlvn"]
+
+    m = Machine()
+
+    with patch.object(sys, 'argv', test_args):
+        with pytest.raises(Exception) as e:
+            _parse_options(m)
+            # assert e[1] == "bad_option"
+
+def test_invalid_file_path_in_args():
+    # generate a very believable filename
+    random_filename = ''.join(random.choice(string.ascii_letters) for i in range(16))
+    test_args = ["main.py", f"{random_filename}.py"]
+
+    m = Machine()
+
+    with patch.object(sys, 'argv', test_args):
+        with pytest.raises(Exception) as e:
+            print(test_args)
+            _parse_options(m)
