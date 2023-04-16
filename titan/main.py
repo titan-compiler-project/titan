@@ -8,10 +8,12 @@ import machine, parse, generate, symbols
 def _parse_options(machine_object):
 
     got_top_module = False
+    dont_repeat = False
     for x in range(1, len(sys.argv)):
 
         # need to skip over because the -t flag takes 2 params
-        if got_top_module:
+        if got_top_module and not dont_repeat:
+            dont_repeat = True
             continue
 
         option = sys.argv[x]
