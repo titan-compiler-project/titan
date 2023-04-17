@@ -54,12 +54,46 @@ class TitanPythonGrammar(NamedTuple):
 
 class TitanSPIRVGrammar(NamedTuple):
 
-    id = pp.Literal("%") + pp.pyparsing_common.identifier
-    literal_string = pp.quoted_string # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html?highlight=string#common-string-and-token-constants
-    op = pp.Literal("Op").suppress
-    opcode = op + pp.Word(pp.alphanums)
-    opcode_args = pp.rest_of_line
+    pp.ParserElement.set_default_whitespace_chars(" \t")
+    nl = pp.Literal("\n")
+    eq = pp.Literal("=")
+    op = pp.Literal("Op").suppress()
 
-    # TODO: need a parsing action to check whether the opcode we got is valid
-    operation = opcode + pp.Optional(opcode_args)
-    assignment = id + pp.Literal("=").suppress() + opcode + opcode_args
+    id = pp.Combine(pp.Literal("%") + pp.pyparsing_common.identifier)
+    literal_string = pp.quoted_string # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html?highlight=string#common-string-and-token-constants
+
+    # TODO: is there a better way to do this? would rather not have a big list of keywords
+    #       - can't use pp.Word(pp.alphanums) because it will greedily consume the next line
+    # keywords = pp.Keyword("Shader") | pp.Keyword("Logical") | pp.Keyword("GLSL450") | \
+                # pp.Keyword("Fragment") | pp.Keyword("OriginUpperLeft") | pp.Keyword("Location") | \
+                # pp.Keyword("Output") | pp.Keyword("Function") | pp.Keyword("None")
+
+    opcode = op + pp.Word(pp.alphanums).set_results_name("opcode")
+
+    opcode_args = pp.Group(pp.delimited_list(
+        pp.ZeroOrMore(id | literal_string | pp.Word(pp.alphanums) | pp.pyparsing_common.number),
+        delim=" ",
+        allow_trailing_delim=False
+    )).set_results_name("opcode_args")
+
+
+    body_start = id + eq + op + pp.Keyword("Label")
+    body_end = op + pp.Keyword("FunctionEnd")
+    operation = opcode + pp.Opt(opcode_args) + nl.suppress()
+    assignment = id + eq + operation
+    
+    header = pp.ZeroOrMore(operation)
+
+    spirv_body = pp.ZeroOrMore(
+        pp.Group(operation | assignment)
+    )
+
+    # spirv_body = pp.Group(header) + pp.ZeroOrMore(
+    #     pp.Group(
+    #         body_start + \
+    #             pp.Group(
+    #                 operation | assignment
+    #             ) + \
+    #         body_end
+    #     )
+    # )
