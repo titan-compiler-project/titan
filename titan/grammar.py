@@ -56,7 +56,7 @@ class TitanSPIRVGrammar(NamedTuple):
 
     pp.ParserElement.set_default_whitespace_chars(" \t")
     nl = pp.Literal("\n")
-    eq = pp.Literal("=")
+    eq = pp.Literal("=").suppress()
     op = pp.Literal("Op").suppress()
 
     id = pp.Combine(pp.Literal("%") + pp.pyparsing_common.identifier)
