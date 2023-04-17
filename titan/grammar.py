@@ -50,3 +50,16 @@ class TitanPythonGrammar(NamedTuple):
             function_definition + l_cbr.suppress() + function_body + r_cbr.suppress()
             )
     )
+
+
+class TitanSPIRVGrammar(NamedTuple):
+
+    id = pp.Literal("%") + pp.pyparsing_common.identifier
+    literal_string = pp.quoted_string # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html?highlight=string#common-string-and-token-constants
+    op = pp.Literal("Op").suppress
+    opcode = op + pp.Word(pp.alphanums)
+    opcode_args = pp.rest_of_line
+
+    # TODO: need a parsing action to check whether the opcode we got is valid
+    operation = opcode + pp.Optional(opcode_args)
+    assignment = id + pp.Literal("=").suppress() + opcode + opcode_args
