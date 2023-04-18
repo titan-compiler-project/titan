@@ -22,7 +22,8 @@ class TitanPythonGrammar(NamedTuple):
     # integer = pp.pyparsing_common.signed_integer
     # float = pp.pyparsing_common.fnumber
     # number = integer | float
-    number = pp.pyparsing_common.signed_integer | pp.pyparsing_common.fnumber
+    # number = pp.pyparsing_common.signed_integer | pp.pyparsing_common.fnumber
+    number = pp.pyparsing_common.fnumber | pp.pyparsing_common.signed_integer
 
     function_parameter_list = pp.delimited_list(variable_name) | pp.empty
     function_return_list = pp.Group(pp.delimited_list(variable_name | number | keyword_None))
