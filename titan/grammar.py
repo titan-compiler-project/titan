@@ -19,11 +19,10 @@ class TitanPythonGrammar(NamedTuple):
     semicolon = pp.Literal(";")
 
     # numbers
-    integer = pp.Word(pp.nums).set_parse_action(lambda tokens: int(tokens[0]))
-    # float = (pp.Word(pp.nums) + "." + pp.Word(pp.nums)).set_parse_action(lambda tokens: float(tokens[0]))
-    float = pp.pyparsing_common.fnumber
+    # integer = pp.pyparsing_common.signed_integer
+    # float = pp.pyparsing_common.fnumber
     # number = integer | float
-    number = pp.Or(integer, float)
+    number = pp.pyparsing_common.signed_integer | pp.pyparsing_common.fnumber
 
     function_parameter_list = pp.delimited_list(variable_name) | pp.empty
     function_return_list = pp.Group(pp.delimited_list(variable_name | number | keyword_None))
@@ -59,14 +58,8 @@ class TitanSPIRVGrammar(NamedTuple):
     eq = pp.Literal("=").suppress()
     op = pp.Literal("Op").suppress()
 
-    id = pp.Combine(pp.Literal("%") + pp.pyparsing_common.identifier)
+    id = pp.Combine(pp.Literal("%") + pp.pyparsing_common.identifier).set_results_name("id")
     literal_string = pp.quoted_string # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html?highlight=string#common-string-and-token-constants
-
-    # TODO: is there a better way to do this? would rather not have a big list of keywords
-    #       - can't use pp.Word(pp.alphanums) because it will greedily consume the next line
-    # keywords = pp.Keyword("Shader") | pp.Keyword("Logical") | pp.Keyword("GLSL450") | \
-                # pp.Keyword("Fragment") | pp.Keyword("OriginUpperLeft") | pp.Keyword("Location") | \
-                # pp.Keyword("Output") | pp.Keyword("Function") | pp.Keyword("None")
 
     opcode = op + pp.Word(pp.alphanums).set_results_name("opcode")
 
@@ -77,23 +70,31 @@ class TitanSPIRVGrammar(NamedTuple):
     )).set_results_name("opcode_args")
 
 
-    body_start = id + eq + op + pp.Keyword("Label")
-    body_end = op + pp.Keyword("FunctionEnd")
     operation = opcode + pp.Opt(opcode_args) + nl.suppress()
     assignment = id + eq + operation
     
-    header = pp.ZeroOrMore(operation)
+    line = pp.Group(operation | assignment)
 
     spirv_body = pp.ZeroOrMore(
-        pp.Group(operation | assignment)
+        line
     )
 
-    # spirv_body = pp.Group(header) + pp.ZeroOrMore(
-    #     pp.Group(
-    #         body_start + \
-    #             pp.Group(
-    #                 operation | assignment
-    #             ) + \
-    #         body_end
-    #     )
-    # )
+    # TODO: is there a way to isolate function blocks using what we currently have?
+    #       or does the grammar need to be a lot more specific?
+    #       - tried using pp.nested_expr and using the Label and FunctionEnd keywords but
+    #           i think that something else is just greedily eating tokens
+
+    # body_start = id + eq + op + pp.Keyword("Label")
+    # body_end = op + pp.Keyword("FunctionEnd")
+    
+    # not_label_or_func_end = (~pp.Keyword("Label") | ~pp.Keyword("FunctionEnd") | pp.Word(pp.alphanums))
+
+    # header = pp.Group(pp.ZeroOrMore(
+    #     pp.Group(pp.Opt(id + eq) + op + not_label_or_func_end + pp.Opt(opcode_args) + nl.suppress())
+    # ))
+
+    # spirv_body = header + pp.ZeroOrMore(pp.Group(pp.nested_expr(
+    #     opener = body_start,
+    #     content = pp.ZeroOrMore(line),
+    #     closer = body_end
+    # )).set_results_name("func_body"))
