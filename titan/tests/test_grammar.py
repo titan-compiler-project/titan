@@ -1,5 +1,6 @@
 import pytest
 import grammar as g
+import operators as o
 
 
 @pytest.mark.parametrize("num_val_list, expected_type_list",[
@@ -22,3 +23,13 @@ def test_python_number(num_val_list, expected_type_list):
 def test_param_list(param_str):
     g.TitanPythonGrammar.function_parameter_list.parse_string(param_str, parse_all=True)
 
+# TODO: expand this once grammar.TitanPythonGrammar.arithmetic_expression is fixed
+# TODO: add more cases, i.e. nested expressions maybe
+@pytest.mark.parametrize("expression, expected_class", [
+    ("1", int), ("-1", o.UnaryOp), ("a + b", o.BinaryOp)
+])
+def test_arithmetic(expression, expected_class):
+
+    x = g.TitanPythonGrammar.arithmetic_expression.parse_string(expression, parse_all=True)
+
+    assert expected_class == type(x[0])

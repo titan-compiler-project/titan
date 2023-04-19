@@ -25,11 +25,20 @@ class TitanPythonGrammar(NamedTuple):
     function_call = function_name + l_br + function_parameter_list + r_br
     function_definition = keyword_def.suppress() + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon.suppress()
 
+    # TODO: this doesn't like parsing "a + b - 3" or anything that isn't nicely seperated by brackets
+    #       - tried the github ver down below but it also has the same issue, the operators.py file needs to be looked at
     arithmetic_expression = pp.infix_notation(variable_name | number, [
         ('-', 1, pp.OpAssoc.RIGHT, o.UnaryOp),
         (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
         (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     ])
+
+    # https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
+    # arithmetic_expression = pp.infix_notation(variable_name | number, [
+    #     (pp.one_of("+ -"), 1, pp.OpAssoc.RIGHT, o.UnaryOp),
+    #     (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+    #     (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
+    # ])
 
     assignment = (variable_name + "=" + arithmetic_expression | function_call).set_results_name("assignment")
 
