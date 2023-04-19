@@ -40,8 +40,8 @@ class TitanPythonGrammar(NamedTuple):
     #     (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     # ])
 
-    assignment = (variable_name + "=" + arithmetic_expression | function_call).set_results_name("assignment")
-
+    assignment = (variable_name + "=" + (arithmetic_expression | function_call)).set_results_name("assignment")
+    
     # an optional ";" was added to the end of the statement and function return grammars, this is so that it can still match
     # when doing the preprocessing step, and when it comes to parsing the file itself
     # TODO: this might cause issues, maybe split into two seperate variables?
