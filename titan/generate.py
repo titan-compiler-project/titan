@@ -2,6 +2,7 @@ import machine as m
 import symbols as s
 import type as t
 import operators as o
+from errors import TitanErrors
 
 def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
@@ -11,9 +12,11 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
         func_count = len(machine_object.functions)
 
         if func_count == 0:
-            raise Exception("no parsed source code to generate SPIR-V from", "no_source")
+            # raise Exception("no parsed source code to generate SPIR-V from", "no_source")
+            raise Exception(TitanErrors.NO_PARSED_SOURCE_CODE.value, TitanErrors.NO_PARSED_SOURCE_CODE.name)
         elif func_count > 1:
-            raise Exception(f"undefined top module when there are {func_count} modules, use the -t option to set the top.", "no_top_set")
+            # raise Exception(f"undefined top module when there are {func_count} modules, use the -t option to set the top.", "no_top_set")
+            raise Exception(TitanErrors.UNDEFINED_TOP_MODULE.value, TitanErrors.UNDEFINED_TOP_MODULE.name)
         else:
             machine_object.name_of_top_module = machine_object.functions[0].name
 
@@ -90,7 +93,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 )
 
             case _:
-                raise Exception("got unknown type while trying to generate SPIR-V", "unknown_type")
+                # raise Exception("got unknown type while trying to generate SPIR-V", "unknown_type")
+                raise Exception(TitanErrors.PARSED_UNKNOWN_TYPE.value, TitanErrors.PARSED_UNKNOWN_TYPE.name)
 
     for symbol, info in symbol_table.content.items():
         if info.operation == s.Operation.FUNCTION_DECLARATION:
@@ -110,7 +114,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
         
         match info.operation:
             case s.Operation.FUNCTION_IN_VAR_PARAM:
-                raise Exception("not implemented", "not_implemented")
+                # raise Exception("not implemented", "not_implemented")
+                raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function input variable parameter)", TitanErrors.NOT_IMPLEMENTED.name)
             
             case s.Operation.FUNCTION_OUT_VAR_PARAM:
                 ptr_id = f"%ptr_output_"
@@ -127,7 +132,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                                 f"{ptr_id} = OpTypePointer Output {spirv.get_type_id(spirv.TypeContext(info.datatype, None, False, False))}"
                             )
                     case _:
-                        raise Exception("not implemented", "not_implemented")
+                        # raise Exception("not implemented", "not_implemented")
+                        raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function output variable parameter datatype ({info.datatype}) declaration)", TitanErrors.NOT_IMPLEMENTED.name)
                     
             case s.Operation.VARIABLE_DECLARATION:
                 ptr_id = f"%ptr_funcvar_"
@@ -144,9 +150,9 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                                 f"{ptr_id} = OpTypePointer Function {spirv.get_type_id(spirv.TypeContext(info.datatype))}"
                             )
                     case _:
-                        raise Exception("not implemented", "not_implemented")
+                        # raise Exception("not implemented", "not_implemented")
+                        raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (variable datatype ({info.datatype}) declaration)", TitanErrors.NOT_IMPLEMENTED.name)
 
-    # define globals
     for func in machine_object.functions:
         # TODO: the same for params
 
@@ -165,15 +171,15 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         )
 
                     case _:
-                        raise Exception("not implemented", "not_implemented")
-
-
+                        # raise Exception("not implemented", "not_implemented")
+                        raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (returned variable type ({info.datatype}) id)", TitanErrors.NOT_IMPLEMENTED.name)
 
 
 
     def _extract_type(info):
         if info is None:
-            raise Exception("unable to extract type", "fail_type_extract")
+            # raise Exception("unable to extract type", "fail_type_extract")
+            raise Exception(TitanErrors.TYPE_EXTRACT_FAILED.value, TitanErrors.TYPE_EXTRACT_FAILED.name)
         else:
             match type(info):
                 case spirv.ConstContext:
@@ -181,9 +187,10 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 case s.Information:
                     return info.datatype.value
                 case _:
-                    raise Exception("got unknown type", "unknown_type_while_extracting")
+                    # raise Exception("got unknown type", "unknown_type_while_extracting")
+                    raise Exception(f"{TitanErrors.UNKNOWN_TYPE_EXTRACTED.value} ({info})", TitanErrors.UNKNOWN_TYPE_EXTRACTED.name)
 
-    
+    # TODO: move this outside of the generate_spirv_asm function
     def _eval_line(line):
 
         if isinstance(line, o.UnaryOp):
@@ -219,7 +226,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 else:
                     # TODO
                     # use Op(S|F)Negate when dealing with variables
-                    raise Exception("got unexpected type whilst parsing arithmetic", "unexpected_type")
+                    # raise Exception("got unexpected type whilst parsing arithmetic", "unexpected_type")
+                    raise Exception(TitanErrors.UNKNOWN_TYPE_IN_ARITHMETIC.value, TitanErrors.UNKNOWN_TYPE_IN_ARITHMETIC.name)
             # ---- the unary op is only ever used when there is a negative value, redundant to have this here?
             # else:
             #     if type_of_operand == (int or float):
@@ -271,7 +279,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             t_1 = _extract_type(info_1)
 
             if t_0 is not t_1:
-                raise Exception("type mismatch", "type_mismatch")
+                # raise Exception("type mismatch", "type_mismatch")
+                raise Exception(f"{TitanErrors.TYPE_MISMATCH.value} t_0 = {t_0}, t_1 = {t_1}", TitanErrors.TYPE_MISMATCH.name)    
 
             print(f"line: {line}")
             print(f"operator: {line.operator}")
@@ -297,7 +306,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         case "/":
                             opcode = "OpSDiv"
                         case _:
-                            raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
+                            # raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
+                            raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
                 elif t_0 is float:
                     opcode += "F"
                     match line.operator:
@@ -310,9 +320,11 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         case "/":
                             opcode += "Div"
                         case _:
-                            raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
+                            # raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
+                            raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
                 else:
-                    raise Exception("got unknown type when trying to generate opcode", "unknown_type")
+                    # raise Exception("got unknown type when trying to generate opcode", "unknown_type")
+                    raise Exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value}", TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name)
                         
                 # we already checked if the types matches so it doesn't really matter if we mix its use
                 prim_t_id_0 = spirv.get_type_id(
@@ -369,7 +381,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     f"%{func.name} = OpFunction {type_id} None {func_id}"
                 )
             case _:
-                raise Exception("not implemented", "not_implemented")
+                # raise Exception("not implemented", "not_implemented")
+                raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function type ({info.datatype}) declaration)", TitanErrors.NOT_IMPLEMENTED.name)
 
         spirv.append_code(
             spirv.Sections.FUNCTIONS,
@@ -396,6 +409,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
         for entry in func.body:
 
+            # TODO: maybe make a wrapper function so that we don't need to drop one of the return values?
             line_id, _ = _eval_line(entry[2])
             print(f"line: {entry} has final evaluation id of {line_id}")
 
