@@ -45,7 +45,7 @@ class TitanPythonGrammar(NamedTuple):
     # an optional ";" was added to the end of the statement and function return grammars, this is so that it can still match
     # when doing the preprocessing step, and when it comes to parsing the file itself
     # TODO: this might cause issues, maybe split into two seperate variables?
-    statement = pp.Group(assignment) + pp.Opt(semicolon.suppress())
+    statement = (pp.Group(assignment) | pp.Group(function_call)) + pp.Opt(semicolon.suppress())
 
     function_body = pp.Group(pp.ZeroOrMore(statement)).set_results_name("function_statements") + pp.Optional(keyword_return.suppress()  + function_return_list.set_results_name("function_returns") + pp.Opt(semicolon.suppress()))
 
