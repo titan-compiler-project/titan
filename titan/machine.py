@@ -133,6 +133,7 @@ class SPIRV_ASM:
     def get_func_id(self, type: type.DataType):
         return self.declared_function_types[type]
 
+
     # === consts helper functions ===
     def const_exists(self, const: ConstContext):
         return True if const in self.declared_consts else False
@@ -142,6 +143,7 @@ class SPIRV_ASM:
 
     def get_const_id(self, c_ctx: ConstContext):
         return self.declared_consts[c_ctx]
+
 
     # === generated line helper functions ===
     def line_exists(self, id: str):
