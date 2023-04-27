@@ -1,8 +1,13 @@
+import options
 import machine as m
 import symbols as s
 import type as t
 import operators as o
+import dataflow as d
+import pyparsing as pp
 from errors import TitanErrors
+from typing import NamedTuple
+# from pyparsing import ParseResults
 
 def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
@@ -269,7 +274,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             if symbol_table.exists(line):
                 return f"%{line}", symbol_table.get(line)
             else:
-                raise Exception("symbol does not exist!", "no_symbol")
+                # raise Exception("symbol does not exist!", "no_symbol")
+                raise Exception(f"{TitanErrors.NON_EXISTENT_SYMBOL.value} ({line})", TitanErrors.NON_EXISTENT_SYMBOL.name)
 
         elif isinstance(line, o.BinaryOp):
             id_0, info_0 = _eval_line(line.operands[0])
@@ -282,10 +288,10 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 # raise Exception("type mismatch", "type_mismatch")
                 raise Exception(f"{TitanErrors.TYPE_MISMATCH.value} t_0 = {t_0}, t_1 = {t_1}", TitanErrors.TYPE_MISMATCH.name)    
 
-            print(f"line: {line}")
-            print(f"operator: {line.operator}")
-            print(f"\ta: {line.operands[0]} returns {id_0} with info {info_0} with type {t_0}")
-            print(f"\tb: {line.operands[1]} returns {id_1} with info {info_1} with type {t_1}")
+            # print(f"line: {line}")
+            # print(f"operator: {line.operator}")
+            # print(f"\ta: {line.operands[0]} returns {id_0} with info {info_0} with type {t_0}")
+            # print(f"\tb: {line.operands[1]} returns {id_1} with info {info_1} with type {t_1}")
 
             line_id = f"%titan_id_{spirv.id}"
 
@@ -337,7 +343,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 )
 
                 if symbol_table.exists(id_0[1:]):
-                    print(id_0[1:])
+                    # print(id_0[1:])
                     temp_id = f"%t_{id_0[1:]}"
                     spirv.append_code(
                         spirv.Sections.FUNCTIONS,
@@ -347,7 +353,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     id_0 = temp_id
 
                 if symbol_table.exists(id_1[1:]):
-                    print(id_1[1:])
+                    # print(id_1[1:])
                     temp_id = f"%t_{id_1[1:]}"
                     spirv.append_code(
                         spirv.Sections.FUNCTIONS,
@@ -411,7 +417,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             # TODO: maybe make a wrapper function so that we don't need to drop one of the return values?
             line_id, _ = _eval_line(entry[2])
-            print(f"line: {entry} has final evaluation id of {line_id}")
+            # print(f"line: {entry} has final evaluation id of {line_id}")
 
             if entry[1] == "=":
                 opcode = "OpStore"
@@ -433,17 +439,19 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
         )
 
     # debug
-    print()
-    print()
-    spirv.print_contents()
-    print()
-    print()
-    print(spirv.generated_lines)
-    print()
-    print()
-    print(symbol_table.content)
+    # print()
+    # print()
+    # spirv.print_contents()
+    machine_object.SPIRV_asm_obj = spirv
+    # print()
+    # print()
+    # print(f"generated: {spirv.generated_lines}")
+    # print()
+    # print()
+    # print(symbol_table.content)
 
-    spirv.output_to_file(machine_object.name_of_top_module)
+    if options.Options.OUTPUT_SPIRV_ASM in machine_object.output_options:
+        spirv.output_to_file(machine_object.name_of_top_module)
 
 
 def test_parse_action(tokens):
@@ -452,7 +460,8 @@ def test_parse_action(tokens):
     print("called")
     for x in range(0, len(tokens)):
         for y in range(0, len(tokens[x])):
-            print(f"{x} {y}: {tokens[x][y]}")
+            # print(f"{x} {y}: {tokens[x][y]}")
+            continue
 
     return None
 
@@ -498,3 +507,200 @@ def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
 
                 # print(entry.get_name('assignment'))
+
+
+
+class _FunctionLocation(NamedTuple):
+    start_pos: int
+    end_pos: int
+    name: str
+
+def _get_spirv_function_locations(parsed_spirv):
+    # TODO: figure out how to improve this
+    line_no = fn_start = 0
+    fn_name = ""
+    fn_locations = []
+    for line in parsed_spirv:
+        match line.opcode:
+            case "Function":
+                fn_start = line_no
+                fn_name = line.id[1:] # slice to remove '%'
+            case "FunctionEnd":
+                fn_locations.append(_FunctionLocation(fn_start, line_no, fn_name))
+                fn_name = ""
+
+        line_no += 1
+
+    del fn_start, line_no, fn_name
+    return fn_locations
+
+
+
+# generates nodes and then generates text
+def generate_verilog(parsed_spirv: pp.ParseResults):
+    verilog = m.Verilog_ASM()               
+
+    fn_name = ""
+    fn_locations = _get_spirv_function_locations(parsed_spirv)
+
+    # deal with headers
+    for x in range(0, fn_locations[0].start_pos):
+        line = parsed_spirv[x]
+        print(line)
+
+        match line.opcode:
+            case "EntryPoint":
+                fn_name = line.opcode_args[2][1:-1]
+                verilog.create_function(fn_name)
+            
+            case "Constant":
+                if verilog.type_exists_in_func(fn_name, line.opcode_args[0]):
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                x,
+                                line.id,
+                                line.opcode_args[0],
+                                None, None,
+                                s.Operation.CONSTANT_DECLARATION,
+                                [line.opcode_args[1]]
+                            )
+                        )
+                    )
+                else:
+                    raise Exception(f"{TitanErrors.NON_EXISTENT_SYMBOL.value} ({line.opcode_args[0]} on line {x})", TitanErrors.NON_EXISTENT_SYMBOL.name)
+            
+            case "Variable":
+                match line.opcode_args[1]:
+                    case "Output":
+                        verilog.add_output_to_function(fn_name, line.id[1:])
+
+                        verilog.add_body_node_to_function(
+                            fn_name,
+                            d.Node(
+                                d.NodeContext(
+                                    x, line.id,
+                                    verilog.get_primative_type_id_from_id(fn_name, line.opcode_args[0]),
+                                    None, None, s.Operation.VARIABLE_DECLARATION
+                                )
+                            )
+                        )
+
+                    case "Input":
+                        raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+            
+            case "TypePointer":
+                verilog.add_type_context_to_function(
+                    fn_name,
+                    line.id, # %ptr_something_something id
+                    m._VerilogTypeContext(
+                        verilog.get_datatype_from_id(fn_name, line.opcode_args[1]), # returns types.DataType
+                        [], True, line.opcode_args[1] # line.opcode_args[1] = %type_something (primative)
+                    )
+                )
+            
+            case "TypeInt":
+                verilog.add_type_context_to_function(
+                    fn_name,
+                    line.id,
+                    m._VerilogTypeContext(
+                        t.DataType.INTEGER,
+                        # line.id,
+                        line.opcode_args.as_list()
+                    )
+                )
+            
+            case "TypeFloat":
+                raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+            
+            case "TypeBool":
+                raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+            
+    
+    for fn_count in range(0, len(fn_locations)):
+        fn = fn_locations[fn_count]
+
+        # for pos in range()
+        for pos in range(fn.start_pos, fn.end_pos + 1):
+            line = parsed_spirv[pos]
+            print(line)
+
+            match line.opcode:
+
+                case "Variable":
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, 
+                                verilog.get_primative_type_id_from_id(fn_name, line.opcode_args[0]),
+                                None, None, s.Operation.VARIABLE_DECLARATION
+                            )
+                        )
+                    )
+
+
+                case "Store":
+                    # print(verilog.get_node(fn_name, line.opcode_args[0]))
+                    # storage_node = verilog.get_node(fn_name, line.opcode_args[0])
+                    value_node = verilog.get_node(fn_name, line.opcode_args[1])
+
+                    verilog.modify_node(fn_name, line.opcode_args[0], 0, value_node)
+                    
+
+                case "Load":
+                    value_node = verilog.get_node(fn_name, line.opcode_args[1])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0], value_node, None,
+                                s.Operation.LOAD
+                            )
+                        )
+                    )
+
+                case "IAdd":
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.ADD
+                            )
+                        )
+                    )
+
+                case "ISub":
+                    raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                case "IMul":
+                    raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                case "IDiv":
+                    raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                case _:
+                    if line.opcode == "Function" or "Label" or "Return" or "FunctionEnd":
+                        continue
+                    else:
+                        raise Exception(f"{TitanErrors.UNKNOWN_SPIRV_OPCODE.value} ({line.opcode})", TitanErrors.UNKNOWN_SPIRV_OPCODE.name) 
+
+
+
+
+
+    
+    # print()
+    # print(verilog.content)
+
+    print()
+    for k, v in verilog.content.items():
+        print(f"types: {v.types}")
+        print(f"inputs: {v.inputs}")
+        print(f"outputs: {v.outputs}")
+        # print(f"body_nodes: {v.body_nodes}")
+        for a, b in v.body_nodes.items():
+            print(f"key: {a} value: {b}\n")

@@ -1,7 +1,10 @@
-from enum import Enum, auto
-from typing import NamedTuple, TypedDict, Union
-# import typing
+from __future__ import annotations
+
 import type
+import dataflow as d
+from enum import Enum, auto
+from typing import NamedTuple, TypedDict, Union, List
+# import typing
 
 class Machine:
 
@@ -13,6 +16,7 @@ class Machine:
         self.parsed_modules = []
         self.functions = []
         self.name_of_top_module = None
+        self.SPIRV_asm_obj: SPIRV_ASM = None
 
 class Function:
     name = ""
@@ -83,6 +87,8 @@ class SPIRV_ASM:
         self.declared_types: declared_type_dict_hint = {}
         self.declared_function_types: declared_func_type_dict_hint = {}
         self.declared_consts: declared_consts_dict_hint = {}
+
+        # lines that were generated as a result of parsing arithmetic, they'll have something like "%titan_id_0" as their id
         self.generated_lines: generated_line_dict_hint = {}
 
         self.location = 0
@@ -99,6 +105,17 @@ class SPIRV_ASM:
             for entry in code:
                 print(f"\t{entry}")
         print("-"*10)
+
+    def create_file_as_string(self):
+
+        fake_file = ""
+
+        for k, v in self.generated_spirv.items():
+            for line in v:
+                fake_file += f"{line}\n"
+
+        return fake_file
+
 
     def output_to_file(self, name):
 
@@ -154,3 +171,93 @@ class SPIRV_ASM:
     
     def add_line(self, id: str, type: type.DataType):
         self.generated_lines[id] = type
+
+
+###############################################################
+
+class _VerilogTypeContext(NamedTuple):
+    type: type.DataType = None
+    data: list = []
+    is_pointer: bool = False
+    alias: str = "" # alias is used to store the original type id when is_pointer is set to True
+
+class _spirv_id_with_type_context_dict_hint(TypedDict):
+    id: str
+    type_context: _VerilogTypeContext
+
+class _id_and_node_dict_hint(TypedDict):
+    id: str
+    node: d.Node
+
+class _VerilogFunctionData(NamedTuple):
+    # name: str = "",
+    # types: List[_VerilogTypeContext] = []
+    types: _spirv_id_with_type_context_dict_hint = {}
+    inputs: List[str] = []
+    outputs: List[str] = []
+    # body_nodes: List[d.Node] = []
+    body_nodes: _id_and_node_dict_hint = {}
+
+class Verilog_ASM():
+
+    class Sections(Enum):
+        MODULE_NAME = auto()
+        PARAMETER_LIST = auto()
+        PORTS_LIST = auto()
+        BODY = auto()
+        END = auto()
+
+
+    def __init__(self):
+
+        class function_name_and_data_dict_hint(TypedDict):
+            name: str
+            data: _VerilogFunctionData
+        
+        self.content: function_name_and_data_dict_hint = {}
+
+
+    ## helper functions
+    def create_function(self, function_name):
+        self.content[function_name] = _VerilogFunctionData()
+
+    def add_body_node_to_function(self, name: str, node: d.Node):
+        # self.content[name].body_nodes.append(node)
+        self.content[name].body_nodes[node.spirv_id] = node
+
+    def add_type_context_to_function(self, function_name: str, type_id: str, type_context: _VerilogTypeContext):
+        # self.content[function_name].types.append(type_context)
+        self.content[function_name].types[type_id] = type_context
+
+    def type_exists_in_func(self, name: str, type_id: str):
+        # return True if type_id in 
+        return True if type_id in self.content[name].types else False
+
+    def add_output_to_function(self, name:str, symbol:str):
+        self.content[name].outputs.append(symbol)
+
+    def get_datatype_from_id(self, name:str, id:str):
+        return self.content[name].types[id].type
+
+    def get_primative_type_id_from_id(self, name:str, id:str):
+        x = self.content[name].types[id]
+        if x.is_pointer:
+            return x.alias
+        else:
+            return id
+
+    def does_node_exist(self, name:str, node_id:str):
+        return True if node_id in self.content[name].body_nodes else False
+
+    def get_node(self, name:str, node_id: str):
+        return self.content[name].body_nodes[node_id]
+    
+    def modify_node(self, name:str, target_node_id:str, pos:int,  value_node: d.Node):
+        self.content[name].body_nodes[target_node_id].update_input(pos, value_node)
+
+    # def add_function_and_data(self, name: str, data: _VerilogFunctionData):
+    #     self.content[name] = data 
+
+    # def append_code(self, function_name: str, section: Sections, code: str):
+    #     # self.content[function_name].
+    #     pass
