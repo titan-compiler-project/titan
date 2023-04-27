@@ -15,4 +15,5 @@ class TitanErrors(Enum):
     TYPE_MISMATCH = "type mismatch"
     UNKNOWN_OPERATOR_DURING_GENERATION = "got unknown operator whilst trying to generate opcode"
     UNKNOWN_TYPE_DURING_GENERATION = "got unknown type when trying to generate opcode"
-    NON_EXISTENT_SYMBOL = "symbol does not exist!"
+    NON_EXISTENT_SYMBOL = "symbol does not exist"
+    UNKNOWN_SPIRV_OPCODE = "unknown SPIR-V opcode"
