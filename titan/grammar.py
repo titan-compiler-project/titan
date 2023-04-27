@@ -89,6 +89,8 @@ class TitanSPIRVGrammar(NamedTuple):
     #       - tried using pp.nested_expr and using the Label and FunctionEnd keywords but
     #           i think that something else is just greedily eating tokens
 
+    # https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html?highlight=locatedExpr#pyparsing.Located
+
     # body_start = id + eq + op + pp.Keyword("Label")
     # body_end = op + pp.Keyword("FunctionEnd")
     
