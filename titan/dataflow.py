@@ -1,13 +1,19 @@
 from __future__ import annotations # https://peps.python.org/pep-0484/#the-problem-of-forward-declarations
-from typing import NamedTuple
+import type as t
+from typing import NamedTuple, List
+from symbols import Operation
 
 
 class NodeContext(NamedTuple):
     line_no: int = 0
     id: str = ""
+    type_id: str = ""
     input_left: Node = None
     input_right: Node = None
-    operation: str = ""
+    # operation: str = ""
+    operation: Operation = None
+
+
     # tick: int = 0 # tick is ignored when the node(s) are populated
 
 
