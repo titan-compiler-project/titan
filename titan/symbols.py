@@ -13,6 +13,8 @@ class Operation(Enum):
     FUNCTION_IN_VAR_PARAM = auto()
     FUNCTION_OUT_VAR_PARAM = auto()
     ASSIGNMENT = auto()
+    STORE = auto()
+    LOAD = auto()
     ADD = auto()
     SUB = auto()
     MULT = auto()
