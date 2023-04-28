@@ -703,4 +703,9 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
         print(f"outputs: {v.outputs}")
         # print(f"body_nodes: {v.body_nodes}")
         for a, b in v.body_nodes.items():
-            print(f"key: {a} value: {b}\n")
+            print(f"key: {a}")
+            for node in b:
+                print(f"\t{node}")
+            print()
+
+

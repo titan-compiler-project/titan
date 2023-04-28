@@ -187,7 +187,7 @@ class _spirv_id_with_type_context_dict_hint(TypedDict):
 
 class _id_and_node_dict_hint(TypedDict):
     id: str
-    node: d.Node
+    node: List[d.Node]
 
 class _VerilogFunctionData(NamedTuple):
     # name: str = "",
@@ -222,8 +222,13 @@ class Verilog_ASM():
         self.content[function_name] = _VerilogFunctionData()
 
     def add_body_node_to_function(self, name: str, node: d.Node):
-        # self.content[name].body_nodes.append(node)
-        self.content[name].body_nodes[node.spirv_id] = node
+        # self.content[name].body_nodes[node.spirv_id] = node
+        # self.content[name].body_nodes[node.spirv_id].append(node)
+
+        if not self.does_node_exist(name, node.spirv_id):
+            self.content[name].body_nodes[node.spirv_id] = []
+
+        self.content[name].body_nodes[node.spirv_id].append(node)
 
     def add_type_context_to_function(self, function_name: str, type_id: str, type_context: _VerilogTypeContext):
         # self.content[function_name].types.append(type_context)
@@ -250,10 +255,33 @@ class Verilog_ASM():
         return True if node_id in self.content[name].body_nodes else False
 
     def get_node(self, name:str, node_id: str):
-        return self.content[name].body_nodes[node_id]
+        # return self.content[name].body_nodes[node_id]
+        return self.content[name].body_nodes[node_id][-1]
     
     def modify_node(self, name:str, target_node_id:str, pos:int,  value_node: d.Node):
-        self.content[name].body_nodes[target_node_id].update_input(pos, value_node)
+        # self.content[name].body_nodes[target_node_id].update_input(pos, value_node)
+        x = self.get_node(name, target_node_id)
+        print(x)
+        print(x.spirv_id)
+
+        # new_ctx = d.NodeContext(
+            # x.spirv_line_no, x.spirv_id, x.type_id, x.input_left, x.input_right, x.operation, x.data
+        # )
+
+        # dirty, maybe need to use a dataclass instead
+        if pos == 0:
+            # new_ctx.input_left = value_node
+            new_ctx = d.NodeContext(
+               x.spirv_line_no, x.spirv_id, x.type_id, value_node, x.input_right, x.operation, x.data
+        )
+        elif pos == 1:
+            # new_ctx.input_right = value_node
+            new_ctx = d.NodeContext(
+               x.spirv_line_no, x.spirv_id, x.type_id, x.input_left, value_node, x.operation, x.data
+        )
+
+        self.content[name].body_nodes[target_node_id].append(d.Node(new_ctx))
+
 
     # def add_function_and_data(self, name: str, data: _VerilogFunctionData):
     #     self.content[name] = data 
