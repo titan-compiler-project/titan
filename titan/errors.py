@@ -17,3 +17,4 @@ class TitanErrors(Enum):
     UNKNOWN_TYPE_DURING_GENERATION = "got unknown type when trying to generate opcode"
     NON_EXISTENT_SYMBOL = "symbol does not exist"
     UNKNOWN_SPIRV_OPCODE = "unknown SPIR-V opcode"
+    UNEXPECTED = "unexpected exception"
