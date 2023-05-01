@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import graphviz
+
 import type
 import dataflow as d
+from errors import TitanErrors
 from enum import Enum, auto
 from typing import NamedTuple, TypedDict, Union, List
-# import typing
 
 class Machine:
 
@@ -218,6 +220,9 @@ class Verilog_ASM():
 
 
     ## helper functions
+                    
+
+
     def create_function(self, function_name):
         self.content[function_name] = _VerilogFunctionData()
 
@@ -283,9 +288,89 @@ class Verilog_ASM():
         self.content[name].body_nodes[target_node_id].append(d.Node(new_ctx))
 
 
-    # def add_function_and_data(self, name: str, data: _VerilogFunctionData):
-    #     self.content[name] = data 
+    def _sort_body_nodes_by_tick(self, fn_name: str):
+        tick_dict = {}
 
-    # def append_code(self, function_name: str, section: Sections, code: str):
-    #     # self.content[function_name].
-    #     pass
+        # TODO: can we just use list comprehension on this?
+        for symbols in self.content[fn_name].body_nodes:
+            for node in self.content[fn_name].body_nodes[symbols]:
+
+                if node.tick not in tick_dict.keys():
+                    tick_dict[node.tick] = []
+
+                tick_dict[node.tick].append(node)
+
+        return tick_dict
+
+    @staticmethod
+    def _parent_exists(node: d.Node):
+        return True if node.input_left is not None or node.input_right is not None else False
+
+    @staticmethod
+    def _encode_parents(node: d.Node):
+        count = 0
+
+        if node.input_left is not None:
+            count += 1
+        if node.input_right is not None:
+            count += 2
+
+        # if left exists, return 1
+        # if right exists, return 2
+        # if both exist, return 3
+        # if none exist, return 0
+        return count
+    
+
+    def generate_dot_graph(self):
+        print("===graph gen===") # debug
+
+
+        for key in self.content.keys():
+            dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}.dot", directory="dots") 
+            x = self._sort_body_nodes_by_tick(key)
+
+            for k in range(0, len(x.keys())):
+                print(f"{k} tick:")
+
+                with dot.subgraph(name=f"cluster_{k}") as ds:
+                    ds.attr(style="dashed")
+                    ds.attr(label=f"tick {k}")
+                    
+                    for v in x[k]:
+                        print(f"\t{v}, parents? {self._parent_exists(v)}, pos: {self._encode_parents(v)}")
+                        current_node_label = f"{v.spirv_id}_{k}"
+                        ds.node(current_node_label, f"{v.spirv_id} at tick {k}")
+
+                        if self._parent_exists(v):
+                            # check which parents exist
+                            parent_num = self._encode_parents(v)
+                            match parent_num:
+                                case 1:
+                                    # ds.edge()
+                                    # get parent name/spirv id
+                                    print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
+                                    parent_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
+                                    ds.edge(parent_id_label, current_node_label)
+
+                                case 2:
+                                    print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
+                                    parent_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
+                                    ds.edge(parent_id_label, current_node_label)
+                                case 3:
+                                    print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
+                                    print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
+
+                                    parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
+                                    parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
+
+                                    ds.edge(parent_l_id_label, current_node_label)
+                                    ds.edge(parent_r_id_label, current_node_label)
+
+                                case _:
+                                    # should be unreachable
+                                    raise Exception(f"{TitanErrors.UNEXPECTED.value} - got {parent_num} parents, but parents exist.", TitanErrors.UNEXPECTED.name)
+
+
+            print(dot.source)
+            dot.render(view=True, overwrite_source=True)

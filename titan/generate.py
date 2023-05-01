@@ -709,3 +709,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
             print()
 
 
+    print()
+    verilog.generate_dot_graph()
+
+
