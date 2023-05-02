@@ -218,6 +218,7 @@ class Verilog_ASM():
             data: _VerilogFunctionData
         
         self.content: function_name_and_data_dict_hint = {}
+        self.declared_symbols = {}
 
 
     ## helper functions
@@ -329,19 +330,23 @@ class Verilog_ASM():
 
         for key in self.content.keys():
             dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}.dot", directory="dots") 
+            dot.attr(bgcolor="gray10")
+            dot.attr(color="white")
+            dot.attr(fontcolor="white")
+
             x = self._sort_body_nodes_by_tick(key)
 
             for k in range(0, len(x.keys())):
                 print(f"tick: {k}")
 
-                with dot.subgraph(name=f"cluster_{k}") as ds:
+                with dot.subgraph(name=f"cluster_tick_{k}") as ds:
                     ds.attr(style="dashed")
                     ds.attr(label=f"tick {k}")
                     
                     for v in x[k]:
                         print(f"\t{v}, parents? {self._parent_exists(v)}, pos: {self._encode_parents(v)}")
                         current_node_label = f"{v.spirv_id}_{k}"
-                        ds.node(current_node_label, f"{v.spirv_id} at tick {k} \n({v.operation})")
+                        ds.node(current_node_label, f"{v.spirv_id} at tick {k} \n({v.operation})", color="white", fontcolor="white")
 
                         if self._parent_exists(v):
                             # check which parents exist
@@ -352,12 +357,12 @@ class Verilog_ASM():
                                     # get parent name/spirv id
                                     print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
                                     parent_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
-                                    ds.edge(parent_id_label, current_node_label)
+                                    ds.edge(parent_id_label, current_node_label, color="white")
 
                                 case 2:
                                     print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
                                     parent_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
-                                    ds.edge(parent_id_label, current_node_label)
+                                    ds.edge(parent_id_label, current_node_label, color="white")
                                 case 3:
                                     print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
                                     print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
@@ -365,8 +370,8 @@ class Verilog_ASM():
                                     parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
                                     parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
 
-                                    ds.edge(parent_l_id_label, current_node_label)
-                                    ds.edge(parent_r_id_label, current_node_label)
+                                    ds.edge(parent_l_id_label, current_node_label, color="white")
+                                    ds.edge(parent_r_id_label, current_node_label, color="white")
 
                                 case _:
                                     # should be unreachable
@@ -374,4 +379,4 @@ class Verilog_ASM():
 
 
             print(dot.source)
-            dot.render(view=True, overwrite_source=True)
+            dot.render(view=False, overwrite_source=True)
