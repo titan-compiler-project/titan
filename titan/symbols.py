@@ -5,13 +5,22 @@ from type import *
 # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
 # if TYPE_CHECKING:
 #     from pyparsing import ParserElement
-    
+
+# TODO: maybe seperate into two enums? currently being used for
+#       symbol table generation and dataflow graph generation
 class Operation(Enum):
+    # vars
     VARIABLE_DECLARATION = auto()
     CONSTANT_DECLARATION = auto()
+    GLOBAL_VAR_DECLARATION = auto()
+    GLOBAL_CONST_DECLARATION = auto()
+    
+    # funcs
     FUNCTION_DECLARATION = auto()
     FUNCTION_IN_VAR_PARAM = auto()
     FUNCTION_OUT_VAR_PARAM = auto()
+
+    # operations
     ASSIGNMENT = auto()
     STORE = auto()
     LOAD = auto()
@@ -19,6 +28,9 @@ class Operation(Enum):
     SUB = auto()
     MULT = auto()
     DIV = auto()
+
+    # misc
+    NOP = auto()
 
 
 class Information(NamedTuple):

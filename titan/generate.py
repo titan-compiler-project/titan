@@ -563,7 +563,8 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                                 line.id,
                                 line.opcode_args[0],
                                 None, None,
-                                s.Operation.CONSTANT_DECLARATION,
+                                # s.Operation.CONSTANT_DECLARATION,
+                                s.Operation.GLOBAL_CONST_DECLARATION,
                                 [line.opcode_args[1]]
                             )
                         )
@@ -582,7 +583,9 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                                 d.NodeContext(
                                     x, line.id,
                                     verilog.get_primative_type_id_from_id(fn_name, line.opcode_args[0]),
-                                    None, None, s.Operation.VARIABLE_DECLARATION
+                                    None, None, 
+                                    # s.Operation.VARIABLE_DECLARATION
+                                    s.Operation.GLOBAL_VAR_DECLARATION
                                 )
                             )
                         )
@@ -646,7 +649,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                     # storage_node = verilog.get_node(fn_name, line.opcode_args[0])
                     value_node = verilog.get_node(fn_name, line.opcode_args[1])
 
-                    verilog.modify_node(fn_name, line.opcode_args[0], 0, value_node)
+                    verilog.modify_node(fn_name, line.opcode_args[0], 0, value_node, s.Operation.STORE)
                     
 
                 case "Load":

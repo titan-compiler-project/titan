@@ -5,6 +5,7 @@ import graphviz
 import type
 import dataflow as d
 from errors import TitanErrors
+from symbols import Operation
 from enum import Enum, auto
 from typing import NamedTuple, TypedDict, Union, List
 
@@ -263,11 +264,11 @@ class Verilog_ASM():
         # return self.content[name].body_nodes[node_id]
         return self.content[name].body_nodes[node_id][-1]
     
-    def modify_node(self, name:str, target_node_id:str, pos:int,  value_node: d.Node):
+    def modify_node(self, fn_name:str, target_node_id:str, pos:int,  value_node: d.Node, operation: Operation = Operation.NOP):
         # self.content[name].body_nodes[target_node_id].update_input(pos, value_node)
-        x = self.get_node(name, target_node_id)
-        print(x)
-        print(x.spirv_id)
+        x = self.get_node(fn_name, target_node_id)
+        # print(x)
+        # print(x.spirv_id)
 
         # new_ctx = d.NodeContext(
             # x.spirv_line_no, x.spirv_id, x.type_id, x.input_left, x.input_right, x.operation, x.data
@@ -277,15 +278,15 @@ class Verilog_ASM():
         if pos == 0:
             # new_ctx.input_left = value_node
             new_ctx = d.NodeContext(
-               x.spirv_line_no, x.spirv_id, x.type_id, value_node, x.input_right, x.operation, x.data
+               x.spirv_line_no, x.spirv_id, x.type_id, value_node, x.input_right, operation, x.data
         )
         elif pos == 1:
             # new_ctx.input_right = value_node
             new_ctx = d.NodeContext(
-               x.spirv_line_no, x.spirv_id, x.type_id, x.input_left, value_node, x.operation, x.data
+               x.spirv_line_no, x.spirv_id, x.type_id, x.input_left, value_node, operation, x.data
         )
 
-        self.content[name].body_nodes[target_node_id].append(d.Node(new_ctx))
+        self.content[fn_name].body_nodes[target_node_id].append(d.Node(new_ctx))
 
 
     def _sort_body_nodes_by_tick(self, fn_name: str):
@@ -331,7 +332,7 @@ class Verilog_ASM():
             x = self._sort_body_nodes_by_tick(key)
 
             for k in range(0, len(x.keys())):
-                print(f"{k} tick:")
+                print(f"tick: {k}")
 
                 with dot.subgraph(name=f"cluster_{k}") as ds:
                     ds.attr(style="dashed")
@@ -340,7 +341,7 @@ class Verilog_ASM():
                     for v in x[k]:
                         print(f"\t{v}, parents? {self._parent_exists(v)}, pos: {self._encode_parents(v)}")
                         current_node_label = f"{v.spirv_id}_{k}"
-                        ds.node(current_node_label, f"{v.spirv_id} at tick {k}")
+                        ds.node(current_node_label, f"{v.spirv_id} at tick {k} \n({v.operation})")
 
                         if self._parent_exists(v):
                             # check which parents exist
