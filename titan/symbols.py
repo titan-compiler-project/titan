@@ -32,6 +32,12 @@ class Operation(Enum):
     # misc
     NOP = auto()
 
+# https://stackoverflow.com/questions/58492047/how-to-add-member-subsets-to-a-python-enum
+class Operation_Type(set, Enum):
+    ARITHMETIC = {Operation.ADD, Operation.SUB, Operation.MULT, Operation.DIV}
+    GENERIC_CONSTANT_DECLARATION = {Operation.CONSTANT_DECLARATION, Operation.GLOBAL_CONST_DECLARATION}
+    GENERIC_VARIABLE_DECLARATION = {Operation.VARIABLE_DECLARATION, Operation.GLOBAL_VAR_DECLARATION}
+
 
 class Information(NamedTuple):
     datatype: DataType
