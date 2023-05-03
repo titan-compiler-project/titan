@@ -5,7 +5,7 @@ import graphviz
 import type
 import dataflow as d
 from errors import TitanErrors
-from symbols import Operation
+from symbols import Operation, Operation_Type
 from enum import Enum, auto
 from typing import NamedTuple, TypedDict, Union, List
 
@@ -218,7 +218,7 @@ class Verilog_ASM():
             data: _VerilogFunctionData
         
         self.content: function_name_and_data_dict_hint = {}
-        self.declared_symbols = {}
+        self.declared_symbols = []
 
 
     ## helper functions
@@ -325,7 +325,7 @@ class Verilog_ASM():
     
 
     def generate_dot_graph(self):
-        print("===graph gen===") # debug
+        # print("===graph gen===") # debug
 
 
         for key in self.content.keys():
@@ -337,14 +337,14 @@ class Verilog_ASM():
             x = self._sort_body_nodes_by_tick(key)
 
             for k in range(0, len(x.keys())):
-                print(f"tick: {k}")
+                # print(f"tick: {k}")
 
                 with dot.subgraph(name=f"cluster_tick_{k}") as ds:
                     ds.attr(style="dashed")
                     ds.attr(label=f"tick {k}")
                     
                     for v in x[k]:
-                        print(f"\t{v}, parents? {self._parent_exists(v)}, pos: {self._encode_parents(v)}")
+                        # print(f"\t{v}, parents? {self._parent_exists(v)}, pos: {self._encode_parents(v)}")
                         current_node_label = f"{v.spirv_id}_{k}"
                         ds.node(current_node_label, f"{v.spirv_id} at tick {k} \n({v.operation})", color="white", fontcolor="white")
 
@@ -355,17 +355,17 @@ class Verilog_ASM():
                                 case 1:
                                     # ds.edge()
                                     # get parent name/spirv id
-                                    print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
+                                    # print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
                                     parent_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
                                     ds.edge(parent_id_label, current_node_label, color="white")
 
                                 case 2:
-                                    print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
+                                    # print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
                                     parent_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
                                     ds.edge(parent_id_label, current_node_label, color="white")
                                 case 3:
-                                    print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
-                                    print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
+                                    # print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
+                                    # print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
 
                                     parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
                                     parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
@@ -378,5 +378,70 @@ class Verilog_ASM():
                                     raise Exception(f"{TitanErrors.UNEXPECTED.value} - got {parent_num} parents, but parents exist.", TitanErrors.UNEXPECTED.name)
 
 
-            print(dot.source)
+            # print(dot.source)
             dot.render(view=False, overwrite_source=True)
+
+
+    def __find_best_parents(self, subject_node: d.Node):
+
+        # if variable is just storing a constant
+        if subject_node.operation is Operation.STORE and subject_node.input_left.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
+            return subject_node.input_left
+        
+        # a non existant id means that it was created for either loading or arithmetic
+        if subject_node.spirv_id not in self.declared_symbols:
+
+            # if a temp id was only created for loading an existing value
+            if subject_node.operation is Operation.LOAD:
+                return self.__find_best_parents(subject_node.input_left)
+            elif subject_node.operation in Operation_Type.ARITHMETIC:
+                # tandem arithmetic means that this node references a previous node that is also an arithmetic node
+                # for example:
+                # %titan_id_0 = OpIAdd %int %const_3 %const_5
+                # %titan_id_1 = OpIMul %int %titan_id_0 %const_2
+                # 
+                # we want to retain the refereced arithmetic node id (%titan_id_0) in this case, because it is the best parent for the left side
+                # so tandem_arith_left will be True
+                tandem_arith_left = True if subject_node.input_left.operation in Operation_Type.ARITHMETIC else False
+                tandem_arith_right = True if subject_node.input_right.operation in Operation_Type.ARITHMETIC else False
+                # print(f"tal: {tandem_arith_left} - tar: {tandem_arith_right}")
+
+                if tandem_arith_left and tandem_arith_right:
+                    return (subject_node.input_left, subject_node.input_right)
+                elif tandem_arith_left:
+                    return (subject_node.input_left, self.__find_best_parents(subject_node.input_right))
+                elif tandem_arith_right:
+                    return (self.__find_best_parents(subject_node.input_left), subject_node.input_right)
+                else:
+                    return (self.__find_best_parents(subject_node.input_left), self.__find_best_parents(subject_node.input_right))
+
+
+    def _eval_parents_for_non_temp_id(self, current_node: d.Node):
+        # a temp id is defined as a LOAD instruction which references an existing symbol
+        # in spirv, this looks something like:
+        #   %1 = OpLoad %type_int %a
+        # where %1 is a temporary id containing the value of %a
+
+        # print(self.declared_symbols)
+        # print(current_node)
+
+        
+        best = self.__find_best_parents(current_node)
+
+        # print(f"\n\nbest for node {current_node.spirv_id} is\n{best}")
+
+        print(f"best parents for node {current_node.spirv_id} is:")
+        print(f"\tL: {best[0]}\n\tR: {best[1]}")
+
+
+
+    def clean_graph(self):
+        for function in self.content.keys():
+            for symbol in self.content[function].body_nodes.keys():
+                for node in self.content[function].body_nodes[symbol]:
+
+                    # TODO: better way to do this? dont want a string of ORs
+                    if node.operation is (Operation.ADD or Operation.SUB or Operation.DIV or Operation.MULT):
+                        print(f"{node.operation} {node.operation is Operation.ADD}")
+
+                        self._eval_parents_for_non_temp_id(node)
