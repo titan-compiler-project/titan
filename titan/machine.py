@@ -440,8 +440,6 @@ class Verilog_ASM():
             for symbol in self.content[function].body_nodes.keys():
                 for node in self.content[function].body_nodes[symbol]:
 
-                    # TODO: better way to do this? dont want a string of ORs
-                    if node.operation is (Operation.ADD or Operation.SUB or Operation.DIV or Operation.MULT):
-                        print(f"{node.operation} {node.operation is Operation.ADD}")
-
+                    # if node.operation is (Operation.ADD or Operation.SUB or Operation.DIV or Operation.MULT):
+                    if node.operation in Operation_Type.ARITHMETIC:
                         self._eval_parents_for_non_temp_id(node)
