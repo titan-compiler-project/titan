@@ -554,6 +554,9 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                 verilog.create_function(fn_name)
             
             case "Constant":
+                if line.id not in verilog.declared_symbols:
+                    verilog.declared_symbols.append(line.id)
+
                 if verilog.type_exists_in_func(fn_name, line.opcode_args[0]):
                     verilog.add_body_node_to_function(
                         fn_name,
@@ -573,6 +576,9 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                     raise Exception(f"{TitanErrors.NON_EXISTENT_SYMBOL.value} ({line.opcode_args[0]} on line {x})", TitanErrors.NON_EXISTENT_SYMBOL.name)
             
             case "Variable":
+                if line.id not in verilog.declared_symbols:
+                    verilog.declared_symbols.append(line.id)
+
                 match line.opcode_args[1]:
                     case "Output":
                         verilog.add_output_to_function(fn_name, line.id[1:])
@@ -632,6 +638,9 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
             match line.opcode:
 
                 case "Variable":
+                    if line.id not in verilog.declared_symbols:
+                        verilog.declared_symbols.append(line.id)
+
                     verilog.add_body_node_to_function(
                         fn_name,
                         d.Node(
@@ -699,20 +708,23 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
     # print()
     # print(verilog.content)
 
-    print()
-    for k, v in verilog.content.items():
-        print(f"types: {v.types}")
-        print(f"inputs: {v.inputs}")
-        print(f"outputs: {v.outputs}")
-        # print(f"body_nodes: {v.body_nodes}")
-        for a, b in v.body_nodes.items():
-            print(f"key: {a}")
-            for node in b:
-                print(f"\t{node}")
-            print()
+    # print()
+    # for k, v in verilog.content.items():
+    #     print(f"types: {v.types}")
+    #     print(f"inputs: {v.inputs}")
+    #     print(f"outputs: {v.outputs}\n")
+    #     # print(f"body_nodes: {v.body_nodes}")
+    #     for a, b in v.body_nodes.items():
+    #         print(f"key: {a}")
+    #         for node in b:
+    #             print(f"\t{node}")
+    #         print()
 
 
     print()
     verilog.generate_dot_graph()
+    # print(verilog.declared_symbols)
+    verilog.clean_graph()
+    # print("t_a" in verilog.declared_symbols)
 
 
