@@ -219,10 +219,19 @@ class Verilog_ASM():
         
         self.content: function_name_and_data_dict_hint = {}
         self.declared_symbols = []
+        self.marked_symbols_for_deletion = []
 
 
     ## helper functions
-                    
+    def _overwrite_body_nodes(self, fn_name, nodes):
+        new_vfd = _VerilogFunctionData(
+            self.content[fn_name].types,
+            self.content[fn_name].inputs,
+            self.content[fn_name].outputs,
+            nodes
+        )
+
+        self.content[fn_name] = new_vfd
 
 
     def create_function(self, function_name):
@@ -324,59 +333,65 @@ class Verilog_ASM():
         return count
     
 
-    def generate_dot_graph(self):
+    def generate_dot_graph(self, file_name_suffix: str = "", clean_nodes = None):
         # print("===graph gen===") # debug
 
 
         for key in self.content.keys():
-            dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}.dot", directory="dots") 
+            dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}_{file_name_suffix}.dot", directory="dots") 
             dot.attr(bgcolor="gray10")
             dot.attr(color="white")
             dot.attr(fontcolor="white")
 
-            x = self._sort_body_nodes_by_tick(key)
+            if clean_nodes is None:
+                x = self._sort_body_nodes_by_tick(key)
+            else:
+                x = clean_nodes
 
-            for k in range(0, len(x.keys())):
+            # for k in range(0, len(x.keys())):
+            for k in x.keys():
                 # print(f"tick: {k}")
 
                 with dot.subgraph(name=f"cluster_tick_{k}") as ds:
                     ds.attr(style="dashed")
                     ds.attr(label=f"tick {k}")
                     
-                    for v in x[k]:
-                        # print(f"\t{v}, parents? {self._parent_exists(v)}, pos: {self._encode_parents(v)}")
-                        current_node_label = f"{v.spirv_id}_{k}"
-                        ds.node(current_node_label, f"{v.spirv_id} at tick {k} \n({v.operation})", color="white", fontcolor="white")
+                    try:
+                        for v in x[k]:
+                            # print(f"\t{v}, parents? {self._parent_exists(v)}, pos: {self._encode_parents(v)}")
+                            current_node_label = f"{v.spirv_id}_{k}"
+                            ds.node(current_node_label, f"{v.spirv_id} at tick {k} \n({v.operation})", color="white", fontcolor="white")
 
-                        if self._parent_exists(v):
-                            # check which parents exist
-                            parent_num = self._encode_parents(v)
-                            match parent_num:
-                                case 1:
-                                    # ds.edge()
-                                    # get parent name/spirv id
-                                    # print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
-                                    parent_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
-                                    ds.edge(parent_id_label, current_node_label, color="white")
+                            if self._parent_exists(v):
+                                # check which parents exist
+                                parent_num = self._encode_parents(v)
+                                match parent_num:
+                                    case 1:
+                                        # ds.edge()
+                                        # get parent name/spirv id
+                                        # print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
+                                        parent_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
+                                        ds.edge(parent_id_label, current_node_label, color="white")
 
-                                case 2:
-                                    # print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
-                                    parent_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
-                                    ds.edge(parent_id_label, current_node_label, color="white")
-                                case 3:
-                                    # print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
-                                    # print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
+                                    case 2:
+                                        # print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
+                                        parent_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
+                                        ds.edge(parent_id_label, current_node_label, color="white")
+                                    case 3:
+                                        # print(f"\t\tL: {v.input_left.spirv_id} at tick {v.input_left.tick}")
+                                        # print(f"\t\tR: {v.input_right.spirv_id} at tick {v.input_right.tick}")
 
-                                    parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
-                                    parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
+                                        parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
+                                        parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
 
-                                    ds.edge(parent_l_id_label, current_node_label, color="white")
-                                    ds.edge(parent_r_id_label, current_node_label, color="white")
+                                        ds.edge(parent_l_id_label, current_node_label, color="white")
+                                        ds.edge(parent_r_id_label, current_node_label, color="white")
 
-                                case _:
-                                    # should be unreachable
-                                    raise Exception(f"{TitanErrors.UNEXPECTED.value} - got {parent_num} parents, but parents exist.", TitanErrors.UNEXPECTED.name)
-
+                                    case _:
+                                        # should be unreachable
+                                        raise Exception(f"{TitanErrors.UNEXPECTED.value} - got {parent_num} parents, but parents exist.", TitanErrors.UNEXPECTED.name)
+                    except KeyError:
+                        continue
 
             # print(dot.source)
             dot.render(view=False, overwrite_source=True)
@@ -384,15 +399,31 @@ class Verilog_ASM():
 
     def __find_best_parents(self, subject_node: d.Node):
 
+        # if subject_node.operation in (Operation_Type.GENERIC_CONSTANT_DECLARATION or Operation_Type.GENERIC_VARIABLE_DECLARATION):
+            # return (None, None)
+
         # if variable is just storing a constant
         if subject_node.operation is Operation.STORE and subject_node.input_left.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
             return subject_node.input_left
+        
+        if subject_node.operation is Operation.STORE:
+
+            if subject_node.input_left.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
+                return subject_node.input_left
+            
+            if subject_node.input_left.operation in Operation_Type.ARITHMETIC:
+                return subject_node.input_left
         
         # a non existant id means that it was created for either loading or arithmetic
         if subject_node.spirv_id not in self.declared_symbols:
 
             # if a temp id was only created for loading an existing value
             if subject_node.operation is Operation.LOAD:
+
+                # if subject_node.spirv_id not in self.marked_symbols_for_deletion:
+                    # self.marked_symbols_for_deletion.append(subject_node.spirv_id)
+                    # print(f"mark node for deletion {subject_node.spirv_id}")
+
                 return self.__find_best_parents(subject_node.input_left)
             elif subject_node.operation in Operation_Type.ARITHMETIC:
                 # tandem arithmetic means that this node references a previous node that is also an arithmetic node
@@ -421,25 +452,87 @@ class Verilog_ASM():
         # in spirv, this looks something like:
         #   %1 = OpLoad %type_int %a
         # where %1 is a temporary id containing the value of %a
-
-        # print(self.declared_symbols)
-        # print(current_node)
-
         
         best = self.__find_best_parents(current_node)
+        new_ctx = None
 
-        # print(f"\n\nbest for node {current_node.spirv_id} is\n{best}")
+        # print(f"best parents for node {current_node} is:")
 
-        print(f"best parents for node {current_node.spirv_id} is:")
-        print(f"\tL: {best[0]}\n\tR: {best[1]}")
+        try:
+            # print(f"\tL: {best[0]}\n\tR: {best[1]}")
+            new_ctx = d.NodeContext(
+                current_node.spirv_line_no, current_node.spirv_id,
+                current_node.type_id, 
+                best[0], best[1],
+                current_node.operation, current_node.data
+            )
+        except:
+            # print(f"\t{best}")
+            new_ctx = d.NodeContext(
+                current_node.spirv_line_no, current_node.spirv_id,
+                current_node.type_id, 
+                best, current_node.input_right,
+                current_node.operation, current_node.data
+            )
+
+        return new_ctx
+        # return updated node context or node?
 
 
 
     def clean_graph(self):
-        for function in self.content.keys():
-            for symbol in self.content[function].body_nodes.keys():
-                for node in self.content[function].body_nodes[symbol]:
+        # for function in self.content.keys():
+        #     for symbol in self.content[function].body_nodes.keys():
+        #         for node in self.content[function].body_nodes[symbol]:
 
-                    # if node.operation is (Operation.ADD or Operation.SUB or Operation.DIV or Operation.MULT):
-                    if node.operation in Operation_Type.ARITHMETIC:
-                        self._eval_parents_for_non_temp_id(node)
+        #             is_node_a_declaration = node.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION or node.operation in Operation_Type.GENERIC_VARIABLE_DECLARATION
+
+        #             if not is_node_a_declaration:
+        #                 print(f"{node.spirv_id} {node.operation} -- {is_node_a_declaration}")
+        #                 self._eval_parents_for_non_temp_id(node)
+
+
+
+        for function in self.content.keys():
+            clean_nodes: _id_and_node_dict_hint = {}
+            # print(self.content[functions].body_nodes)
+            tick_ordered_nodes = self._sort_body_nodes_by_tick(function)
+
+            # shift all declarations into the new dict
+            for node in tick_ordered_nodes[0]:
+                if node.spirv_id not in clean_nodes:
+                    clean_nodes[node.spirv_id] = [node]
+                else:
+                    clean_nodes[node.spirv_id].append(node)
+
+
+
+            for tick in range(1, len(tick_ordered_nodes.keys())):
+                for node in tick_ordered_nodes[tick]:
+                    if node.spirv_id not in self.declared_symbols and node.operation is Operation.LOAD:
+                        continue
+
+
+                    ctx = self._eval_parents_for_non_temp_id(node)
+                    print(f"node: {node} evalutes to context: \n\t{ctx}")
+                    new_node = d.Node(ctx)
+                    print(f"new node is: {new_node}\n\n")
+                    
+                    if new_node.spirv_id not in clean_nodes:
+                        clean_nodes[new_node.spirv_id] = [new_node]
+                    else:
+                        clean_nodes[new_node.spirv_id].append(new_node)
+
+                    # print()
+
+
+            print()
+            print(clean_nodes)
+            
+            # print(type(self.content[function].body_nodes))
+            # self.content[function].body_nodes = clean_nodes
+            self._overwrite_body_nodes(function, clean_nodes)
+
+        self.generate_dot_graph("clean_nodes")
+
+        
