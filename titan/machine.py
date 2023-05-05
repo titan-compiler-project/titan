@@ -455,30 +455,31 @@ class Verilog_ASM():
         
         best = self.__find_best_parents(current_node)
         new_ctx = None
+        node_names = []
 
         # print(f"best parents for node {current_node} is:")
 
         try:
-            # print(f"\tL: {best[0]}\n\tR: {best[1]}")
-            new_ctx = d.NodeContext(
-                current_node.spirv_line_no, current_node.spirv_id,
-                current_node.type_id, 
-                best[0], best[1],
-                current_node.operation, current_node.data
-            )
+            # print(f"L: {best[0]} ({best[0].spirv_id})\nR: {best[1]} ({best[1].spirv_id})")
+            # new_ctx = d.NodeContext(
+            #     current_node.spirv_line_no, current_node.spirv_id,
+            #     current_node.type_id, 
+            #     best[0], best[1],
+            #     current_node.operation, current_node.data
+            # )
+            node_names = [best[0].spirv_id, best[1].spirv_id]
         except:
-            # print(f"\t{best}")
-            new_ctx = d.NodeContext(
-                current_node.spirv_line_no, current_node.spirv_id,
-                current_node.type_id, 
-                best, current_node.input_right,
-                current_node.operation, current_node.data
-            )
+            # print(f"O:{best} ({best.spirv_id})")
+            # new_ctx = d.NodeContext(
+            #     current_node.spirv_line_no, current_node.spirv_id,
+            #     current_node.type_id, 
+            #     best, current_node.input_right,
+            #     current_node.operation, current_node.data
+            # )
+            node_names = [best.spirv_id]
 
-        return new_ctx
-        # return updated node context or node?
-
-
+        # return new_ctx
+        return node_names
 
     def clean_graph(self):
         # for function in self.content.keys():
@@ -490,6 +491,20 @@ class Verilog_ASM():
         #             if not is_node_a_declaration:
         #                 print(f"{node.spirv_id} {node.operation} -- {is_node_a_declaration}")
         #                 self._eval_parents_for_non_temp_id(node)
+
+
+        def _fetch_last_node(node_dict, node_name: str):
+            if node_name in node_dict:
+                return node_dict[node_name][-1]
+            else:
+                # return None
+                raise Exception(TitanErrors.UNEXPECTED.value, TitanErrors.UNEXPECTED.name)
+
+        def _update_node_dict(node_dict, node_name: str, node_ctx: d.NodeContext):
+            if node_name in node_dict:
+                node_dict[node_name].append(d.Node(node_ctx))
+            else:
+                node_dict[node_name] = [d.Node(node_ctx)]
 
 
 
@@ -512,23 +527,74 @@ class Verilog_ASM():
                     if node.spirv_id not in self.declared_symbols and node.operation is Operation.LOAD:
                         continue
 
+                    # print("="*10)
+                    # print(len(clean_nodes))
+                    # print("="*10)
 
-                    ctx = self._eval_parents_for_non_temp_id(node)
-                    print(f"node: {node} evalutes to context: \n\t{ctx}")
-                    new_node = d.Node(ctx)
-                    print(f"new node is: {new_node}\n\n")
+                    # ctx = self._eval_parents_for_non_temp_id(node)
+                    # print(f"node: {node} evalutes to context: \n\t{ctx}")
+                    # new_node = d.Node(ctx)
+                    # print(f"new node is: {new_node}\n\n")
                     
-                    if new_node.spirv_id not in clean_nodes:
-                        clean_nodes[new_node.spirv_id] = [new_node]
-                    else:
-                        clean_nodes[new_node.spirv_id].append(new_node)
-
-                    # print()
+                    # if new_node.spirv_id not in clean_nodes:
+                    #     clean_nodes[new_node.spirv_id] = [new_node]
+                    # else:
+                    #     clean_nodes[new_node.spirv_id].append(new_node)
 
 
-            print()
-            print(clean_nodes)
-            
+
+                    # if _eval_parents_for_non_temp_id(node) returns a spirv id
+                    # we should just try and reference the latest one in the clean
+                    # nodes dict
+                    print(f"current node: {node}")
+                    best_node_names = self._eval_parents_for_non_temp_id(node)
+                    # print(f"returned with {best_node_names}")
+
+                    if len(best_node_names) == 1:
+                        print(f"returned with one node: {best_node_names[0]}")
+                        n = _fetch_last_node(clean_nodes, best_node_names[0])
+                        print(f"\n{n}")
+
+                        new_ctx = d.NodeContext(
+                            node.spirv_line_no, node.spirv_id, node.type_id,
+                            n, None, node.operation, node.data
+                        )
+
+                        _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
+
+
+                    elif len(best_node_names) == 2:
+                        print(f"returned with two nodes: {best_node_names}")
+                        n1 = _fetch_last_node(clean_nodes, best_node_names[0])
+                        n2 = _fetch_last_node(clean_nodes, best_node_names[1])
+
+                        print(f"\t{n1}\n\t{n2}")
+
+                        new_ctx = d.NodeContext(
+                            node.spirv_line_no, node.spirv_id, node.type_id,
+                            n1, n2, node.operation, node.data
+                        )
+
+                        _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
+                        # if node.spirv_id in clean_nodes:
+                            # clean_nodes[node.spirv_id].append(d.Node(new_ctx))
+                        # else:
+                            # clean_nodes[node.spirv_id] = [d.Node(new_ctx)]
+
+
+                    
+
+
+
+            print("="*10)
+            # print(clean_nodes)
+            for symbol in clean_nodes:
+                print(symbol)
+                for node in clean_nodes[symbol]:
+                    print(f"\t{node}")
+                print()
+            print("="*10)
+
             # print(type(self.content[function].body_nodes))
             # self.content[function].body_nodes = clean_nodes
             self._overwrite_body_nodes(function, clean_nodes)
