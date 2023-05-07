@@ -348,8 +348,8 @@ class Verilog_ASM():
             else:
                 x = clean_nodes
 
-            # for k in range(0, len(x.keys())):
-            for k in x.keys():
+            for k in range(0, len(x.keys())):
+            # for k in x.keys():
                 # print(f"tick: {k}")
 
                 with dot.subgraph(name=f"cluster_tick_{k}") as ds:
