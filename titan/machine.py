@@ -237,42 +237,42 @@ class Verilog_ASM():
     def create_function(self, function_name):
         self.content[function_name] = _VerilogFunctionData()
 
-    def add_body_node_to_function(self, name: str, node: d.Node):
+    def add_body_node_to_function(self, fn_name: str, node: d.Node):
         # self.content[name].body_nodes[node.spirv_id] = node
         # self.content[name].body_nodes[node.spirv_id].append(node)
 
-        if not self.does_node_exist(name, node.spirv_id):
-            self.content[name].body_nodes[node.spirv_id] = []
+        if not self.does_node_exist(fn_name, node.spirv_id):
+            self.content[fn_name].body_nodes[node.spirv_id] = []
 
-        self.content[name].body_nodes[node.spirv_id].append(node)
+        self.content[fn_name].body_nodes[node.spirv_id].append(node)
 
-    def add_type_context_to_function(self, function_name: str, type_id: str, type_context: _VerilogTypeContext):
+    def add_type_context_to_function(self, fn_name: str, type_id: str, type_context: _VerilogTypeContext):
         # self.content[function_name].types.append(type_context)
-        self.content[function_name].types[type_id] = type_context
+        self.content[fn_name].types[type_id] = type_context
 
-    def type_exists_in_func(self, name: str, type_id: str):
+    def type_exists_in_func(self, fn_name: str, type_id: str):
         # return True if type_id in 
-        return True if type_id in self.content[name].types else False
+        return True if type_id in self.content[fn_name].types else False
 
-    def add_output_to_function(self, name:str, symbol:str):
-        self.content[name].outputs.append(symbol)
+    def add_output_to_function(self, fn_name:str, symbol:str):
+        self.content[fn_name].outputs.append(symbol)
 
-    def get_datatype_from_id(self, name:str, id:str):
-        return self.content[name].types[id].type
+    def get_datatype_from_id(self, fn_name:str, id:str):
+        return self.content[fn_name].types[id].type
 
-    def get_primative_type_id_from_id(self, name:str, id:str):
-        x = self.content[name].types[id]
+    def get_primative_type_id_from_id(self, fn_name:str, id:str):
+        x = self.content[fn_name].types[id]
         if x.is_pointer:
             return x.alias
         else:
             return id
 
-    def does_node_exist(self, name:str, node_id:str):
-        return True if node_id in self.content[name].body_nodes else False
+    def does_node_exist(self, fn_name:str, node_id:str):
+        return True if node_id in self.content[fn_name].body_nodes else False
 
-    def get_node(self, name:str, node_id: str):
+    def get_node(self, fn_name:str, node_id: str):
         # return self.content[name].body_nodes[node_id]
-        return self.content[name].body_nodes[node_id][-1]
+        return self.content[fn_name].body_nodes[node_id][-1]
     
     def modify_node(self, fn_name:str, target_node_id:str, pos:int,  value_node: d.Node, operation: Operation = Operation.NOP):
         # self.content[name].body_nodes[target_node_id].update_input(pos, value_node)
