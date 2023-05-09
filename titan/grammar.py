@@ -20,10 +20,14 @@ class TitanPythonGrammar(NamedTuple):
 
     number = pp.pyparsing_common.number
 
+    parameter_with_type_hint = pp.Group(variable_name.set_results_name("parameter") + colon.suppress() + pp.one_of(["int", "float", "bool"]).set_results_name("type"))
+    function_parameter_list_with_type_hint = pp.delimited_list(parameter_with_type_hint) | pp.empty
+
     function_parameter_list = pp.delimited_list(variable_name) | pp.empty
     function_return_list = pp.Group(pp.delimited_list(variable_name | number | keyword_None))
     function_call = function_name + l_br + function_parameter_list + r_br
-    function_definition = keyword_def.suppress() + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon.suppress()
+    # function_definition = keyword_def.suppress() + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon.suppress()
+    function_definition = keyword_def.suppress() + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list_with_type_hint.set_results_name("function_param_list") + r_br.suppress() + colon.suppress()
 
     # TODO: this doesn't like parsing "a + b - 3" or anything that isn't nicely seperated by brackets
     #       - tried the github ver down below but it also has the same issue, the operators.py file needs to be looked at
