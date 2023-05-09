@@ -6,15 +6,16 @@ def test_node_creation():
 
     node_1 = d.Node(
         d.NodeContext(
-            0, "%test_id_1", None, None, "const"
+            0, "test_id_0", "type_id_0", None, None, None, []
         )
     )
 
     assert node_1.spirv_line_no == 0
-    assert node_1.spirv_id == "%test_id_1"
+    assert node_1.spirv_id == "test_id_0"
+    assert node_1.type_id == "type_id_0"
     assert node_1.input_left == None
     assert node_1.input_right == None
-    assert node_1.operation == "const"
+    assert node_1.operation == None
     assert node_1.tick == 0
 
 
@@ -32,14 +33,14 @@ def test_tick_propagation():
         print(x)
         node_list.append(
             d.Node(d.NodeContext(
-                x, f"%id_line_{x}", None, None, "OpCode"
+                x, f"%id_line_{x}", f"%type_id_x", None, None, None, []
             ))
         )
 
     node_list.append(
         d.Node(
             d.NodeContext(
-                3, f"%end_node", node_list[0], node_list[1], "OpCode"
+                3, f"%end_node", "type_id_y", node_list[0], node_list[1], "OpCode", []
             )
         )
     )
