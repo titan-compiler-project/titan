@@ -12,29 +12,30 @@ from typing import NamedTuple, TypedDict, Union, List
 class Machine:
 
     def __init__(self):
-        self.options = []
-        self.output_options = []
-        self.processed_text = []
-        self.files = []
+        self.options = []   # parsed options (anything but output stuff)
+        self.output_options = []    # parsed outputting options
+        self.processed_text = []    # preprocessed python
+        self.files = []     # file names
         self.parsed_modules = []
         self.functions = []
         self.name_of_top_module = None
         self.SPIRV_asm_obj: SPIRV_ASM = None
 
 class Function:
-    name = ""
-    params = []
-    body = []
-    returns = []
+    # name = ""
+    # params = []
+    # body = []
+    # returns = []
 
-    def __init__(self, name, params, body, returns):
+    def __init__(self, name, params, body, returns, return_type):
         self.name = name
         self.params = params
         self.body = body
         self.returns = returns
+        self.return_type = return_type
 
     def __str__(self):
-        return f"{self.name}, {self.params}, {self.body}, {self.returns}"
+        return f"{self.name}, {self.params}, {self.body}, {self.returns} with type {self.return_type}"
     
 #######################################################################
 

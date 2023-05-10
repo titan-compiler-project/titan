@@ -87,7 +87,8 @@ def parse_processed_python(machine_object: machine.Machine):
                   name= result.function_name,
                   params= result.function_param_list,
                   body= result.function_statements,
-                  returns = result.function_returns
+                  returns= result.function_returns,
+                  return_type= result.function_return_type
                 )
             )
 
