@@ -258,6 +258,9 @@ class Verilog_ASM():
     def add_output_to_function(self, fn_name:str, symbol:str):
         self.content[fn_name].outputs.append(symbol)
 
+    def add_input_to_function(self, fn_name:str, symbol:str):
+        self.content[fn_name].inputs.append(symbol)
+
     def get_datatype_from_id(self, fn_name:str, id:str):
         return self.content[fn_name].types[id].type
 
@@ -400,8 +403,9 @@ class Verilog_ASM():
 
     def __find_best_parents(self, subject_node: d.Node):
 
-        # if subject_node.operation in (Operation_Type.GENERIC_CONSTANT_DECLARATION or Operation_Type.GENERIC_VARIABLE_DECLARATION):
-            # return (None, None)
+        # if node is a GLOBAL variable and is declared, return itself as being the best (this assumes that it is either an input or output of the function)
+        if subject_node.operation in Operation_Type.GENERIC_VARIABLE_DECLARATION and subject_node.spirv_id in self.declared_symbols:
+            return subject_node
 
         # if variable is just storing a constant
         if subject_node.operation is Operation.STORE and subject_node.input_left.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:

@@ -43,7 +43,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
     for entry in machine_object.functions:
         for param in entry.params:
-            id = f"%{param}"
+            id = f"%{param.parameter}"
             entrypoint_param_list += f" {id}"
 
         for returned in entry.returns:
@@ -82,6 +82,19 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             )
             spirv.location += 1
 
+        if info.operation == s.Operation.FUNCTION_IN_VAR_PARAM:
+            spirv.append_code(
+                spirv.Sections.ANNOTATIONS,
+                f"OpDecorate %{symbol} Location {spirv.location}"
+            )
+
+            spirv.append_code(
+                spirv.Sections.ANNOTATIONS,
+                f"OpDecorate %{symbol} Flat"
+            )
+
+            spirv.location += 1
+
     for t_ctx, id in spirv.declared_types.items():
 
         match t_ctx.primative_type:
@@ -97,9 +110,15 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     f"{id} = OpTypeVoid"
                 )
 
+            case t.DataType.FLOAT:
+                spirv.append_code(
+                    spirv.Sections.TYPES_CONSTS_VARS,
+                    f"{id} = OpTypeFloat 32"
+                )
+
             case _:
                 # raise Exception("got unknown type while trying to generate SPIR-V", "unknown_type")
-                raise Exception(TitanErrors.PARSED_UNKNOWN_TYPE.value, TitanErrors.PARSED_UNKNOWN_TYPE.name)
+                raise Exception(f"{TitanErrors.PARSED_UNKNOWN_TYPE.value} : {t_ctx} for {id}", TitanErrors.PARSED_UNKNOWN_TYPE.name)
 
     for symbol, info in symbol_table.content.items():
         if info.operation == s.Operation.FUNCTION_DECLARATION:
@@ -119,9 +138,26 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
         
         match info.operation:
             case s.Operation.FUNCTION_IN_VAR_PARAM:
-                # raise Exception("not implemented", "not_implemented")
-                raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function input variable parameter)", TitanErrors.NOT_IMPLEMENTED.name)
+                # raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function input variable parameter)", TitanErrors.NOT_IMPLEMENTED.name)
             
+                ptr_id = f"%ptr_input_"
+
+                match info.datatype:
+                    case t.DataType.INTEGER:
+                        ptr_id += info.datatype.name
+
+                        t_ctx = spirv.TypeContext(t.DataType.INTEGER, t.StorageType.IN, False, True)
+
+                        if not spirv.type_exists(t_ctx):
+                            spirv.add_type(t_ctx, ptr_id)
+
+                            spirv.append_code(
+                                spirv.Sections.TYPES_CONSTS_VARS,
+                                f"{ptr_id} = OpTypePointer Input {spirv.get_type_id(spirv.TypeContext(info.datatype, None, False, False))}"
+                            )
+                    case _:
+                        raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function input variable parameter datatype ({info.datatype}) declaration)", TitanErrors.NOT_IMPLEMENTED.name)
+
             case s.Operation.FUNCTION_OUT_VAR_PARAM:
                 ptr_id = f"%ptr_output_"
 
@@ -160,6 +196,26 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
     for func in machine_object.functions:
         # TODO: the same for params
+
+        print(f"SYMBOL TABLE: {symbol_table.content}")
+
+        for input in func.params:
+            # print(input)
+            # print(input.parameter)
+
+            if symbol_table.exists(input.parameter):
+                info = symbol_table.get(input.parameter)
+                print(info)
+
+                match info.datatype:
+                    case t.DataType.INTEGER:
+                        id = spirv.get_type_id(spirv.TypeContext(t.DataType.INTEGER, t.StorageType.IN, False, True))
+
+                        spirv.append_code(
+                            spirv.Sections.TYPES_CONSTS_VARS,
+                            f"%{input.parameter} = OpVariable {id} Input"
+                        )
+
 
         for returned in func.returns:
             if symbol_table.exists(returned):
@@ -470,6 +526,18 @@ def test_parse_action_statement(tokens):
     return None
 
 
+def _get_datatype_from_string(type_string):
+    match type_string:
+        case "int":
+            return s.DataType.INTEGER
+        case "float":
+            return s.DataType.FLOAT
+        case "bool":
+            return s.DataType.BOOLEAN
+        case _:
+            raise Exception(f"{TitanErrors.UNEXPECTED.value} unexpected type {type_string}", TitanErrors.UNEXPECTED.name)            
+
+
 def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
     for function in machine_object.functions:
@@ -481,14 +549,43 @@ def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
             # now that the function is declared, check its input params
             if len(function.params) > 0:
                 for param in function.params:
-                    if not symbol_table.exists(param):
-                        symbol_table.add(param, s.Information(s.DataType.INTEGER, s.Operation.FUNCTION_IN_VAR_PARAM))
+                    # print(f"SYMBOL TABLE: PARAMS: {param} -- name: {param.parameter} with type {param.type}")
+                    
+                    if not symbol_table.exists(param.parameter):
+                        # match param.type:
+                        #     case "int":
+                        #         datatype = s.DataType.INTEGER
+                        #     case "float":
+                        #         datatype = s.DataType.FLOAT
+                        #     case "bool":
+                        #         datatype = s.DataType.BOOLEAN
+                        #     case _:
+                        #         raise Exception(f"{TitanErrors.UNEXPECTED.value} (unexpected type {param.type})", TitanErrors.UNEXPECTED.name)
+
+                        datatype = _get_datatype_from_string(param.type)
+
+                        symbol_table.add(param.parameter, s.Information(datatype, s.Operation.FUNCTION_IN_VAR_PARAM))
+
+                    # if not symbol_table.exists(param):
+                    #     symbol_table.add(param, s.Information(s.DataType.INTEGER, s.Operation.FUNCTION_IN_VAR_PARAM))
 
             # check its output params
             if len(function.returns) > 0:
                 for param in function.returns:
+                    # print(f"[WARN]: return value for {param} is still assumed to be an integer. (generate.generate_symbols line:504)")
+                    print(f"[WARN]: return value for {param} is {function.return_type} (multiple return types are not yet supported) (generate.generate_symbols line:492)")
+                    
+                    # if not symbol_table.exists(param):
+                        # symbol_table.add(param, s.Information(s.DataType.INTEGER, s.Operation.FUNCTION_OUT_VAR_PARAM))
+
+
                     if not symbol_table.exists(param):
-                        symbol_table.add(param, s.Information(s.DataType.INTEGER, s.Operation.FUNCTION_OUT_VAR_PARAM))
+                        datatype = _get_datatype_from_string(function.return_type)
+
+                        symbol_table.add(param, s.Information(datatype, s.Operation.FUNCTION_OUT_VAR_PARAM))
+
+
+
 
 
             # check body params
@@ -542,6 +639,8 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
 
     fn_name = ""
     fn_locations = _get_spirv_function_locations(parsed_spirv)
+
+    # print(f"SPIRV: {parsed_spirv}")
 
     # deal with headers
     for x in range(0, fn_locations[0].start_pos):
@@ -597,7 +696,20 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                         )
 
                     case "Input":
-                        raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                        verilog.add_input_to_function(fn_name, line.id[1:])
+
+                        verilog.add_body_node_to_function(
+                            fn_name,
+                            d.Node(
+                                d.NodeContext(
+                                    x, line.id,
+                                    verilog.get_primative_type_id_from_id(fn_name, line.opcode_args[0]),
+                                    None, None, s.Operation.GLOBAL_VAR_DECLARATION
+                                )
+                            )
+                        )
+
+                        # raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
             
             case "TypePointer":
                 verilog.add_type_context_to_function(
