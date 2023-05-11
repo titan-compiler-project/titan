@@ -275,7 +275,6 @@ class Verilog_ASM():
         return True if node_id in self.content[fn_name].body_nodes else False
 
     def get_node(self, fn_name:str, node_id: str):
-        # return self.content[name].body_nodes[node_id]
         return self.content[fn_name].body_nodes[node_id][-1]
     
     def modify_node(self, fn_name:str, target_node_id:str, pos:int,  value_node: d.Node, operation: Operation = Operation.NOP):
@@ -403,6 +402,10 @@ class Verilog_ASM():
 
     def __find_best_parents(self, subject_node: d.Node):
 
+        # if the node is a constant declaration, return itself
+        if subject_node.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
+          return subject_node
+
         # if node is a GLOBAL variable and is declared, return itself as being the best (this assumes that it is either an input or output of the function)
         if subject_node.operation in Operation_Type.GENERIC_VARIABLE_DECLARATION and subject_node.spirv_id in self.declared_symbols:
             return subject_node
@@ -461,6 +464,8 @@ class Verilog_ASM():
         best = self.__find_best_parents(current_node)
         new_ctx = None
         node_names = []
+
+        print(f"BEST EVAL---- {best}")
 
         # print(f"best parents for node {current_node} is:")
 
