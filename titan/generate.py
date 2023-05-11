@@ -793,6 +793,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                         )
                     )
 
+                # TODO: these arithmetic operations practically follow the same format, is there a way to minimise this repeating code?
                 case "IAdd":
                     l = verilog.get_node(fn_name, line.opcode_args[1])
                     r = verilog.get_node(fn_name, line.opcode_args[2])
@@ -808,9 +809,35 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                     )
 
                 case "ISub":
-                    raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.SUB
+                            )
+                        )
+                    )
+
+                    # raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
                 case "IMul":
-                    raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.MULT
+                            )
+                        )
+                    )
+                    # raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+
                 case "SDiv":
                     # print(f"--------{line.opcode_args}")
                     l = verilog.get_node(fn_name, line.opcode_args[1])
