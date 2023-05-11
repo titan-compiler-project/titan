@@ -768,9 +768,16 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                 case "Store":
                     # print(verilog.get_node(fn_name, line.opcode_args[0]))
                     # storage_node = verilog.get_node(fn_name, line.opcode_args[0])
-                    value_node = verilog.get_node(fn_name, line.opcode_args[1])
 
-                    verilog.modify_node(fn_name, line.opcode_args[0], 0, value_node, s.Operation.STORE)
+                    # if verilog.does_node_exist()
+                    # print(f"---fn_name {fn_name} arg {line.opcode_args[1]}")
+
+                    if verilog.does_node_exist(fn_name, line.opcode_args[1]):
+                        value_node = verilog.get_node(fn_name, line.opcode_args[1])
+
+                        verilog.modify_node(fn_name, line.opcode_args[0], 0, value_node, s.Operation.STORE)
+                    else:
+                        raise Exception(f"DOES NOT EXIST {fn_name} {line.opcode_args[1]}")
                     
 
                 case "Load":
@@ -804,8 +811,21 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                     raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
                 case "IMul":
                     raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
-                case "IDiv":
-                    raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                case "SDiv":
+                    # print(f"--------{line.opcode_args}")
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.DIV
+                            )
+                        )
+                    )
+
                 case _:
                     if line.opcode == "Function" or "Label" or "Return" or "FunctionEnd":
                         continue
