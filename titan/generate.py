@@ -886,6 +886,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
     # print(verilog.declared_symbols)
     verilog.clean_graph()
     _generate_verilog_text(verilog)
+    verilog.generate_dot_graph("clean_nodes")
     # print("t_a" in verilog.declared_symbols)
 
 

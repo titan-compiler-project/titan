@@ -344,7 +344,7 @@ class Verilog_ASM():
 
 
         for key in self.content.keys():
-            dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}_{file_name_suffix}.dot", directory="dots") 
+            dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}{file_name_suffix}.dot", directory="dots") 
             dot.attr(bgcolor="gray10")
             dot.attr(color="white")
             dot.attr(fontcolor="white")
@@ -608,7 +608,7 @@ class Verilog_ASM():
             # self.content[function].body_nodes = clean_nodes
             self._overwrite_body_nodes(function, clean_nodes)
 
-        self.generate_dot_graph("clean_nodes")
+        # self.generate_dot_graph("_clean_nodes")
 
         
 class Verilog_Text():
