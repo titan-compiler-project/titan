@@ -251,6 +251,9 @@ class Verilog_ASM():
         # self.content[function_name].types.append(type_context)
         self.content[fn_name].types[type_id] = type_context
 
+    def get_type_context_from_function(self, fn_name:str, type_id: str):
+        return self.content[fn_name].types[type_id]
+
     def type_exists_in_func(self, fn_name: str, type_id: str):
         # return True if type_id in 
         return True if type_id in self.content[fn_name].types else False
@@ -592,10 +595,6 @@ class Verilog_ASM():
                             # clean_nodes[node.spirv_id] = [d.Node(new_ctx)]
 
 
-                    
-
-
-
             print("="*10)
             # print(clean_nodes)
             for symbol in clean_nodes:
@@ -612,3 +611,41 @@ class Verilog_ASM():
         self.generate_dot_graph("clean_nodes")
 
         
+class Verilog_Text():
+
+    class Sections(Enum):
+        MODULE_AND_PORTS = auto()
+        INTERNAL = auto()
+        ALWAYS_BLOCK = auto()
+        ASSIGNMENTS = auto()
+
+    def __init__(self):
+        self.generated_verilog = {
+            self.Sections.MODULE_AND_PORTS.name: [],
+            self.Sections.INTERNAL.name: [],
+            self.Sections.ALWAYS_BLOCK.name: [],
+            self.Sections.ASSIGNMENTS.name: []
+        }
+
+    def append_code(self, section: Sections, code:str):
+        self.generated_verilog[section.name].append(code)
+
+    def print_contents(self):
+        print("-"*10)
+        for section, code_list in self.generated_verilog.items():
+            print(f"{section}")
+
+            for entry in code_list:
+                print(f"{entry}")
+
+        print("-"*10)
+
+    def output_to_file(self, name):
+
+        with open(f"{name}.sv", "w") as f:
+            for k, v in self.generated_verilog.items():
+                print(f"writing {k}")
+                
+                for line in v:
+                    f.write(line)
+                    f.write(f"\n")
