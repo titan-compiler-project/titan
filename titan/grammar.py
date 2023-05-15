@@ -34,10 +34,14 @@ class TitanPythonGrammar(NamedTuple):
 
     # TODO: this doesn't like parsing "a + b - 3" or anything that isn't nicely seperated by brackets
     #       - tried the github ver down below but it also has the same issue, the operators.py file needs to be looked at
+    # precendece reference for the comparison operators https://en.cppreference.com/w/c/language/operator_precedence
     arithmetic_expression = pp.infix_notation(variable_name | number, [
-        ('-', 1, pp.OpAssoc.RIGHT, o.UnaryOp),
+        ("-", 1, pp.OpAssoc.RIGHT, o.UnaryOp),
+        ("~", 1, pp.OpAssoc.RIGHT, o.UnaryOp),
         (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
-        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
+        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+        (pp.one_of("< <= >= > == !="), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+        (pp.one_of("& | ^"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     ])
 
     # https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
