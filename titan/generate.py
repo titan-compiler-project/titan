@@ -934,7 +934,7 @@ def _generate_verilog_text(v: m.Verilog_ASM):
 
                 if node.operation is s.Operation.GLOBAL_VAR_DECLARATION:
                     # this should only ever get hit on tick 0 but just in case
-                    if tick is not 0:
+                    if tick != 0:
                         raise Exception("variable declaration outside of tick 0", TitanErrors.UNEXPECTED.name)
 
                     type_ctx = v.get_type_context_from_function(fn, node.type_id)
