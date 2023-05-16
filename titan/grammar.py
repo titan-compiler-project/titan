@@ -40,9 +40,29 @@ class TitanPythonGrammar(NamedTuple):
         ("~", 1, pp.OpAssoc.RIGHT, o.UnaryOp),
         (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
         (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
-        (pp.one_of("< <= >= > == !="), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+        (pp.one_of("& | ^"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+        (pp.one_of("< <= >= > == !="), 2, pp.OpAssoc.LEFT, o.BinaryOp)
+    ])
+
+    # TODO: should these be separate or merged with the arithmetic_expression object
+    bitwise_expression = pp.infix_notation(variable_name | number, [
+        ("~", 1, pp.OpAssoc.RIGHT, o.UnaryOp),
         (pp.one_of("& | ^"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     ])
+
+    comparison_expression = pp.Forward()
+
+    comparison_expression = pp.infix_notation(variable_name | number | arithmetic_expression, [
+        (pp.one_of("< <= >= > == !="), 2, pp.OpAssoc.LEFT, o.BinaryOp)
+    ])
+
+    combo_expression = arithmetic_expression ^ bitwise_expression ^ comparison_expression
+
+    # TEST_comparator = (combo_expression ^ variable_name ^ number) + pp.one_of("< <= >= > == !=") + (combo_expression ^ variable_name ^ number)
+
+    # x = combo_expression ^ variable_name ^ number
+
+    TEST_comparator = comparison_expression
 
     # https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
     # arithmetic_expression = pp.infix_notation(variable_name | number, [
@@ -52,6 +72,7 @@ class TitanPythonGrammar(NamedTuple):
     # ])
 
     assignment = (variable_name + "=" + (arithmetic_expression | function_call)).set_results_name("assignment")
+    # assignment = (variable_name + "=" + (combo_expression | function_call)).set_results_name("assignment")
     
     # an optional ";" was added to the end of the statement and function return grammars, this is so that it can still match
     # when doing the preprocessing step, and when it comes to parsing the file itself
