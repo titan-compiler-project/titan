@@ -254,13 +254,58 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
     # TODO: move this outside of the generate_spirv_asm function
     def _eval_line(line):
 
-        if isinstance(line, o.UnaryOp):
+        print(f"[_eval_line]: line is type {type(line)} containing {line}")
+
+        if isinstance(line, o.TernaryCondOp):
+            # check if bool datatype has been created
+            t_ctx = spirv.TypeContext(t.DataType.BOOLEAN)
+            if not spirv.type_exists(t_ctx):
+                spirv.add_type(t_ctx, f"%type_{t.DataType.BOOLEAN.name}")
+
+                spirv.append_code(
+                    spirv.Sections.TYPES_CONSTS_VARS,
+                    f"{spirv.get_type_id(t_ctx)} = OpTypeBool"
+                )
+            
+            a = true_val_id, true_val_ctx = _eval_line(line.true_val)
+            b = false_val_id, false_val_ctx = _eval_line(line.false_val)
+            c = cond_id, cond_ctx = _eval_line(line.condition)
+
+            # print("-"*10)
+            # print(f"{a}\n{b}\n{c}")
+            # print("-"*10)
+
+            selector_line_id = f"%titan_id_{spirv.id}"
+
+            if not spirv.line_exists(selector_line_id):
+                spirv.add_line(selector_line_id, cond_ctx.datatype)
+
+            true_val_type = _extract_type(true_val_ctx)
+            false_val_type = _extract_type(false_val_ctx)
+
+            # sanity check
+            if true_val_type != false_val_type:
+                raise Exception(f"{TitanErrors.TYPE_MISMATCH.value} value {true_val_ctx} with id {true_val_id} does not match value {false_val_ctx} with id {false_val_id}")
+
+
+            target_type_id = spirv.get_type_id(spirv.TypeContext(t.DataType(true_val_type)))
+
+            spirv.append_code(
+                spirv.Sections.FUNCTIONS,
+                f"{selector_line_id} = OpSelect {target_type_id} {cond_id} {true_val_id} {false_val_id}"
+            )
+
+            spirv.id += 1
+            return selector_line_id, spirv.TypeContext(t.DataType(true_val_type))
+            
+
+        elif isinstance(line, o.UnaryOp):
             type_of_operand = type(line.operands)
 
             # TODO: redundant?
             if line.operator == "-":
                 if type_of_operand == (int or float):
-                    temp_negate = line.operands * -1 # doing this in a temp var to mess up class
+                    temp_negate = line.operands * -1 # doing this in a temp var to avoid messing up the class
 
                     c_ctx = spirv.ConstContext(type_of_operand, temp_negate)
                     if not spirv.const_exists(c_ctx):
@@ -356,6 +401,9 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
                 opcode = "Op"
 
+                hit_comparison = False
+                compare_op = None
+
                 if t_0 is int:
                     opcode += "I"
                     match line.operator:
@@ -367,9 +415,13 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                             opcode += "Mul"
                         case "/":
                             opcode = "OpSDiv"
+                        case ">=":
+                            opcode = "OpSGreaterThanEqual"
+                            hit_comparison = True
+                            compare_op = s.Operation.GREATER_THAN
                         case _:
                             # raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
-                            raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
+                            raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} (int) ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
                 elif t_0 is float:
                     opcode += "F"
                     match line.operator:
@@ -383,7 +435,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                             opcode += "Div"
                         case _:
                             # raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
-                            raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
+                            raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} (float) ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
                 else:
                     # raise Exception("got unknown type when trying to generate opcode", "unknown_type")
                     raise Exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value}", TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name)
@@ -416,14 +468,25 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         f"{temp_id} = OpLoad {prim_t_id_0} {id_1}"
                     )
 
-                    id_1 = temp_id
+                    id_1 = temp_id                
 
+                # special logic in case we are dealing with comparison operators
+                if hit_comparison:
+                    bool_id = spirv.get_type_id(spirv.TypeContext(t.DataType.BOOLEAN))
 
-                spirv.append_code(
-                    spirv.Sections.FUNCTIONS,
-                    f"{line_id} = {opcode} {prim_t_id_0} {id_0} {id_1}"
-                )
-                
+                    spirv.append_code(
+                        spirv.Sections.FUNCTIONS,
+                        f"{line_id} = {opcode} {bool_id} {id_0} {id_1}"
+                    )
+                    
+                    info_0 = s.Information(t.DataType.BOOLEAN, compare_op)
+
+                else:
+                    spirv.append_code(
+                        spirv.Sections.FUNCTIONS,
+                        f"{line_id} = {opcode} {prim_t_id_0} {id_0} {id_1}"
+                    )
+
 
             spirv.id += 1
             return line_id, info_0
@@ -473,7 +536,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             # TODO: maybe make a wrapper function so that we don't need to drop one of the return values?
             line_id, _ = _eval_line(entry[2])
-            # print(f"line: {entry} has final evaluation id of {line_id}")
+            print(f"line: {entry} has final evaluation id of {line_id}")
 
             if entry[1] == "=":
                 opcode = "OpStore"
@@ -497,7 +560,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
     # debug
     # print()
     # print()
-    # spirv.print_contents()
+    spirv.print_contents()
+    print(f"-[generate_spirv_asm] {spirv.generated_lines}")
     machine_object.SPIRV_asm_obj = spirv
     # print()
     # print()
@@ -508,23 +572,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
     if options.Options.OUTPUT_SPIRV_ASM in machine_object.output_options:
         spirv.output_to_file(machine_object.name_of_top_module)
-
-
-def test_parse_action(tokens):
-    # print(f"CALLED {tokens}")
-
-    print("called")
-    for x in range(0, len(tokens)):
-        for y in range(0, len(tokens[x])):
-            # print(f"{x} {y}: {tokens[x][y]}")
-            continue
-
-    return None
-
-def test_parse_action_statement(tokens):
-    # print(f"statment test: {tokens}")
-    return None
-
 
 def _get_datatype_from_string(type_string):
     match type_string:
@@ -734,10 +781,15 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                 )
             
             case "TypeFloat":
-                raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} TypeFloat", TitanErrors.NOT_IMPLEMENTED.name)
             
             case "TypeBool":
-                raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)
+                verilog.add_type_context_to_function(
+                    fn_name, line.id,
+                    m._VerilogTypeContext(
+                        t.DataType.BOOLEAN, [], False, ""
+                    )
+                )
             
     
     for fn_count in range(0, len(fn_locations)):
@@ -854,8 +906,45 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                         )
                     )
 
+                case "Select":
+                        #                          0           1               2             3
+                        # %result_id = OpSelect %type_id %comparison_id %true_value_id %false_value_id
+                        
+                        l = verilog.get_node(fn_name, line.opcode_args[2])
+                        r = verilog.get_node(fn_name, line.opcode_args[3])
+
+                        compare_node = verilog.get_node(fn_name, line.opcode_args[1])
+                        print(f"-[generate_verilog] [select case for OpSelect] {compare_node}")
+
+                        verilog.add_body_node_to_function(
+                            fn_name,
+                            d.Node(
+                                d.NodeContext(
+                                    pos, line.id, line.opcode_args[0],
+                                    l, r, s.Operation.DECISION, [compare_node], True
+                                )
+                            )
+                        )
+
+
+                case "SGreaterThanEqual":
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.GREATER_OR_EQ
+                            )
+                        )
+                    )
+
+
                 case _:
-                    if line.opcode == "Function" or "Label" or "Return" or "FunctionEnd":
+                    # TODO: make this less ugly
+                    if line.opcode == "Function" or line.opcode == "Label" or line.opcode == "Return" or line.opcode == "FunctionEnd":
                         continue
                     else:
                         raise Exception(f"{TitanErrors.UNKNOWN_SPIRV_OPCODE.value} ({line.opcode})", TitanErrors.UNKNOWN_SPIRV_OPCODE.name) 
@@ -891,6 +980,12 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
 
 
 def _generate_verilog_text(v: m.Verilog_ASM):
+
+    def __get_correct_id(node: d.Node):
+        if node.operation in s.Operation_Type.GENERIC_CONSTANT_DECLARATION:
+            return node.data[0]
+        else:
+            return node.spirv_id[1:]
 
     print(f"{v.content}\n\n{v.declared_symbols}\n\n{v.marked_symbols_for_deletion}\n\n")
 
@@ -929,7 +1024,11 @@ def _generate_verilog_text(v: m.Verilog_ASM):
             print(tick)
 
             io_length_tracker = 0
-            for node in sorted_nodes[tick]:
+            # for node in sorted_nodes[tick]:
+            print(f"--=-=-=-=-= LENGTH: {len(sorted_nodes[tick])}")
+            writer_deferred_due_to_comparison = False
+            for x in range(len(sorted_nodes[tick])):
+                node = sorted_nodes[tick][x]
                 print(f"\t{node}")
 
                 if node.operation is s.Operation.GLOBAL_VAR_DECLARATION:
@@ -972,7 +1071,6 @@ def _generate_verilog_text(v: m.Verilog_ASM):
 
                 if node.operation in s.Operation_Type.ARITHMETIC:
                     if node.spirv_id not in v.declared_symbols:
-                        # print("no")
 
                         # update this with a proper function
                         width = int(v.get_type_context_from_function(fn, node.type_id).data[0])
@@ -996,11 +1094,7 @@ def _generate_verilog_text(v: m.Verilog_ASM):
                             op_symbol = "/"
 
 
-                    def __get_correct_id(node: d.Node):
-                        if node.operation in s.Operation_Type.GENERIC_CONSTANT_DECLARATION:
-                            return node.data[0]
-                        else:
-                            return node.spirv_id[1:]
+
 
 
                     # line += f"{node.input_left.spirv_id[1:]} {op_symbol} {node.input_right.spirv_id[1:]};"
@@ -1011,6 +1105,60 @@ def _generate_verilog_text(v: m.Verilog_ASM):
                         writer.Sections.ALWAYS_BLOCK,
                         line
                     )
+
+                # if node.operation in s.Operation_Type.COMPARISON and node.operation is not s.Operation.DECISION:
+                if node.operation in s.Operation_Type.COMPARISON and node.operation is not s.Operation.DECISION:
+                    writer_deferred_due_to_comparison = True
+                
+                if node.operation is s.Operation.DECISION:
+                    # paired_decision_node = sorted_nodes[tick+1][x+1]
+
+                    comparison_node = node.data[0]
+
+                    # comparison node holds the comparison operator, and the comparison itself
+                    # the paried decision node holds the expected results
+
+                    # so i.e. c = a >= 10 ? 5 : 0 would require the comparison node to construct a >= 10
+                    # and the paried decision node for the ? 5 : 0 section
+
+                    # we dont want to create a logic value for the comparison node because that can just be abstracted away
+                    # so instead we will create the logic value for the decision node
+
+                    width = int(v.get_type_context_from_function(fn, node.type_id).data[0])
+
+                    writer.append_code(
+                        writer.Sections.INTERNAL,
+                        f"\tlogic [{width-1}:0] {node.spirv_id[1:]};"
+                    )
+
+                    compare_op = ""
+
+                    match comparison_node.operation:
+                        case s.Operation.LESS_THAN:
+                            compare_op = "<"
+                        case s.Operation.LESS_OR_EQ:
+                            compare_op = "<="
+                        case s.Operation.GREATER_THAN:
+                            compare_op = ">"
+                        case s.Operation.GREATER_OR_EQ:
+                            compare_op = ">="
+                        case s.Operation.EQUAL_TO:
+                            compare_op = "=="
+                        case s.Operation.NOT_EQUAL_TO:
+                            compare_op = "!="
+                        case _:
+                            raise Exception(f"{TitanErrors.UNEXPECTED.value} failed to match operator {node.operation}", TitanErrors.UNEXPECTED.name)
+
+                    line = f"\t{__get_correct_id(node)} <= {__get_correct_id(comparison_node.input_left)} {compare_op} {__get_correct_id(comparison_node.input_right)} ? {__get_correct_id(node.input_left)} : {__get_correct_id(node.input_right)};"
+
+                    writer.append_code(
+                        writer.Sections.ALWAYS_BLOCK,
+                        line
+                    )
+
+                    # writer_deferred_due_to_comparison = False
+                    # x += 1 # skip over the selector node we just used
+
 
         # writer.append_code(
         #     writer.Sections.MODULE_AND_PORTS,

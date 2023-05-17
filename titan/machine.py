@@ -245,6 +245,7 @@ class Verilog_ASM():
         if not self.does_node_exist(fn_name, node.spirv_id):
             self.content[fn_name].body_nodes[node.spirv_id] = []
 
+        print(f"-[Verilog_ASM.add_body_node_to_function] adding {node} with id {node.spirv_id} to function {fn_name}")
         self.content[fn_name].body_nodes[node.spirv_id].append(node)
 
     def add_type_context_to_function(self, fn_name: str, type_id: str, type_context: _VerilogTypeContext):
@@ -276,6 +277,9 @@ class Verilog_ASM():
 
     def does_node_exist(self, fn_name:str, node_id:str):
         return True if node_id in self.content[fn_name].body_nodes else False
+
+    def does_node_exist_in_dict(self, node_dict, node_id):
+        return True if node_id in node_dict else False
 
     def get_node(self, fn_name:str, node_id: str):
         return self.content[fn_name].body_nodes[node_id][-1]
@@ -393,6 +397,10 @@ class Verilog_ASM():
                                         ds.edge(parent_l_id_label, current_node_label, color="white")
                                         ds.edge(parent_r_id_label, current_node_label, color="white")
 
+                                        if v.is_comparison:
+                                            parent_compare_id_label = f"{v.data[0].spirv_id}_{v.data[0].tick}"
+                                            ds.edge(parent_compare_id_label, current_node_label, color="white")
+
                                     case _:
                                         # should be unreachable
                                         raise Exception(f"{TitanErrors.UNEXPECTED.value} - got {parent_num} parents, but parents exist.", TitanErrors.UNEXPECTED.name)
@@ -423,6 +431,9 @@ class Verilog_ASM():
                 return subject_node.input_left
             
             if subject_node.input_left.operation in Operation_Type.ARITHMETIC:
+                return subject_node.input_left
+            
+            if subject_node.input_left.operation in Operation_Type.COMPARISON:
                 return subject_node.input_left
         
         # a non existant id means that it was created for either loading or arithmetic
@@ -456,6 +467,14 @@ class Verilog_ASM():
                     return (self.__find_best_parents(subject_node.input_left), subject_node.input_right)
                 else:
                     return (self.__find_best_parents(subject_node.input_left), self.__find_best_parents(subject_node.input_right))
+                
+            # if its an actual comparison (and not a decision node), find the best parent nodes
+            elif subject_node.operation in Operation_Type.COMPARISON and subject_node.operation is not Operation.DECISION:
+                return (self.__find_best_parents(subject_node.input_left), self.__find_best_parents(subject_node.input_right))
+            
+            # if its a decision node, the best node will be the comparison node that just came before it, so return it
+            elif subject_node.operation is Operation.DECISION:
+                return subject_node.data[0] 
 
 
     def _eval_parents_for_non_temp_id(self, current_node: d.Node):
@@ -465,7 +484,6 @@ class Verilog_ASM():
         # where %1 is a temporary id containing the value of %a
         
         best = self.__find_best_parents(current_node)
-        new_ctx = None
         node_names = []
 
         print(f"BEST EVAL---- {best}")
@@ -526,19 +544,33 @@ class Verilog_ASM():
             # print(self.content[functions].body_nodes)
             tick_ordered_nodes = self._sort_body_nodes_by_tick(function)
 
-            # shift all declarations into the new dict
+            # print(f"-[Verilog_ASM.clean_graph] tick_ordered_nodes: {tick_ordered_nodes}")
+
+            # shift all declarations into the new dict (tick=0, consts + vars)
+            # print('='*10)
             for node in tick_ordered_nodes[0]:
+                # print(f"-[Verilog_ASM.clean_graph] node: {node}", end="")
                 if node.spirv_id not in clean_nodes:
+                    # print(f"...was not in clean nodes as was added into {node.spirv_id}")
                     clean_nodes[node.spirv_id] = [node]
                 else:
+                    # print(f"...was appended to {node.spirv_id}")
                     clean_nodes[node.spirv_id].append(node)
+            # print('='*10)
 
+            # print(f"-[Verilog_ASM.clean_graph] clean_nodes: {clean_nodes}")
 
-
+            print()
             for tick in range(1, len(tick_ordered_nodes.keys())):
+                print(f"-[Verilog_ASM.clean_graph] tick: {tick}")
                 for node in tick_ordered_nodes[tick]:
+                    print(f"\tnode: {node}", end="")
+
                     if node.spirv_id not in self.declared_symbols and node.operation is Operation.LOAD:
+                        print(f"....ignored ({node.spirv_id})")
                         continue
+
+                    print()
 
                     # print("="*10)
                     # print(len(clean_nodes))
@@ -559,21 +591,54 @@ class Verilog_ASM():
                     # if _eval_parents_for_non_temp_id(node) returns a spirv id
                     # we should just try and reference the latest one in the clean
                     # nodes dict
-                    print(f"current node: {node}")
+                    print(f"-->[Verilog_ASM.clean_graph] current node: {node}")
                     best_node_names = self._eval_parents_for_non_temp_id(node)
-                    # print(f"returned with {best_node_names}")
+                    print(f"-->[Verilog_ASM.clean_graph] returned with {best_node_names}")
 
                     if len(best_node_names) == 1:
                         print(f"returned with one node: {best_node_names[0]}")
-                        n = _fetch_last_node(clean_nodes, best_node_names[0])
-                        print(f"\n{n}")
+                        # n = _fetch_last_node(clean_nodes, best_node_names[0])
+                        # print(f"\n{n}")
 
-                        new_ctx = d.NodeContext(
-                            node.spirv_line_no, node.spirv_id, node.type_id,
-                            n, None, node.operation, node.data
-                        )
+                        # new_ctx = d.NodeContext(
+                        #     node.spirv_line_no, node.spirv_id, node.type_id,
+                        #     n, None, node.operation, node.data
+                        # )
 
-                        _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
+                        # _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
+
+                        # print(self.does_node_exist_in_dict(clean_nodes, node.spirv_id))
+
+                        if self.does_node_exist_in_dict(clean_nodes, node.spirv_id):
+                            n = _fetch_last_node(clean_nodes, best_node_names[0])
+
+                            new_ctx = d.NodeContext(
+                                node.spirv_line_no, node.spirv_id, node.type_id,
+                                n, None, node.operation, node.data
+                            )
+
+                            _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
+                        else:
+
+                            # print(f"-[Verilog_ASM.clean_graph] node {node} does not exist in clean dict")
+
+                            if node.is_comparison:
+                                n = _fetch_last_node(clean_nodes, node.data[0].spirv_id)
+                                
+                                new_ctx = d.NodeContext(
+                                    node.spirv_line_no, node.spirv_id, node.type_id,
+                                    node.input_left, node.input_right,
+                                    node.operation, [n], node.is_comparison
+                                )
+                            else:
+                                new_ctx = d.NodeContext(
+                                    node.spirv_line_no, node.spirv_id, node.type_id,
+                                    node.input_left, node.input_right, 
+                                    node.operation, node.data, node.is_comparison
+                                )
+
+                            _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
+
 
 
                     elif len(best_node_names) == 2:
