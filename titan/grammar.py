@@ -2,6 +2,10 @@ import pyparsing as pp
 from typing import NamedTuple
 import operators as o
 
+# slow performance when evaluating comparison statements
+# https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html?highlight=infix_notation#pyparsing.ParserElement.enable_packrat
+pp.ParserElement.enable_packrat()
+
 class TitanPythonGrammar(NamedTuple):
 
     # keywords
@@ -50,19 +54,18 @@ class TitanPythonGrammar(NamedTuple):
         (pp.one_of("& | ^"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     ])
 
-    comparison_expression = pp.Forward()
 
     comparison_expression = pp.infix_notation(variable_name | number | arithmetic_expression, [
         (pp.one_of("< <= >= > == !="), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     ])
 
-    combo_expression = arithmetic_expression ^ bitwise_expression ^ comparison_expression
+    
+    # combo_expression = arithmetic_expression ^ bitwise_expression ^ comparison_expression
 
-    # TEST_comparator = (combo_expression ^ variable_name ^ number) + pp.one_of("< <= >= > == !=") + (combo_expression ^ variable_name ^ number)
+    combo_expression = number ^ variable_name ^ arithmetic_expression
 
-    # x = combo_expression ^ variable_name ^ number
+    conditional_ternary_expr = (combo_expression + pp.Literal("if").suppress() + comparison_expression + pp.Literal("else").suppress() + combo_expression).set_parse_action(o.TernaryCondOp)
 
-    TEST_comparator = comparison_expression
 
     # https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
     # arithmetic_expression = pp.infix_notation(variable_name | number, [
@@ -71,7 +74,7 @@ class TitanPythonGrammar(NamedTuple):
     #     (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     # ])
 
-    assignment = (variable_name + "=" + (arithmetic_expression | function_call)).set_results_name("assignment")
+    assignment = (variable_name + "=" + (combo_expression ^ conditional_ternary_expr ^ function_call)).set_results_name("assignment")
     # assignment = (variable_name + "=" + (combo_expression | function_call)).set_results_name("assignment")
     
     # an optional ";" was added to the end of the statement and function return grammars, this is so that it can still match
