@@ -12,26 +12,49 @@ class NodeContext(NamedTuple):
     input_right: Node = None
     operation: Operation = None
     data: List() = []
+    is_comparison: bool = False # hack because i didn't realise that OpSelect had so many parameters
 
 
     # tick: int = 0 # tick is ignored when the node(s) are populated
 
 
 class Node:
+    
+    @staticmethod
+    def _calculate_tick(left_node, right_node, comparison_node = None):
+        # print("-[_calculate_tick] hit")
+        
+        if comparison_node is None:
+            if left_node is None and right_node is None:
+                return 0
+            elif left_node is None:
+                return right_node + 1
+            elif right_node is None:
+                return left_node + 1
+            else:
+                return max(left_node, right_node) + 1
+        else:
+            if left_node is None and right_node is None:
+                return comparison_node + 1
+            elif left_node is None:
+                return max(right_node, comparison_node) + 1
+            elif right_node is None:
+                return max(left_node, comparison_node) + 1
+            else:
+                return max(left_node, right_node, comparison_node) + 1
 
     @staticmethod
     def _set_tick_during_init(context: NodeContext):
-        left_node_is_none = context.input_left == None
-        right_node_is_none = context.input_right == None
+        # left_node_is_none = context.input_left == None
+        # right_node_is_none = context.input_right == None
 
-        if left_node_is_none and right_node_is_none:
-            return 0
-        elif left_node_is_none:
-            return context.input_right.tick + 1
-        elif right_node_is_none:
-            return context.input_left.tick + 1
+        l_node_val = None if context.input_left == None else context.input_left.tick
+        r_node_val = None if context.input_right == None else context.input_right.tick
+
+        if context.is_comparison:
+            return Node._calculate_tick(l_node_val, r_node_val, context.data[0].tick)
         else:
-            return max(context.input_left.tick, context.input_right.tick) + 1
+            return Node._calculate_tick(l_node_val, r_node_val)
 
 
     def __init__(self, context: NodeContext):
@@ -42,6 +65,7 @@ class Node:
         self.input_right = context.input_right
         self.operation = context.operation
         self.data = context.data
+        self.is_comparison = context.is_comparison
         self.tick = self._set_tick_during_init(context)
 
 
@@ -49,14 +73,22 @@ class Node:
         left_node_is_none = self.input_left == None
         right_node_is_none = self.input_right == None
 
-        if left_node_is_none and right_node_is_none:
-            return 0
-        elif left_node_is_none:
-            return self.input_right.tick + 1
-        elif right_node_is_none:
-            return self.input_left.tick + 1
+        l_node_val = None if left_node_is_none else self.input_left.tick
+        r_node_val = None if right_node_is_none else self.input_right.tick
+
+        if self.is_comparison:
+            return Node._calculate_tick(l_node_val, r_node_val, self.data[0].tick)
         else:
-            return max(self.input_left.tick, self.input_right.tick) + 1
+            return Node._calculate_tick(l_node_val, r_node_val)
+
+        # if left_node_is_none and right_node_is_none:
+        #     return 0
+        # elif left_node_is_none:
+        #     return self.input_right.tick + 1
+        # elif right_node_is_none:
+        #     return self.input_left.tick + 1
+        # else:
+        #     return max(self.input_left.tick, self.input_right.tick) + 1
 
 
     def update_input(self, pos: int, new_node: Node):        
