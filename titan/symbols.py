@@ -28,6 +28,15 @@ class Operation(Enum):
     SUB = auto()
     MULT = auto()
     DIV = auto()
+    
+    # comparisons
+    DECISION = auto()
+    LESS_THAN = auto()
+    LESS_OR_EQ = auto()
+    GREATER_THAN = auto()
+    GREATER_OR_EQ = auto()
+    EQUAL_TO = auto()
+    NOT_EQUAL_TO = auto()
 
     # misc
     NOP = auto()
@@ -37,7 +46,9 @@ class Operation_Type(set, Enum):
     ARITHMETIC = {Operation.ADD, Operation.SUB, Operation.MULT, Operation.DIV}
     GENERIC_CONSTANT_DECLARATION = {Operation.CONSTANT_DECLARATION, Operation.GLOBAL_CONST_DECLARATION}
     GENERIC_VARIABLE_DECLARATION = {Operation.VARIABLE_DECLARATION, Operation.GLOBAL_VAR_DECLARATION}
-
+    COMPARISON = {Operation.DECISION, Operation.LESS_THAN, Operation.LESS_OR_EQ, 
+                  Operation.GREATER_THAN, Operation.GREATER_OR_EQ, 
+                  Operation.EQUAL_TO, Operation.NOT_EQUAL_TO}
 
 class Information(NamedTuple):
     datatype: DataType
