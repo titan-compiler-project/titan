@@ -418,7 +418,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         case ">=":
                             opcode = "OpSGreaterThanEqual"
                             hit_comparison = True
-                            compare_op = s.Operation.GREATER_THAN
+                            compare_op = s.Operation.GREATER_OR_EQ
                         case _:
                             # raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
                             raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} (int) ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
@@ -1133,6 +1133,7 @@ def _generate_verilog_text(v: m.Verilog_ASM):
 
                     compare_op = ""
 
+                    # TODO: replace with enum values instead, since they're just numbers via auto() atm
                     match comparison_node.operation:
                         case s.Operation.LESS_THAN:
                             compare_op = "<"
@@ -1178,3 +1179,6 @@ def _generate_verilog_text(v: m.Verilog_ASM):
     print()
     writer.print_contents()
     writer.output_to_file(fn)
+
+    with open(f"yosys_script_{fn}.txt", "w+") as f:
+        f.write(f"read_verilog -sv {fn}.sv; proc; opt; memory; opt; show;")
