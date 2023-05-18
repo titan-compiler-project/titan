@@ -394,8 +394,8 @@ class Verilog_ASM():
                                         parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
                                         parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
 
-                                        ds.edge(parent_l_id_label, current_node_label, color="white")
-                                        ds.edge(parent_r_id_label, current_node_label, color="white")
+                                        ds.edge(parent_l_id_label, current_node_label, color="white" if not v.is_comparison else "green")
+                                        ds.edge(parent_r_id_label, current_node_label, color="white" if not v.is_comparison else "red")
 
                                         if v.is_comparison:
                                             parent_compare_id_label = f"{v.data[0].spirv_id}_{v.data[0].tick}"
