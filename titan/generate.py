@@ -399,46 +399,85 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             if not spirv.line_exists(line_id):
                 spirv.add_line(line_id, t.DataType(t_0))
 
-                opcode = "Op"
-
+                opcode = ""
                 hit_comparison = False
                 compare_op = None
 
-                if t_0 is int:
-                    opcode += "I"
-                    match line.operator:
-                        case "+":
-                            opcode += "Add"
-                        case "-":
-                            opcode += "Sub"
-                        case "*":
-                            opcode += "Mul"
-                        case "/":
-                            opcode = "OpSDiv"
-                        case ">=":
-                            opcode = "OpSGreaterThanEqual"
-                            hit_comparison = True
-                            compare_op = s.Operation.GREATER_OR_EQ
-                        case _:
-                            # raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
-                            raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} (int) ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
-                elif t_0 is float:
-                    opcode += "F"
-                    match line.operator:
-                        case "+":
-                            opcode += "Add"
-                        case "-":
-                            opcode += "Sub"
-                        case "*":
-                            opcode += "Mul"
-                        case "/":
-                            opcode += "Div"
-                        case _:
-                            # raise Exception("got unknown operator when trying to generate opcode", "unknown_operator")
-                            raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} (float) ({line.operator})", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
-                else:
-                    # raise Exception("got unknown type when trying to generate opcode", "unknown_type")
-                    raise Exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value}", TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name)
+
+                # begin matching the operator
+                match line.operator:
+
+                    # handle arithmetic (see symbols.py)
+                    case line.operator if line.operator in s.LiteralSymbolGroup.ARITHMETIC:
+                        op = s.Operation(line.operator)
+
+                        # handle different types
+                        if t_0 is int:
+                            match op:
+                                case s.Operation.ADD:
+                                    opcode = "OpIAdd"
+                                case s.Operation.SUB:
+                                    opcode = "OpISub"
+                                case s.Operation.MULT:
+                                    opcode = "OpIMul"
+                                case s.Operation.DIV:
+                                    opcode = "OpSDiv"
+                        elif t_0 is float:
+                            match op:
+                                case s.Operation.ADD:
+                                    opcode = "OpFAdd"
+                                case s.Operation.SUB:
+                                    opcode = "OpFSub"
+                                case s.Operation.MULT:
+                                    opcode = "OpFMult"
+                                case s.Operation.DIV:
+                                    opcode = "OpFDiv"
+                        else:
+                            raise Exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value} for arithmetic operator", TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name)
+
+                    # handle comparison
+                    case line.operator if line.operator in s.LiteralSymbolGroup.COMPARISON:
+                        hit_comparison = True
+                        compare_op = s.Operation(line.operator)
+
+                        if t_0 is int:
+                            match compare_op:
+                                case s.Operation.EQUAL_TO:
+                                    opcode = "OpIEqual"
+                                case s.Operation.NOT_EQUAL_TO:
+                                    opcode = "OpINotEqual"
+                                case s.Operation.LESS_THAN:
+                                    opcode = "OpSLessThan"
+                                case s.Operation.LESS_OR_EQ:
+                                    opcode = "OpSLessThanEqual"
+                                case s.Operation.GREATER_THAN:
+                                    opcode = "OpSGreaterThan"
+                                case s.Operation.GREATER_OR_EQ:
+                                    opcode = "OpSGreaterThanEqual"
+                        elif t_0 is float:
+                            # there's ordered and unordered comparisons, not 100% on the differences so we'll be sticking to ordered for now
+                            # https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpFOrdEqual
+                            # https://stackoverflow.com/questions/8627331/what-does-ordered-unordered-comparison-mean
+
+                            match compare_op:
+                                case s.Operation.EQUAL_TO:
+                                    opcode = "OpFOrdEqual"
+                                case s.Operation.NOT_EQUAL_TO:
+                                    opcode = "OpFOrdNotEqual"
+                                case s.Operation.LESS_THAN:
+                                    opcode = "OpFOrdLessThan"
+                                case s.Operation.LESS_OR_EQ:
+                                    opcode = "OpFOrdLessThanEqual"
+                                case s.Operation.GREATER_THAN:
+                                    opcode = "OpFOrdGreaterThan"
+                                case s.Operation.GREATER_OR_EQ:
+                                    opcode = "OpFOrdGreaterThanEqual"
+
+                        else:
+                            raise Exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value} for comparison operator", TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name)
+
+                    case _:
+                        raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} - failed to match line operator {line.operator} during generation", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
                         
                 # we already checked if the types matches so it doesn't really matter if we mix its use
                 prim_t_id_0 = spirv.get_type_id(
@@ -942,6 +981,8 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                     )
 
 
+
+
                 case _:
                     # TODO: make this less ugly
                     if line.opcode == "Function" or line.opcode == "Label" or line.opcode == "Return" or line.opcode == "FunctionEnd":
@@ -1025,7 +1066,7 @@ def _generate_verilog_text(v: m.Verilog_ASM):
 
             io_length_tracker = 0
             # for node in sorted_nodes[tick]:
-            print(f"--=-=-=-=-= LENGTH: {len(sorted_nodes[tick])}")
+            # print(f"--=-=-=-=-= LENGTH: {len(sorted_nodes[tick])}")
             writer_deferred_due_to_comparison = False
             for x in range(len(sorted_nodes[tick])):
                 node = sorted_nodes[tick][x]
