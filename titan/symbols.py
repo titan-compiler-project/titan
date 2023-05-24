@@ -24,19 +24,19 @@ class Operation(Enum):
     ASSIGNMENT = auto()
     STORE = auto()
     LOAD = auto()
-    ADD = auto()
-    SUB = auto()
-    MULT = auto()
-    DIV = auto()
+    ADD = "+"
+    SUB = "-"
+    MULT = "*"
+    DIV = "/"
     
     # comparisons
     DECISION = auto()
-    LESS_THAN = auto()
-    LESS_OR_EQ = auto()
-    GREATER_THAN = auto()
-    GREATER_OR_EQ = auto()
-    EQUAL_TO = auto()
-    NOT_EQUAL_TO = auto()
+    LESS_THAN = "<"
+    LESS_OR_EQ = "<="
+    GREATER_THAN = ">"
+    GREATER_OR_EQ = ">="
+    EQUAL_TO = "=="
+    NOT_EQUAL_TO = "!="
 
     # misc
     NOP = auto()
@@ -49,6 +49,10 @@ class Operation_Type(set, Enum):
     COMPARISON = {Operation.DECISION, Operation.LESS_THAN, Operation.LESS_OR_EQ, 
                   Operation.GREATER_THAN, Operation.GREATER_OR_EQ, 
                   Operation.EQUAL_TO, Operation.NOT_EQUAL_TO}
+
+class LiteralSymbolGroup(set, Enum):
+    ARITHMETIC = {"+", "-", "*", "/"}
+    COMPARISON = {">=", ">", "<", "<=", "==", "!="}
 
 class Information(NamedTuple):
     datatype: DataType
