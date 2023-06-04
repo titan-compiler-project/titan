@@ -18,3 +18,4 @@ class TitanErrors(Enum):
     NON_EXISTENT_SYMBOL = "symbol does not exist"
     UNKNOWN_SPIRV_OPCODE = "unknown SPIR-V opcode"
     UNEXPECTED = "unexpected exception"
+    BAD_TYPES = "bad/unsupported type(s) for operation"
