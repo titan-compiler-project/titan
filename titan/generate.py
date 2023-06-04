@@ -360,8 +360,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             c_ctx = spirv.ConstContext(type(line), line) # create context using line and its type
             if not spirv.const_exists(c_ctx):
                 type_str = t.DataType(type(line)).name
-                
-                                
+
+
                 # set "is_constant" to false because we want the primative type, and that isn't applied to the original type 
                 primative_type_ctx = spirv.TypeContext(
                     t.DataType(type(line)), None, False, False
@@ -1284,7 +1284,8 @@ def _generate_verilog_text(v: m.Verilog_ASM):
                         case _:
                             raise Exception(f"{TitanErrors.UNEXPECTED.value} failed to match operator {node.operation}", TitanErrors.UNEXPECTED.name)
 
-                    line = f"\t\t{__get_correct_id(node)} <= {__get_correct_id(comparison_node.input_left)} {compare_op} {__get_correct_id(comparison_node.input_right)} ? {__get_correct_id(node.input_left)} : {__get_correct_id(node.input_right)};"
+                    # TODO: __get_correct_id(node) was returning the string representation of the node instead, why?
+                    line = f"\t\t{node.spirv_id[1:]} <= {__get_correct_id(comparison_node.input_left)} {compare_op} {__get_correct_id(comparison_node.input_right)} ? {__get_correct_id(node.input_left)} : {__get_correct_id(node.input_right)};"
 
                     writer.append_code(
                         writer.Sections.ALWAYS_BLOCK,
