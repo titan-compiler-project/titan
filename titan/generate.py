@@ -95,6 +95,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             spirv.location += 1
 
+    # TODO: might need a way to change the bit size for types
     for t_ctx, id in spirv.declared_types.items():
 
         match t_ctx.primative_type:
@@ -215,6 +216,9 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                             spirv.Sections.TYPES_CONSTS_VARS,
                             f"%{input.parameter} = OpVariable {id} Input"
                         )
+
+                    case _:
+                        raise Exception(f"{TitanErrors.UNEXPECTED.value}: generate_spirv_asm got an unhandled datatype ({info.datatype})", TitanErrors.UNEXPECTED.name)
 
 
         for returned in func.returns:
@@ -350,18 +354,31 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             #         # TODO
             #         raise Exception("got unexpected type whilst parsing arithmetic", "unexpected_type")
 
-        elif isinstance(line, int):
+        elif isinstance(line, int) or isinstance(line, float):
             # getting an int means that its positive, cus otherwise it would have been wrapped in the UnaryOp class by the parser
-            c_ctx = spirv.ConstContext(int, line)
+            
+            c_ctx = spirv.ConstContext(type(line), line) # create context using line and its type
             if not spirv.const_exists(c_ctx):
                 type_str = t.DataType(type(line)).name
                 
+                                
+                # set "is_constant" to false because we want the primative type, and that isn't applied to the original type 
+                primative_type_ctx = spirv.TypeContext(
+                    t.DataType(type(line)), None, False, False
+                )
+
+                # this should handle unexpected constants
+                if not spirv.type_exists(primative_type_ctx):
+                    spirv.add_type(primative_type_ctx, f"%type_{type_str}")
+
+
                 prim_t_id = spirv.get_type_id(
                     spirv.TypeContext(
                         t.DataType(type(line)),
                         None, False, False
                     )
                 )
+
                 spirv.add_const(c_ctx, f"%const_{type_str}_{line}")
 
                 spirv.append_code(
@@ -369,7 +386,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     f"{spirv.get_const_id(c_ctx)} = OpConstant {prim_t_id} {line}"
                 )
             return spirv.get_const_id(c_ctx), c_ctx
-        
+
         elif isinstance(line, str):
             # gonna assume that this is a symbol
             if symbol_table.exists(line):
@@ -386,8 +403,8 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             t_1 = _extract_type(info_1)
 
             if t_0 is not t_1:
-                # raise Exception("type mismatch", "type_mismatch")
-                raise Exception(f"{TitanErrors.TYPE_MISMATCH.value} t_0 = {t_0}, t_1 = {t_1}", TitanErrors.TYPE_MISMATCH.name)    
+                if line.operator not in s.LiteralSymbolGroup.BITWISE:
+                    raise Exception(f"{TitanErrors.TYPE_MISMATCH.value} t_0 = {t_0}, t_1 = {t_1} on line {line}", TitanErrors.TYPE_MISMATCH.name)    
 
             # print(f"line: {line}")
             # print(f"operator: {line.operator}")
@@ -399,8 +416,10 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             if not spirv.line_exists(line_id):
                 spirv.add_line(line_id, t.DataType(t_0))
 
-                opcode = ""
-                hit_comparison = False
+                opcode = None
+                
+                # special_opset is set to the operation type just incase the opcode needs to be treated differently
+                special_opset = None
                 compare_op = None
 
 
@@ -437,7 +456,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
                     # handle comparison
                     case line.operator if line.operator in s.LiteralSymbolGroup.COMPARISON:
-                        hit_comparison = True
+                        special_opset = s.Operation_Type.COMPARISON
                         compare_op = s.Operation(line.operator)
 
                         if t_0 is int:
@@ -476,16 +495,33 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         else:
                             raise Exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value} for comparison operator", TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name)
 
+                    case line.operator if line.operator in s.LiteralSymbolGroup.BITWISE:
+
+                        if t_0 is float:
+                            raise Exception(f"{TitanErrors.BAD_TYPES.value}: bitwise shift operators require the result variable to be of type integer", TitanErrors.BAD_TYPES.name)
+
+                        if t_1 is float:
+                            raise Exception(f"{TitanErrors.BAD_TYPES}: bitwise shift value must be of type integer")
+                        
+                        special_opset = s.Operation_Type.BITWISE
+                        op = s.Operation(line.operator)
+
+                        match op:
+                            case s.Operation.SHIFT_LEFT:
+                                opcode = "OpShiftLeftLogical"
+                            case s.Operation.SHIFT_RIGHT:
+                                # there's two options in SPIR-V: OpShiftRightLogical and OpShiftRightArithmetic
+                                # https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpShiftRightLogical
+                                # we'll be using OpShiftRightArithmetic in the SPIR-V to keep the sign in case it gets run, but it will be interpreted as OpShiftRightLogical in Verilog
+                                opcode = "OpShiftRightArithmetic"
+
                     case _:
                         raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} - failed to match line operator {line.operator} during generation", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
                         
                 # we already checked if the types matches so it doesn't really matter if we mix its use
                 prim_t_id_0 = spirv.get_type_id(
                     spirv.TypeContext(
-                        t.DataType(t_0),
-                        None,
-                        False,
-                        False
+                        t.DataType(t_0), None, False, False
                     )
                 )
 
@@ -510,7 +546,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     id_1 = temp_id                
 
                 # special logic in case we are dealing with comparison operators
-                if hit_comparison:
+                if special_opset is s.Operation_Type.COMPARISON:
                     bool_id = spirv.get_type_id(spirv.TypeContext(t.DataType.BOOLEAN))
 
                     spirv.append_code(
@@ -521,6 +557,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     info_0 = s.Information(t.DataType.BOOLEAN, compare_op)
 
                 else:
+                    
                     spirv.append_code(
                         spirv.Sections.FUNCTIONS,
                         f"{line_id} = {opcode} {prim_t_id_0} {id_0} {id_1}"
@@ -529,6 +566,9 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             spirv.id += 1
             return line_id, info_0
+        
+        else:
+            raise Exception(f"{TitanErrors.UNEXPECTED.value}: _eval_line function got unhandled line instance ({line} is of type {type(line)})", TitanErrors.UNEXPECTED.name)
     
 
     # start doing each function def and body eval
@@ -671,9 +711,6 @@ def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         symbol_table.add(param, s.Information(datatype, s.Operation.FUNCTION_OUT_VAR_PARAM))
 
 
-
-
-
             # check body params
             for entry in function.body:
                 # TODO: figure out why i can't access pyparsing results using the dot notation
@@ -685,12 +722,8 @@ def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     # print(entry)
 
                     if not symbol_table.exists(entry[0]):
+                        # TODO: figure out why i'm using s.DataType.INTEGER -- maybe i should make an "unknown" type?
                         symbol_table.add(entry[0], s.Information(s.DataType.INTEGER, s.Operation.VARIABLE_DECLARATION))
-
-
-
-                # print(entry.get_name('assignment'))
-
 
 
 class _FunctionLocation(NamedTuple):
@@ -953,7 +986,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                         r = verilog.get_node(fn_name, line.opcode_args[3])
 
                         compare_node = verilog.get_node(fn_name, line.opcode_args[1])
-                        print(f"-[generate_verilog] [select case for OpSelect] {compare_node}")
+                        # print(f"-[generate_verilog] [select case for OpSelect] {compare_node}")
 
                         verilog.add_body_node_to_function(
                             fn_name,
@@ -965,6 +998,22 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                             )
                         )
 
+
+                # these comparison functions are practicaly the same except for the operation that gets added
+                case "IEqual":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+
+                case "INotEqual":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+                
+                case "SLessThan":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+                
+                case "SLessThanEqual":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+                
+                case "SGreaterThan":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
 
                 case "SGreaterThanEqual":
                     l = verilog.get_node(fn_name, line.opcode_args[1])
@@ -980,7 +1029,54 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                         )
                     )
 
+                case "FOrdEqual":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
 
+                case "FOrdNotEqual":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+
+                case "FOrdLessThan":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+
+                case "FOrdLessThanEqual":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+
+                case "FOrdGreaterThan":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+
+                case "FOrdGreaterThanEqual":
+                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+
+
+                case "ShiftLeftLogical":
+                    l = verilog.get_node(fn_name, line.opcode_args[1]) # thing to shift
+                    r = verilog.get_node(fn_name, line.opcode_args[2]) # how much to shift by
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.SHIFT_LEFT
+                            )
+                        )
+                    )
+
+                # TODO: this might need to handle "OpShiftRightLogical"
+                case "ShiftRightArithmetic":
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.SHIFT_RIGHT
+                            )
+                        )
+                    )
+                    
 
 
                 case _:
@@ -1135,9 +1231,6 @@ def _generate_verilog_text(v: m.Verilog_ASM):
                             op_symbol = "/"
 
 
-
-
-
                     # line += f"{node.input_left.spirv_id[1:]} {op_symbol} {node.input_right.spirv_id[1:]};"
 
                     line += f"{__get_correct_id(node.input_left)} {op_symbol} {__get_correct_id(node.input_right)};"
@@ -1191,16 +1284,28 @@ def _generate_verilog_text(v: m.Verilog_ASM):
                         case _:
                             raise Exception(f"{TitanErrors.UNEXPECTED.value} failed to match operator {node.operation}", TitanErrors.UNEXPECTED.name)
 
-                    line = f"\t{__get_correct_id(node)} <= {__get_correct_id(comparison_node.input_left)} {compare_op} {__get_correct_id(comparison_node.input_right)} ? {__get_correct_id(node.input_left)} : {__get_correct_id(node.input_right)};"
+                    line = f"\t\t{__get_correct_id(node)} <= {__get_correct_id(comparison_node.input_left)} {compare_op} {__get_correct_id(comparison_node.input_right)} ? {__get_correct_id(node.input_left)} : {__get_correct_id(node.input_right)};"
 
                     writer.append_code(
                         writer.Sections.ALWAYS_BLOCK,
                         line
                     )
 
-                    # writer_deferred_due_to_comparison = False
-                    # x += 1 # skip over the selector node we just used
+                if node.operation in s.Operation_Type.BITWISE:
 
+                    width = int(v.get_type_context_from_function(fn, node.type_id).data[0])
+
+                    writer.append_code(
+                        writer.Sections.INTERNAL,
+                        f"\tlogic [{width-1}:0] {node.spirv_id[1:]}"
+                    )
+
+                    line = f"\t\t{__get_correct_id(node)} <= {__get_correct_id(node.input_left)} {s.Operation(node.operation).value} {__get_correct_id(node.input_right)};"
+
+                    writer.append_code(
+                        writer.Sections.ALWAYS_BLOCK,
+                        line
+                    )
 
         # writer.append_code(
         #     writer.Sections.MODULE_AND_PORTS,

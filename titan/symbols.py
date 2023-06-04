@@ -38,6 +38,10 @@ class Operation(Enum):
     EQUAL_TO = "=="
     NOT_EQUAL_TO = "!="
 
+    # logical
+    SHIFT_LEFT = "<<"
+    SHIFT_RIGHT = ">>"
+
     # misc
     NOP = auto()
 
@@ -49,10 +53,12 @@ class Operation_Type(set, Enum):
     COMPARISON = {Operation.DECISION, Operation.LESS_THAN, Operation.LESS_OR_EQ, 
                   Operation.GREATER_THAN, Operation.GREATER_OR_EQ, 
                   Operation.EQUAL_TO, Operation.NOT_EQUAL_TO}
+    BITWISE = {Operation.SHIFT_LEFT, Operation.SHIFT_RIGHT}
 
 class LiteralSymbolGroup(set, Enum):
     ARITHMETIC = {"+", "-", "*", "/"}
     COMPARISON = {">=", ">", "<", "<=", "==", "!="}
+    BITWISE = {"<<" , ">>"}
 
 class Information(NamedTuple):
     datatype: DataType

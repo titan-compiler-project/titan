@@ -426,15 +426,17 @@ class Verilog_ASM():
             return subject_node.input_left
         
         if subject_node.operation is Operation.STORE:
-
-            if subject_node.input_left.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
-                return subject_node.input_left
+            return subject_node.input_left
             
-            if subject_node.input_left.operation in Operation_Type.ARITHMETIC:
-                return subject_node.input_left
+            # TODO: this is probably just redundant
+            # if subject_node.input_left.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
+            #     return subject_node.input_left
             
-            if subject_node.input_left.operation in Operation_Type.COMPARISON:
-                return subject_node.input_left
+            # if subject_node.input_left.operation in Operation_Type.ARITHMETIC:
+            #     return subject_node.input_left
+            
+            # if subject_node.input_left.operation in Operation_Type.COMPARISON:
+            #     return subject_node.input_left
         
         # a non existant id means that it was created for either loading or arithmetic
         if subject_node.spirv_id not in self.declared_symbols:
@@ -475,6 +477,9 @@ class Verilog_ASM():
             # if its a decision node, the best node will be the comparison node that just came before it, so return it
             elif subject_node.operation is Operation.DECISION:
                 return subject_node.data[0] 
+            
+            elif subject_node.operation in Operation_Type.BITWISE:
+                return (self.__find_best_parents(subject_node.input_left), self.__find_best_parents(subject_node.input_right))
 
 
     def _eval_parents_for_non_temp_id(self, current_node: d.Node):
