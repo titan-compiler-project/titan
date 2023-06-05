@@ -1000,22 +1000,77 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
 
 
                 # these comparison functions are practicaly the same except for the operation that gets added
-                case "IEqual":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+                case "IEqual" | "FOrdEqual":
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
 
-                case "INotEqual":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-                
-                case "SLessThan":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-                
-                case "SLessThanEqual":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-                
-                case "SGreaterThan":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.EQUAL_TO
+                            )
+                        )
+                    )
 
-                case "SGreaterThanEqual":
+                case "INotEqual" | "FOrdNotEqual":
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.NOT_EQUAL_TO
+                            )
+                        )
+                    )
+                
+                case "SLessThan" | "FOrdLessThan":
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.LESS_THAN
+                            )
+                        )
+                    )
+                
+                case "SLessThanEqual" | "FOrdLessThanEqual":
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.LESS_OR_EQ
+                            )
+                        )
+                    )
+                
+                case "SGreaterThan" | "FOrdGreaterThan":
+                    l = verilog.get_node(fn_name, line.opcode_args[1])
+                    r = verilog.get_node(fn_name, line.opcode_args[2])
+
+                    verilog.add_body_node_to_function(
+                        fn_name,
+                        d.Node(
+                            d.NodeContext(
+                                pos, line.id, line.opcode_args[0],
+                                l, r, s.Operation.GREATER_THAN
+                            )
+                        )
+                    )
+
+                case "SGreaterThanEqual" | "FOrdGreaterThanEqual":
                     l = verilog.get_node(fn_name, line.opcode_args[1])
                     r = verilog.get_node(fn_name, line.opcode_args[2])
 
@@ -1028,25 +1083,6 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                             )
                         )
                     )
-
-                case "FOrdEqual":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-
-                case "FOrdNotEqual":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-
-                case "FOrdLessThan":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-
-                case "FOrdLessThanEqual":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-
-                case "FOrdGreaterThan":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-
-                case "FOrdGreaterThanEqual":
-                    raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} {line.opcode}", TitanErrors.NOT_IMPLEMENTED.name)
-
 
                 case "ShiftLeftLogical":
                     l = verilog.get_node(fn_name, line.opcode_args[1]) # thing to shift
