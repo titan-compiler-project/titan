@@ -2,6 +2,10 @@ import pyparsing as pp
 from typing import NamedTuple
 import operators as o
 
+# slow performance when evaluating comparison statements
+# https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html?highlight=infix_notation#pyparsing.ParserElement.enable_packrat
+pp.ParserElement.enable_packrat()
+
 class TitanPythonGrammar(NamedTuple):
 
     # keywords
@@ -17,21 +21,53 @@ class TitanPythonGrammar(NamedTuple):
     l_cbr, r_cbr = map(pp.Literal, "{}")
     colon = pp.Literal(":")
     semicolon = pp.Literal(";")
+    return_arrow = pp.Literal("->")
 
     number = pp.pyparsing_common.number
+
+    type = pp.one_of(["int", "float", "bool"])
+
+    parameter_with_type_hint = pp.Group(variable_name.set_results_name("parameter") + colon.suppress() + type.set_results_name("type"))
+    function_parameter_list_with_type_hint = pp.delimited_list(parameter_with_type_hint) | pp.empty
 
     function_parameter_list = pp.delimited_list(variable_name) | pp.empty
     function_return_list = pp.Group(pp.delimited_list(variable_name | number | keyword_None))
     function_call = function_name + l_br + function_parameter_list + r_br
-    function_definition = keyword_def.suppress() + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon.suppress()
+    # function_definition = keyword_def.suppress() + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list.set_results_name("function_param_list") + r_br.suppress() + colon.suppress()
+    function_definition = keyword_def.suppress() + function_name.set_results_name("function_name") + l_br.suppress() + function_parameter_list_with_type_hint.set_results_name("function_param_list") + r_br.suppress() + return_arrow.suppress() + (type | keyword_None).set_results_name("function_return_type") + colon.suppress()
 
     # TODO: this doesn't like parsing "a + b - 3" or anything that isn't nicely seperated by brackets
     #       - tried the github ver down below but it also has the same issue, the operators.py file needs to be looked at
+    # precendece reference for the comparison operators https://en.cppreference.com/w/c/language/operator_precedence
+    # TODO: perhaps this should have its name changed, it is no longer only handling only arithmetic, but also comparison and bitwise operators
     arithmetic_expression = pp.infix_notation(variable_name | number, [
-        ('-', 1, pp.OpAssoc.RIGHT, o.UnaryOp),
+        ("-", 1, pp.OpAssoc.RIGHT, o.UnaryOp),
+        ("~", 1, pp.OpAssoc.RIGHT, o.UnaryOp),
         (pp.one_of("* /"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
-        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
+        (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+        (pp.one_of("& | ^"), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+        (pp.one_of("< <= >= > == !="), 2, pp.OpAssoc.LEFT, o.BinaryOp),
+        (pp.one_of("<< >>"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     ])
+
+    # TODO: should these be separate or merged with the arithmetic_expression object
+    bitwise_expression = pp.infix_notation(variable_name | number, [
+        ("~", 1, pp.OpAssoc.RIGHT, o.UnaryOp),
+        (pp.one_of("& | ^"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
+    ])
+
+
+    comparison_expression = pp.infix_notation(variable_name | number | arithmetic_expression, [
+        (pp.one_of("< <= >= > == !="), 2, pp.OpAssoc.LEFT, o.BinaryOp)
+    ])
+
+    
+    # combo_expression = arithmetic_expression ^ bitwise_expression ^ comparison_expression
+
+    combo_expression = number ^ variable_name ^ arithmetic_expression
+
+    conditional_ternary_expr = (combo_expression + pp.Literal("if").suppress() + comparison_expression + pp.Literal("else").suppress() + combo_expression).set_parse_action(o.TernaryCondOp)
+
 
     # https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
     # arithmetic_expression = pp.infix_notation(variable_name | number, [
@@ -40,7 +76,8 @@ class TitanPythonGrammar(NamedTuple):
     #     (pp.one_of("+ -"), 2, pp.OpAssoc.LEFT, o.BinaryOp)
     # ])
 
-    assignment = (variable_name + "=" + (arithmetic_expression | function_call)).set_results_name("assignment")
+    assignment = (variable_name + "=" + (combo_expression ^ conditional_ternary_expr ^ function_call)).set_results_name("assignment")
+    # assignment = (variable_name + "=" + (combo_expression | function_call)).set_results_name("assignment")
     
     # an optional ";" was added to the end of the statement and function return grammars, this is so that it can still match
     # when doing the preprocessing step, and when it comes to parsing the file itself
@@ -88,6 +125,8 @@ class TitanSPIRVGrammar(NamedTuple):
     #       or does the grammar need to be a lot more specific?
     #       - tried using pp.nested_expr and using the Label and FunctionEnd keywords but
     #           i think that something else is just greedily eating tokens
+
+    # https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html?highlight=locatedExpr#pyparsing.Located
 
     # body_start = id + eq + op + pp.Keyword("Label")
     # body_end = op + pp.Keyword("FunctionEnd")

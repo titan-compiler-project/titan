@@ -84,20 +84,15 @@ def main():
             print(f"{err.args[0]} : ({err.args[1]})")
             return -1                    
             
+    # handle python -> spirv
     parse.preprocess(machine_object)
-
-    # _print_debug(machine_object)
-
     parse.parse_processed_python(machine_object)
-
-    # _print_debug(machine_object)
-
     generate.generate_symbols(machine_object, symbol_table)
-
-    # _print_debug(machine_object)
-
     generate.generate_spirv_asm(machine_object, symbol_table)
 
+    # handle spirv -> verilog
+    parse_result = parse.parse_spriv(machine_object)
+    generate.generate_verilog(parse_result)
 
 if __name__ == "__main__":
     main()  

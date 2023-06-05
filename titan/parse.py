@@ -1,8 +1,8 @@
-import tokenize
-import machine, generate
-from grammar import *
+import tokenize, machine, io
 from typing import NamedTuple
+from grammar import *
 import pyparsing as pp
+
 
 def preprocess(machine_object):
 
@@ -87,6 +87,17 @@ def parse_processed_python(machine_object: machine.Machine):
                   name= result.function_name,
                   params= result.function_param_list,
                   body= result.function_statements,
-                  returns = result.function_returns
+                  returns= result.function_returns,
+                  return_type= result.function_return_type
                 )
             )
+
+
+def parse_spriv(m: machine.Machine):
+
+    # creates file in memory using what has already been generated
+    with io.StringIO(m.SPIRV_asm_obj.create_file_as_string()) as x:
+        # applies grammar
+        parse_result = TitanSPIRVGrammar.spirv_body.parse_file(x)
+
+    return parse_result

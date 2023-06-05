@@ -5,19 +5,60 @@ from type import *
 # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
 # if TYPE_CHECKING:
 #     from pyparsing import ParserElement
-    
+
+# TODO: maybe seperate into two enums? currently being used for
+#       symbol table generation and dataflow graph generation
 class Operation(Enum):
+    # vars
     VARIABLE_DECLARATION = auto()
     CONSTANT_DECLARATION = auto()
+    GLOBAL_VAR_DECLARATION = auto()
+    GLOBAL_CONST_DECLARATION = auto()
+    
+    # funcs
     FUNCTION_DECLARATION = auto()
     FUNCTION_IN_VAR_PARAM = auto()
     FUNCTION_OUT_VAR_PARAM = auto()
-    ASSIGNMENT = auto()
-    ADD = auto()
-    SUB = auto()
-    MULT = auto()
-    DIV = auto()
 
+    # operations
+    ASSIGNMENT = auto()
+    STORE = auto()
+    LOAD = auto()
+    ADD = "+"
+    SUB = "-"
+    MULT = "*"
+    DIV = "/"
+    
+    # comparisons
+    DECISION = auto()
+    LESS_THAN = "<"
+    LESS_OR_EQ = "<="
+    GREATER_THAN = ">"
+    GREATER_OR_EQ = ">="
+    EQUAL_TO = "=="
+    NOT_EQUAL_TO = "!="
+
+    # logical
+    SHIFT_LEFT = "<<"
+    SHIFT_RIGHT = ">>"
+
+    # misc
+    NOP = auto()
+
+# https://stackoverflow.com/questions/58492047/how-to-add-member-subsets-to-a-python-enum
+class Operation_Type(set, Enum):
+    ARITHMETIC = {Operation.ADD, Operation.SUB, Operation.MULT, Operation.DIV}
+    GENERIC_CONSTANT_DECLARATION = {Operation.CONSTANT_DECLARATION, Operation.GLOBAL_CONST_DECLARATION}
+    GENERIC_VARIABLE_DECLARATION = {Operation.VARIABLE_DECLARATION, Operation.GLOBAL_VAR_DECLARATION}
+    COMPARISON = {Operation.DECISION, Operation.LESS_THAN, Operation.LESS_OR_EQ, 
+                  Operation.GREATER_THAN, Operation.GREATER_OR_EQ, 
+                  Operation.EQUAL_TO, Operation.NOT_EQUAL_TO}
+    BITWISE = {Operation.SHIFT_LEFT, Operation.SHIFT_RIGHT}
+
+class LiteralSymbolGroup(set, Enum):
+    ARITHMETIC = {"+", "-", "*", "/"}
+    COMPARISON = {">=", ">", "<", "<=", "==", "!="}
+    BITWISE = {"<<" , ">>"}
 
 class Information(NamedTuple):
     datatype: DataType
