@@ -27,7 +27,7 @@ class TitanComms {
         };
         
         struct int24 {
-            unsigned int data : 24;
+            unsigned long data : 24;
         };
         void begin(); // handles hardware config
         void write(int24 address, long value);
