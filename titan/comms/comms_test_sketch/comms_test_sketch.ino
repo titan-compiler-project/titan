@@ -1,9 +1,9 @@
 #include "TitanComms.h"
 #include "SPI.h"
 
-const int CS_PIN = 8;
+const int CS_PIN = 48;
 
-TitanComms comms(CS_PIN, SPISettings(8000000, LSBFIRST, SPI_MODE3));
+TitanComms comms(CS_PIN, SPISettings(8000000, MSBFIRST, SPI_MODE3));
 
 void setup() {
     Serial.begin(9600);
@@ -19,8 +19,8 @@ void loop() {
     //     delay(750);
     // }
 
-    x.data = 24;
-    comms.write(x, 77);
+    x.data = 0xAABBCC;
+    comms.write(x, 0xDEADBEEF);
     delay(1000);
 
 }

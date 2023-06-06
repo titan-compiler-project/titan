@@ -16,6 +16,14 @@ TitanComms::TitanComms(int cs_pin, SPISettings spi_settings){
     _spi_settings = spi_settings;
 }
 
+void TitanComms::_chip_select(){
+    digitalWrite(_cs_pin, LOW);
+}
+
+void TitanComms::_chip_deselect(){
+    digitalWrite(_cs_pin, HIGH);
+}
+
 void TitanComms::begin(){
     pinMode(_cs_pin, OUTPUT);
     digitalWrite(_cs_pin, HIGH); // cs is active low, so setting to high means its disabled
@@ -33,34 +41,29 @@ void TitanComms::_extract_byte_from_int(int24 data, int byte_index, byte* storag
     long byte_mask = 0x800000 >> (8 * byte_index);
     byte new_byte;
 
-    DEBUG_PRINT_STR("address/value: "); DEBUG_PRINT_INT(data.data); DEBUG_PRINT_STR(" "); DEBUG_PRINT_BIN(data.data); DEBUG_PRINTLN();
-    DEBUG_PRINT_STR("byte shift: "); DEBUG_PRINT_INT(byte_index); DEBUG_PRINT_STR(" "); DEBUG_PRINT_BIN(byte_index); DEBUG_PRINTLN();
-    DEBUG_PRINT_STR("byte mask hex: "); DEBUG_PRINT_HEX(byte_mask); DEBUG_PRINT_STR(" "); DEBUG_PRINT_BIN(byte_mask); DEBUG_PRINTLN();
-
-    // for each pos (23-16, 15-8, 7-0):
-    //    if data & bytemask
-    //      bitset(pos, newbyte)
+    // DEBUG_PRINT_STR("address/value: "); DEBUG_PRINT_HEX(data.data); DEBUG_PRINTLN();
+    // DEBUG_PRINT_STR("byte shift: "); DEBUG_PRINT_INT(byte_index); DEBUG_PRINTLN();
+    // DEBUG_PRINT_STR("byte mask hex: "); DEBUG_PRINT_HEX(byte_mask); DEBUG_PRINTLN();
 
     int upper_limit = 7 + (8 * byte_index);
     int lower_limit = 0 + (8 * byte_index);
-
 
     int normal_pos = 0; // i is relative to the incoming value, it needs to be translated to the new byte
     for (int i = lower_limit; i < upper_limit + 1; i++){
         if (bitRead(data.data, i)) {
             bitSet(new_byte, normal_pos);
-            DEBUG_PRINT_STR("pos: "); DEBUG_PRINT_INT(i); DEBUG_PRINTLN_STR(" set");
+            // DEBUG_PRINT_STR("pos: "); DEBUG_PRINT_INT(i); DEBUG_PRINTLN_STR(" set");
         } else {
             bitClear(new_byte, normal_pos);
-            DEBUG_PRINT_STR("pos: "); DEBUG_PRINT_INT(i); DEBUG_PRINTLN_STR(" not set");
+            // DEBUG_PRINT_STR("pos: "); DEBUG_PRINT_INT(i); DEBUG_PRINTLN_STR(" not set");
         }
         normal_pos++;
     }
 
     *storage_byte = new_byte;
 
-    DEBUG_PRINT_STR("returning: "); DEBUG_PRINT_BIN(new_byte); DEBUG_PRINTLN();
-    DEBUG_PRINTLN_STR("-------");
+    // DEBUG_PRINT_STR("returning: "); DEBUG_PRINT_BIN(new_byte); DEBUG_PRINT_STR(" "); DEBUG_PRINT_HEX(new_byte); DEBUG_PRINTLN();
+    // DEBUG_PRINTLN_STR("-------");
 }
 
 void TitanComms::write(int24 address, long value){
@@ -81,7 +84,29 @@ void TitanComms::write(int24 address, long value){
     _extract_byte_from_int(address, 0, &addr_low);
     _extract_byte_from_int(address, 1, &addr_mid);
     _extract_byte_from_int(address, 2, &addr_high);
-    DEBUG_PRINT_STR("---L "); DEBUG_PRINT_BIN(addr_low); DEBUG_PRINTLN();
-    DEBUG_PRINT_STR("---M "); DEBUG_PRINT_BIN(addr_mid); DEBUG_PRINTLN();
-    DEBUG_PRINT_STR("---H "); DEBUG_PRINT_BIN(addr_high); DEBUG_PRINTLN();
+
+    unsigned int merged_instr_addr_high = (WRITE << 8) + addr_high; // instruction + address high byte (16b)
+    unsigned int addr_mid_and_low = (addr_mid << 8) + addr_low; // address mid byte + address low byte (16b)
+    unsigned int upper_data = (value >> 16);
+    unsigned int lower_data = value; // auto truncated?
+
+    DEBUG_PRINT_STR("instr+addr_h: "); DEBUG_PRINT_HEX(merged_instr_addr_high); DEBUG_PRINTLN();
+    DEBUG_PRINT_STR("addr_m+addr_l: "); DEBUG_PRINT_HEX(addr_mid_and_low); DEBUG_PRINTLN();
+    DEBUG_PRINT_STR("upper data: "); DEBUG_PRINT_HEX(upper_data); DEBUG_PRINTLN();
+    DEBUG_PRINT_STR("lower data: "); DEBUG_PRINT_HEX(lower_data); DEBUG_PRINTLN();
+    DEBUG_PRINTLN_STR("-------");
+
+
+    SPI.beginTransaction(_spi_settings);
+    _chip_select();
+    SPI.transfer16(merged_instr_addr_high);
+    SPI.transfer16(addr_mid_and_low);
+    SPI.transfer16(upper_data);
+    SPI.transfer16(lower_data);
+    _chip_deselect();
+    SPI.endTransaction();
+
+    // DEBUG_PRINT_STR("---L "); DEBUG_PRINT_HEX(addr_low); DEBUG_PRINTLN();
+    // DEBUG_PRINT_STR("---M "); DEBUG_PRINT_HEX(addr_mid); DEBUG_PRINTLN();
+    // DEBUG_PRINT_STR("---H "); DEBUG_PRINT_HEX(addr_high);  DEBUG_PRINTLN();
 }
