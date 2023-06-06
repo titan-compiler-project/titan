@@ -13,6 +13,7 @@
     #define DEBUG_PRINT_HEX(x) Serial.print(x, HEX);
     #define DEBUG_PRINT_INT(x) Serial.print(x);
     #define DEBUG_PRINT_BIN(x) Serial.print(x, BIN);
+    #define DEBUG_PRINT_SIZEOF(x) Serial.print(sizeof(x));
 
 #else
     #define DEBUG_PRINT(x)
@@ -22,4 +23,5 @@
     #define DEBUG_PRINT_HEX(x)
     #define DEBUG_PRINT_INT(x)
     #define DEBUG_PRINT_BIN(x)
+    #define DEBUG_PRINT_SIZEOF(x)
 #endif
