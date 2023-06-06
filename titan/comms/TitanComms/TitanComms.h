@@ -38,6 +38,8 @@ class TitanComms {
         byte _nop_and_read8();
         int _nop_and_read16();
         void _extract_byte_from_int(int24 data, int byte_index, byte* storage_byte);
+        void _chip_select();
+        void _chip_deselect();
 };
 
 #endif
