@@ -73,16 +73,20 @@ void TitanComms::write(u_int24 address, u_int32_t value){
     _extract_byte_from_int(address, 1, &addr_mid);
     _extract_byte_from_int(address, 2, &addr_high);
 
-    unsigned int merged_instr_addr_high = (WRITE << 8) + addr_high; // instruction + address high byte (16b)
-    unsigned int addr_mid_and_low = (addr_mid << 8) + addr_low; // address mid byte + address low byte (16b)
-    unsigned int upper_data = (value >> 16);
-    unsigned int lower_data = value; // auto truncated?
+    u_int16_t merged_instr_addr_high = (WRITE << 8) + addr_high; // instruction + address high byte (16b)
+    u_int16_t addr_mid_and_low = (addr_mid << 8) + addr_low; // address mid byte + address low byte (16b)
+    u_int16_t upper_data = (value >> 16);
+    u_int16_t lower_data = value; // auto truncated?
 
-    DEBUG_PRINT_STR("instr+addr_h: "); DEBUG_PRINT_HEX(merged_instr_addr_high); DEBUG_PRINTLN();
-    DEBUG_PRINT_STR("addr_m+addr_l: "); DEBUG_PRINT_HEX(addr_mid_and_low); DEBUG_PRINTLN();
-    DEBUG_PRINT_STR("upper data: "); DEBUG_PRINT_HEX(upper_data); DEBUG_PRINTLN();
-    DEBUG_PRINT_STR("lower data: "); DEBUG_PRINT_HEX(lower_data); DEBUG_PRINTLN();
-    DEBUG_PRINTLN_STR("-------");
+    // DEBUG_PRINT_STR("instr+addr_h: "); DEBUG_PRINT_HEX(merged_instr_addr_high); DEBUG_PRINTLN();
+    // DEBUG_PRINT_STR("addr_m+addr_l: "); DEBUG_PRINT_HEX(addr_mid_and_low); DEBUG_PRINTLN();
+    // DEBUG_PRINT_STR("upper data: "); DEBUG_PRINT_HEX(upper_data); DEBUG_PRINTLN();
+    // DEBUG_PRINT_STR("lower data: "); DEBUG_PRINT_HEX(lower_data); DEBUG_PRINTLN();
+    // DEBUG_PRINTLN_STR("-------");
+
+    DEBUG_PRINT_STR("write instruction: "); DEBUG_PRINT_HEX(merged_instr_addr_high);
+        DEBUG_PRINT_HEX(addr_mid_and_low); DEBUG_PRINT_HEX(upper_data);
+        DEBUG_PRINT_HEX(lower_data); DEBUG_PRINTLN();
 
 
     SPI.beginTransaction(_spi_settings);
@@ -125,19 +129,25 @@ u_int32_t TitanComms::read(u_int24 address){
     
     SPI.beginTransaction(_spi_settings);
     _chip_select();
+    
     SPI.transfer16(merged_instr_addr_high);
     SPI.transfer16(addr_mid_and_low);
+
     value_high = _nop_and_read16();
     value_low = _nop_and_read16();
     recieved_checksum = _nop_and_read8();
+    
     _chip_deselect();
     SPI.endTransaction();
 
-    DEBUG_PRINT_STR("reading: "); DEBUG_PRINT_HEX(merged_instr_addr_high); DEBUG_PRINT_HEX(addr_mid_and_low); DEBUG_PRINTLN();
+    u_int32_t final_val = (value_high << 16) + value_low;
+    
+    DEBUG_PRINT_STR("read instruction: "); DEBUG_PRINT_HEX(merged_instr_addr_high); DEBUG_PRINT_HEX(addr_mid_and_low);
+        DEBUG_PRINT_STR(" returns ") + DEBUG_PRINT_HEX(final_val); DEBUG_PRINTLN();
 
     // TODO: double check if value was receieved correctly
     // make checksum + maybe helper function to re-read value if incorrect
 
-    return (u_int32_t) (value_high << 16) + value_low;
+    return final_val;
 
 }
