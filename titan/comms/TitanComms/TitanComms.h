@@ -9,11 +9,6 @@
 #include "Arduino.h"
 #include "SPI.h"
 
-// gotta remember:
-// char - 1 byte/8 bits
-// int - 2 bytes/16 bits
-// long - 4 bytes/32 bits
-
 class TitanComms {
     public:
         TitanComms(int cs_pin, SPISettings spi_settings); // pass cs & spi settings?
@@ -26,20 +21,21 @@ class TitanComms {
             GET_METADATA = 0xFF
         };
         
-        struct int24 {
-            unsigned long data : 24;
+        struct u_int24 {
+            u_int32_t data : 24;
         };
         void begin(); // handles hardware config
-        void write(int24 address, long value);
-        unsigned long read();
+        void write(u_int24 address, u_int32_t value);
+        u_int32_t read(u_int24 address);
     private:
         int _cs_pin;
         SPISettings _spi_settings;
-        byte _nop_and_read8();
-        int _nop_and_read16();
-        void _extract_byte_from_int(int24 data, int byte_index, byte* storage_byte);
+        u_int8_t _nop_and_read8();
+        u_int16_t _nop_and_read16();
+        void _extract_byte_from_int(u_int24 data, int byte_index, u_int8_t* storage_byte);
         void _chip_select();
         void _chip_deselect();
+        u_int8_t _xor_checksum(u_int32_t input);
 };
 
 #endif
