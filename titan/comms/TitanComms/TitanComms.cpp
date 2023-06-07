@@ -30,7 +30,7 @@ void TitanComms::begin(){
     SPI.begin();
 }
 
-void TitanComms::_extract_byte_from_int(int24 data, int byte_index, byte* storage_byte){
+void TitanComms::_extract_byte_from_int(u_int24 data, int byte_index, u_int8_t* storage_byte){
     // byte_index should be either 0, 1 or 2
     // byte_index:     2           1           0
     // 24b number: xxxx xxxx | xxxx xxxx | xxxx xxxx
@@ -38,8 +38,8 @@ void TitanComms::_extract_byte_from_int(int24 data, int byte_index, byte* storag
     //             0000 0000   1000 0000   0000 0000 -- 0x008000
     //             0000 0000   0000 0000   1000 0000 -- 0x000080
     
-    long byte_mask = 0x800000 >> (8 * byte_index);
-    byte new_byte;
+    u_int32_t byte_mask = 0x800000 >> (8 * byte_index);
+    u_int8_t new_byte;
 
     // DEBUG_PRINT_STR("address/value: "); DEBUG_PRINT_HEX(data.data); DEBUG_PRINTLN();
     // DEBUG_PRINT_STR("byte shift: "); DEBUG_PRINT_INT(byte_index); DEBUG_PRINTLN();
@@ -66,20 +66,8 @@ void TitanComms::_extract_byte_from_int(int24 data, int byte_index, byte* storag
     // DEBUG_PRINTLN_STR("-------");
 }
 
-void TitanComms::write(int24 address, long value){
-
-    // have 8b instruction + 24bit address + 32bit value
-    // how to split into nice 8 or 16 bit calls?
-
-    // 8 8 16 16 16
-
+void TitanComms::write(u_int24 address, u_int32_t value){
     byte addr_high, addr_mid, addr_low = 0;
-
-    // DEBUG_PRINT_VALUE(address.data);
-
-    // for (int i = 0; i < 3; i++){
-    //     _extract_byte_from_int(address, i, &addr_high);
-    // }
 
     _extract_byte_from_int(address, 0, &addr_low);
     _extract_byte_from_int(address, 1, &addr_mid);
@@ -109,4 +97,47 @@ void TitanComms::write(int24 address, long value){
     // DEBUG_PRINT_STR("---L "); DEBUG_PRINT_HEX(addr_low); DEBUG_PRINTLN();
     // DEBUG_PRINT_STR("---M "); DEBUG_PRINT_HEX(addr_mid); DEBUG_PRINTLN();
     // DEBUG_PRINT_STR("---H "); DEBUG_PRINT_HEX(addr_high);  DEBUG_PRINTLN();
+}
+
+byte TitanComms::_nop_and_read8(){
+    byte temp = SPI.transfer(NOP);
+    return temp;
+}
+
+u_int16_t TitanComms::_nop_and_read16(){
+    u_int16_t temp = SPI.transfer16(NOP);
+    return temp;
+}
+
+u_int32_t TitanComms::read(u_int24 address){
+    // send: instruction + address --> 8 bits + 24 bits
+    // recieve: value + checksum --> 32 bits + 8 bits
+
+    u_int8_t addr_high;
+    _extract_byte_from_int(address, 2, &addr_high); // should get the highest byte from address
+
+    u_int16_t merged_instr_addr_high = (READ << 8) + addr_high;
+    u_int16_t addr_mid_and_low = address.data;
+
+    u_int16_t value_high, value_low;
+    u_int8_t recieved_checksum, calculated_checksum;
+
+    
+    SPI.beginTransaction(_spi_settings);
+    _chip_select();
+    SPI.transfer16(merged_instr_addr_high);
+    SPI.transfer16(addr_mid_and_low);
+    value_high = _nop_and_read16();
+    value_low = _nop_and_read16();
+    recieved_checksum = _nop_and_read8();
+    _chip_deselect();
+    SPI.endTransaction();
+
+    DEBUG_PRINT_STR("reading: "); DEBUG_PRINT_HEX(merged_instr_addr_high); DEBUG_PRINT_HEX(addr_mid_and_low); DEBUG_PRINTLN();
+
+    // TODO: double check if value was receieved correctly
+    // make checksum + maybe helper function to re-read value if incorrect
+
+    return (u_int32_t) (value_high << 16) + value_low;
+
 }
