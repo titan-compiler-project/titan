@@ -12,7 +12,8 @@ module tb_core_interface;
     reg [31:0] value, returned_value;
 
     core_interface # (
-        .START_ADDRESS(0), .END_ADDRESS(2), .TOTAL_PARAMETERS(2)
+        .START_ADDRESS(0), .END_ADDRESS(2), .TOTAL_INPUTS(2), .TOTAL_OUTPUTS(1)
+
     ) uut_cf (
         .clock(clk), .instruction(instruction),
         .address(address), .value(value), .output_value(returned_value)
