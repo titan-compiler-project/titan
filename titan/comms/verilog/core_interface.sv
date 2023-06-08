@@ -7,7 +7,8 @@ module core_interface # (
     parameter INSTRUCTION_WIDTH = 8,
     parameter ADDRESS_WIDTH = 24,
     parameter VALUE_WIDTH = 32,
-    parameter TOTAL_PARAMETERS,
+    parameter TOTAL_INPUTS,
+    parameter TOTAL_OUTPUTS,
     parameter START_ADDRESS,
     parameter END_ADDRESS
 ) (
@@ -18,44 +19,54 @@ module core_interface # (
     output wire [VALUE_WIDTH-1:0] output_value
 );
 
+    localparam LAST_INPUT_ADDRESS = END_ADDRESS - TOTAL_OUTPUTS;
     TitanComms::instructions instr_enum;
 
-    // VALUE_WIDTH wide memory, 3 units deep
-    reg [VALUE_WIDTH-1:0] value_memory [0:2];
-    // reg [VALUE_WIDTH-1:0] output_reg; // need to account for total number of outputs
-
-
-    wire enable = (address >= START_ADDRESS) & (address <= END_ADDRESS);
-
     // need address in normal range to index memory, not global range
-    wire [ADDRESS_WIDTH-1:0] normalised_address = address - START_ADDRESS;  
+    wire [ADDRESS_WIDTH-1:0] normalised_input_address = address - START_ADDRESS;
+    wire [ADDRESS_WIDTH-1:0] normalised_ouput_address = address - LAST_INPUT_ADDRESS;
+
+    
+    wire interface_enable = (address >= START_ADDRESS) & (address <= END_ADDRESS);
+    wire addressing_inputs = (address >= START_ADDRESS) & (address <= LAST_INPUT_ADDRESS);
+    wire addressing_outputs = (address > LAST_INPUT_ADDRESS) & (address <= END_ADDRESS);
+    
+    
+    logic [VALUE_WIDTH-1:0] input_memory [0:1];  // use params to calculate required depth
+    logic [VALUE_WIDTH-1:0] output_memory; // if only one output, we can't make instance using [0]
+
 
     reg [VALUE_WIDTH-1:0] output_val_internal;
 
+    add_2 uut_add2 (
+        .clock(clock), .a(input_memory[0]), .b(input_memory[1]), .c(output_memory)
+    );    
+
     always_comb begin
-    // always @ (posedge enable) begin
-        // if we're being talked to
-        if (enable) begin
+
+        if (interface_enable) begin
             unique case (instruction)
 
                 READ: begin
-                    output_val_internal <= value_memory[normalised_address];
+                    if (addressing_inputs) begin
+                        output_val_internal <= input_memory[normalised_input_address];
+                    end else if (addressing_outputs) begin
+                        // only usable with multiple outputs
+                        // output_val_internal <= output_memory[normalised_ouput_address];
+                        output_val_internal <= output_memory;
+                    end
                 end
 
                 WRITE: begin
-                    value_memory[normalised_address] <= value;
+                    // writing to output_memory is illegal because it would lead to multiple drivers
+                    if (addressing_inputs) begin
+                        input_memory[normalised_input_address] <= value;
+                    end
                 end
 
             endcase
         end
     end
-
-    // might have to add the core instance here?
-    // not sure how else i could interface the memory block
-
-    add_2 uut_add2 (
-        .clock(clock), .a(value_memory[0]), .b(value_memory[1]), .c(value_memory[2])
-    );
 
 
     assign output_value = output_val_internal;
