@@ -26,7 +26,7 @@ module instruction_handler # (
     wire logic got_all_data;
     assign got_all_data = expected_byte_count == received_byte_count ? 1 : 0;
 
-    logic data_valid = 0;
+    wire logic data_valid;
     logic [1:0] data_pointer = 0;
 
     // on new byte get
@@ -35,6 +35,7 @@ module instruction_handler # (
 
         // might cause issues with adding new instructions because they might be out of range?
         // if the instruction is WRITE, READ or STREAM (long instruction)
+
             if (!instruction_received & (spi_rx_byte >= 1 & spi_rx_byte <= 3)) begin
                 data_pointer <= 0;
                 instruction_received <= 1;
@@ -60,10 +61,17 @@ module instruction_handler # (
             end else if (!instruction_received & (spi_rx_byte >= 4 & spi_rx_byte <= 5)) begin
                 current_instruction <= spi_rx_byte;
 
-                // https://stackoverflow.com/questions/18067571/indexing-vectors-and-arrays-with
-                // spi_tx_byte <= value_from_core[8 * data_pointer +: 8]; // sends LSB first
-                spi_tx_byte <= value_from_core[31 - (8 * data_pointer) -: 8]; // sends MSB first
-                data_pointer <= data_pointer + 1;
+                // reset datapointer if we need to send entire thing again
+                if (spi_rx_byte == REPEAT) begin
+                    data_pointer <= 0;
+                    
+                end else if (spi_rx_byte == TRANSFER) begin
+                    // https://stackoverflow.com/questions/18067571/indexing-vectors-and-arrays-with
+                    // spi_tx_byte <= value_from_core[8 * data_pointer +: 8]; // sends LSB first
+                    spi_tx_byte <= value_from_core[31 - (8 * data_pointer) -: 8]; // sends MSB first
+                    data_pointer <= data_pointer + 1;
+                    spi_tx_valid <= 1;
+                end
 
             end else if (instruction_received) begin
                 received_byte_count <= received_byte_count + 1;
@@ -79,6 +87,8 @@ module instruction_handler # (
         if (instruction_received & (received_byte_count == expected_byte_count)) begin
             instruction_received <= 0;
             received_byte_count <= 0;
+        end else if (current_instruction == TRANSFER) begin
+            spi_tx_valid = 0;
         end
     end
 
