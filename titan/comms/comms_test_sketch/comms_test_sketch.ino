@@ -34,11 +34,10 @@ void loop() {
     if (rx != 0x23232323)
         wrong_counter++;
 
+    total_requests++;
+
     DEBUG_PRINT_STR("wrong hit: "); DEBUG_PRINT_INT(wrong_counter); 
         DEBUG_PRINT_STR(" out of "); DEBUG_PRINT_INT(total_requests); DEBUG_PRINTLN();
 
-    total_requests++;
-
     delay(1000);
-
 }
