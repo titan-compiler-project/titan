@@ -5,12 +5,15 @@ module instruction_handler # (
     parameter ADDRESS_WIDTH = 24,
     parameter VALUE_WIDTH = 32
 ) (
+    input wire clk,
     input wire spi_rx_valid,
     input wire [7:0] spi_rx_byte,
     input wire [VALUE_WIDTH-1:0] value_from_core,
     output logic [INSTRUCTION_WIDTH-1:0] instruction_bus,
     output logic [ADDRESS_WIDTH-1:0] address_bus,
-    output logic [VALUE_WIDTH-1:0] value_bus
+    output logic [VALUE_WIDTH-1:0] value_bus,
+    output logic spi_tx_valid,
+    output logic [7:0] spi_tx_byte
 );
 
     logic instruction_received = 0;
@@ -23,44 +26,51 @@ module instruction_handler # (
     wire logic got_all_data;
     assign got_all_data = expected_byte_count == received_byte_count ? 1 : 0;
 
-    logic [2:0] data_pointer = 0;
+    logic data_valid = 0;
+    logic [1:0] data_pointer = 0;
 
     // on new byte get
     always_ff @ (posedge spi_rx_valid) begin
+        $monitor("(%g) data pointer %h", $time, data_pointer);
+
         // might cause issues with adding new instructions because they might be out of range?
         // if the instruction is WRITE, READ or STREAM (long instruction)
-        if (!instruction_received & (spi_rx_byte >= 1 & spi_rx_byte <= 3)) begin
-            instruction_received <= 1;
-            current_instruction <= spi_rx_byte;
-            received_byte_count <= 1;
+            if (!instruction_received & (spi_rx_byte >= 1 & spi_rx_byte <= 3)) begin
+                data_pointer <= 0;
+                instruction_received <= 1;
+                current_instruction <= spi_rx_byte;
+                received_byte_count <= 1;
 
-            unique case (spi_rx_byte)
-                WRITE: begin
-                    expected_byte_count = 8;
-                end
+                unique case (spi_rx_byte)
+                    WRITE: begin
+                        expected_byte_count = 8;
+                    end
 
-                READ: begin
-                    expected_byte_count = 4;
-                end
+                    READ: begin
+                        expected_byte_count = 4;
+                    end
 
-                default: begin
-                    expected_byte_count = 'hx;
-                end
-            endcase
+                    default: begin
+                        expected_byte_count = 'hx;
+                    end
+                endcase
 
-            
-        // otherwise if the instruction is TRANSFER or REPEAT
-        end else if (!instruction_received & (spi_rx_byte >= 4 & spi_rx_byte <= 5)) begin
-            current_instruction <= spi_rx_byte;
-            $display("%h TRANSFER or REPEAT", spi_rx_byte);
-            // TODO: add stuff to control the transfer back
+                
+            // otherwise if the instruction is TRANSFER or REPEAT
+            end else if (!instruction_received & (spi_rx_byte >= 4 & spi_rx_byte <= 5)) begin
+                current_instruction <= spi_rx_byte;
 
-        end else if (instruction_received) begin
-            received_byte_count <= received_byte_count + 1;
-        end
+                // https://stackoverflow.com/questions/18067571/indexing-vectors-and-arrays-with
+                // spi_tx_byte <= value_from_core[8 * data_pointer +: 8]; // sends LSB first
+                spi_tx_byte <= value_from_core[31 - (8 * data_pointer) -: 8]; // sends MSB first
+                data_pointer <= data_pointer + 1;
 
-            // shift any and all data into the register
-            rebuilt_instruction <= {rebuilt_instruction[56:0], spi_rx_byte};
+            end else if (instruction_received) begin
+                received_byte_count <= received_byte_count + 1;
+            end
+
+                // shift any and all data into the register
+                rebuilt_instruction <= {rebuilt_instruction[56:0], spi_rx_byte};
     end
 
 
