@@ -104,13 +104,25 @@ void TitanComms::write(u_int24 address, u_int32_t value){
 }
 
 byte TitanComms::_nop_and_read8(){
-    byte temp = SPI.transfer(NOP);
+    byte temp = SPI.transfer(TRANSFER);
     return temp;
 }
 
 u_int16_t TitanComms::_nop_and_read16(){
-    u_int16_t temp = SPI.transfer16(NOP);
+    u_int16_t temp = SPI.transfer16(TRANSFER);
     return temp;
+}
+
+void TitanComms::_repeat() {
+    SPI.beginTransaction(_spi_settings);
+    _chip_select();
+    SPI.transfer(REPEAT);
+    _chip_deselect();
+    SPI.endTransaction();
+}
+
+void TitanComms::repeat() {
+    _repeat();
 }
 
 u_int32_t TitanComms::read(u_int24 address){
@@ -133,9 +145,27 @@ u_int32_t TitanComms::read(u_int24 address){
     SPI.transfer16(merged_instr_addr_high);
     SPI.transfer16(addr_mid_and_low);
 
-    value_high = _nop_and_read16();
-    value_low = _nop_and_read16();
-    recieved_checksum = _nop_and_read8();
+    _chip_deselect();
+
+    delayMicroseconds(10);
+
+    _chip_select();
+    // value_high = _nop_and_read16();
+
+    value_high = _nop_and_read8();
+    // value_high = 0b11111111;
+    // DEBUG_PRINT_STR("before shift: "); DEBUG_PRINT_BIN(value_high); DEBUG_PRINTLN();
+    value_high = value_high << 8;
+    // DEBUG_PRINT_STR("after shift: "); DEBUG_PRINT_BIN(value_high); DEBUG_PRINTLN();
+    value_high = value_high ^ _nop_and_read8();
+    // value_high = value_high ^ 0b10101010;
+    // DEBUG_PRINT_STR("after xor: "); DEBUG_PRINT_BIN(value_high); DEBUG_PRINTLN();
+
+    value_low = _nop_and_read8();
+    value_low = value_low << 8;
+    value_low = value_low ^ _nop_and_read8();
+
+    // recieved_checksum = _nop_and_read8();
     
     _chip_deselect();
     SPI.endTransaction();
