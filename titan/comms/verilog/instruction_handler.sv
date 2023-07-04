@@ -12,7 +12,6 @@ module instruction_handler # (
     output logic [INSTRUCTION_WIDTH-1:0] instruction_bus,
     output logic [ADDRESS_WIDTH-1:0] address_bus,
     output logic [VALUE_WIDTH-1:0] value_bus,
-    output logic spi_tx_valid,
     output logic [7:0] spi_tx_byte
 );
 
@@ -24,20 +23,19 @@ module instruction_handler # (
     logic [7:0] received_byte_count = 0;
  
     wire logic got_all_data;
-    assign got_all_data = expected_byte_count == received_byte_count ? 1 : 0;
+    assign got_all_data = expected_byte_count == received_byte_count ? 1'b1 : 1'b0;
+	 
+    logic [1:0] data_pointer = 2'b01;
 
-    wire logic data_valid;
-    logic [1:0] data_pointer = 0;
-
-    // on new byte get
-    always_ff @ (posedge spi_rx_valid) begin
+    always_ff @ (posedge clk) begin
         $monitor("(%g) data pointer %h", $time, data_pointer);
 
         // might cause issues with adding new instructions because they might be out of range?
         // if the instruction is WRITE, READ or STREAM (long instruction)
 
+        if (spi_rx_valid) begin
             if (!instruction_received & (spi_rx_byte >= 1 & spi_rx_byte <= 3)) begin
-                data_pointer <= 0;
+                data_pointer <= 1;
                 instruction_received <= 1;
                 current_instruction <= spi_rx_byte;
                 received_byte_count <= 1;
@@ -63,14 +61,14 @@ module instruction_handler # (
 
                 // reset datapointer if we need to send entire thing again
                 if (spi_rx_byte == REPEAT) begin
-                    data_pointer <= 0;
+                    data_pointer <= 1;
                     
                 end else if (spi_rx_byte == TRANSFER) begin
                     // https://stackoverflow.com/questions/18067571/indexing-vectors-and-arrays-with
                     // spi_tx_byte <= value_from_core[8 * data_pointer +: 8]; // sends LSB first
                     spi_tx_byte <= value_from_core[31 - (8 * data_pointer) -: 8]; // sends MSB first
                     data_pointer <= data_pointer + 1;
-                    spi_tx_valid <= 1;
+                    // spi_tx_valid <= 1;
                 end
 
             end else if (instruction_received) begin
@@ -79,22 +77,19 @@ module instruction_handler # (
 
                 // shift any and all data into the register
                 rebuilt_instruction <= {rebuilt_instruction[56:0], spi_rx_byte};
-    end
 
-
-    always_ff @ (negedge spi_rx_valid) begin
-    // always_ff @ (posedge got_all_data) begin
-        if (instruction_received & (received_byte_count == expected_byte_count)) begin
-            instruction_received <= 0;
-            received_byte_count <= 0;
-        end else if (current_instruction == TRANSFER) begin
-            spi_tx_valid = 0;
+        end else if (~spi_rx_valid) begin
+            if (instruction_received & (received_byte_count == expected_byte_count)) begin
+                instruction_received <= 0;
+                received_byte_count <= 0;
+            end else if (current_instruction == TRANSFER) begin
+                // spi_tx_valid <= 0;
+            end
         end
     end
 
 
-    // if all data was received, write to busses
-    always_comb begin
+    always @ (posedge got_all_data) begin
         if (got_all_data) begin
             unique case (current_instruction)
 
@@ -107,13 +102,13 @@ module instruction_handler # (
                 READ: begin
                     instruction_bus = rebuilt_instruction[32:24];
                     address_bus = rebuilt_instruction[23:0];
-                    value_bus = 'hz;
+                    value_bus = 'h0;
                 end
 
                 default: begin
-                    instruction_bus = 'hz;
-                    address_bus = 'hz;
-                    value_bus = 'hz;
+                    instruction_bus = 'h0;
+                    address_bus = 'h0;
+                    value_bus = 'h0;
                 end
             endcase
         end
