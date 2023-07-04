@@ -42,8 +42,7 @@ module core_interface # (
         .clock(clock), .a(input_memory[0]), .b(input_memory[1]), .c(output_memory)
     );    
 
-    always_comb begin
-
+	 always @ (posedge clock) begin
         if (interface_enable) begin
             unique case (instruction)
 
