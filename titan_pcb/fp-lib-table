@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "teensy")(type "KiCad")(uri "/home/kris/repos/teensy.pretty")(options "")(descr ""))
+)
