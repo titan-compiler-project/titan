@@ -30,7 +30,6 @@ class TitanComms {
         void begin(); // handles hardware config
         void write(u_int24 address, u_int32_t value);
         u_int32_t read(u_int24 address);
-        void repeat();
     private:
         int _cs_pin;
         SPISettings _spi_settings;
