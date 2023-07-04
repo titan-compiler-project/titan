@@ -41,10 +41,6 @@ void TitanComms::_extract_byte_from_int(u_int24 data, int byte_index, u_int8_t* 
     u_int32_t byte_mask = 0x800000 >> (8 * byte_index);
     u_int8_t new_byte;
 
-    // DEBUG_PRINT_STR("address/value: "); DEBUG_PRINT_HEX(data.data); DEBUG_PRINTLN();
-    // DEBUG_PRINT_STR("byte shift: "); DEBUG_PRINT_INT(byte_index); DEBUG_PRINTLN();
-    // DEBUG_PRINT_STR("byte mask hex: "); DEBUG_PRINT_HEX(byte_mask); DEBUG_PRINTLN();
-
     int upper_limit = 7 + (8 * byte_index);
     int lower_limit = 0 + (8 * byte_index);
 
@@ -52,18 +48,14 @@ void TitanComms::_extract_byte_from_int(u_int24 data, int byte_index, u_int8_t* 
     for (int i = lower_limit; i < upper_limit + 1; i++){
         if (bitRead(data.data, i)) {
             bitSet(new_byte, normal_pos);
-            // DEBUG_PRINT_STR("pos: "); DEBUG_PRINT_INT(i); DEBUG_PRINTLN_STR(" set");
         } else {
             bitClear(new_byte, normal_pos);
-            // DEBUG_PRINT_STR("pos: "); DEBUG_PRINT_INT(i); DEBUG_PRINTLN_STR(" not set");
         }
+
         normal_pos++;
     }
 
     *storage_byte = new_byte;
-
-    // DEBUG_PRINT_STR("returning: "); DEBUG_PRINT_BIN(new_byte); DEBUG_PRINT_STR(" "); DEBUG_PRINT_HEX(new_byte); DEBUG_PRINTLN();
-    // DEBUG_PRINTLN_STR("-------");
 }
 
 void TitanComms::write(u_int24 address, u_int32_t value){
@@ -77,16 +69,6 @@ void TitanComms::write(u_int24 address, u_int32_t value){
     u_int16_t addr_mid_and_low = (addr_mid << 8) + addr_low; // address mid byte + address low byte (16b)
     u_int16_t upper_data = (value >> 16);
     u_int16_t lower_data = value; // auto truncated?
-
-    // DEBUG_PRINT_STR("instr+addr_h: "); DEBUG_PRINT_HEX(merged_instr_addr_high); DEBUG_PRINTLN();
-    // DEBUG_PRINT_STR("addr_m+addr_l: "); DEBUG_PRINT_HEX(addr_mid_and_low); DEBUG_PRINTLN();
-    // DEBUG_PRINT_STR("upper data: "); DEBUG_PRINT_HEX(upper_data); DEBUG_PRINTLN();
-    // DEBUG_PRINT_STR("lower data: "); DEBUG_PRINT_HEX(lower_data); DEBUG_PRINTLN();
-    // DEBUG_PRINTLN_STR("-------");
-
-    DEBUG_PRINT_STR("write instruction: "); DEBUG_PRINT_HEX(merged_instr_addr_high);
-        DEBUG_PRINT_HEX(addr_mid_and_low); DEBUG_PRINT_HEX(upper_data);
-        DEBUG_PRINT_HEX(lower_data); DEBUG_PRINTLN();
 
 
     SPI.beginTransaction(_spi_settings);
@@ -109,7 +91,8 @@ byte TitanComms::_nop_and_read8(){
 }
 
 u_int16_t TitanComms::_nop_and_read16(){
-    u_int16_t temp = SPI.transfer16(TRANSFER);
+    // TODO: how to format 0x0404 as TRANSFER, TRANSFER instead of using magic value
+    u_int16_t temp = SPI.transfer16(0x0404);
     return temp;
 }
 
@@ -121,9 +104,6 @@ void TitanComms::_repeat() {
     SPI.endTransaction();
 }
 
-void TitanComms::repeat() {
-    _repeat();
-}
 
 u_int32_t TitanComms::read(u_int24 address){
     // send: instruction + address --> 8 bits + 24 bits
@@ -140,44 +120,21 @@ u_int32_t TitanComms::read(u_int24 address){
 
     
     SPI.beginTransaction(_spi_settings);
-    _chip_select();
     
+    _chip_select();
     SPI.transfer16(merged_instr_addr_high);
     SPI.transfer16(addr_mid_and_low);
+    
+    value_high = _nop_and_read16();
+    value_low = _nop_and_read16();
 
-    _chip_deselect();
-
-    delayMicroseconds(10);
-
-    _chip_select();
-    // value_high = _nop_and_read16();
-
-    value_high = _nop_and_read8();
-    // value_high = 0b11111111;
-    // DEBUG_PRINT_STR("before shift: "); DEBUG_PRINT_BIN(value_high); DEBUG_PRINTLN();
-    value_high = value_high << 8;
-    // DEBUG_PRINT_STR("after shift: "); DEBUG_PRINT_BIN(value_high); DEBUG_PRINTLN();
-    value_high = value_high ^ _nop_and_read8();
-    // value_high = value_high ^ 0b10101010;
-    // DEBUG_PRINT_STR("after xor: "); DEBUG_PRINT_BIN(value_high); DEBUG_PRINTLN();
-
-    value_low = _nop_and_read8();
-    value_low = value_low << 8;
-    value_low = value_low ^ _nop_and_read8();
-
+    // TODO: checksum, and repeating if necessary
     // recieved_checksum = _nop_and_read8();
     
     _chip_deselect();
     SPI.endTransaction();
 
     u_int32_t final_val = (value_high << 16) + value_low;
-    
-    DEBUG_PRINT_STR("read instruction: "); DEBUG_PRINT_HEX(merged_instr_addr_high); DEBUG_PRINT_HEX(addr_mid_and_low);
-        DEBUG_PRINT_STR(" returns ") + DEBUG_PRINT_HEX(final_val); DEBUG_PRINTLN();
-
-    // TODO: double check if value was receieved correctly
-    // make checksum + maybe helper function to re-read value if incorrect
 
     return final_val;
-
 }
