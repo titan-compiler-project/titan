@@ -1,66 +1,97 @@
+// example sketch for how to interface a teensy with titan cores using the TitanComms library
 #define DEBUG
 
 #include "TitanComms.h"
 #include "TitanCommsDebug.h"
 #include "SPI.h"
 
-// mega
-// const int CS_PIN = 48;
 
-// teensy
-const int CS_PIN = 0;
-// const int CLOCK = 72000000;
-// 562600
-const int SCLK = 4000000;
+// pins - teensy - first spi bus
+// const int CS_PIN = 15; // dedicated CS pin 10 does not work, causes weird glitches on MISO
+// const int DOUT = 11;
+// const int DIN = 12;
+// const int SCLK_PIN = 13;
 
-TitanComms comms(CS_PIN, SPISettings(SCLK, MSBFIRST, SPI_MODE3));
-int wrong_counter = 0;
-int total_requests = 0;
+// pins - teensy - alternative SPI pins
+// https://www.pjrc.com/teensy/card7a_rev3_web.pdf
+const int CS_PIN = 21;
+const int DOUT = 7;
+const int DIN = 8;
+const int SCLK_PIN = 14;
 
-TitanComms::u_int24 x = {0};
-TitanComms::u_int24 address = {0};
+// pins - mega
+// const int CS_PIN = 53;
+// const int DOUT = 51;
+// const int DIN = 50;
+// const int SCLK_PIN = 52;
 
-void setup() {
-    Serial.begin(192000);
+const int SCLK = 8000000;
+
+TitanComms comms(CS_PIN, SPISettings(SCLK, MSBFIRST, SPI_MODE0));
+
+unsigned int wrong_counter = 0;
+unsigned int total_requests = 0;
+
+SPISettings spis(SCLK, MSBFIRST, SPI_MODE0);
+
+void setup()
+{
+    Serial.begin(115200);
+    
+    // library handles setting up CS pin as output
+    // and initialising the SPI library
     comms.begin();
+
+    // setting alternative SPI pins
+    SPI.setSCK(SCLK_PIN);
+    SPI.setMISO(DIN);
+    SPI.setMOSI(DOUT);
 }
 
-void loop() {
+bool stop = false;
 
-    // u_int32_t rx;
-    // x.data = 0xAABBCC;
-    // comms.write(x, 0xDEADBEEF);
-    // rx = comms.read(x);
+TitanComms::u_int24 address_a = {0};
+TitanComms::u_int24 address_b = {1};
+TitanComms::u_int24 address_c = {2};
+u_int32_t rx = 0;
 
-    // if (rx != 0x23232323)
-    //     wrong_counter++;
+void loop()
+{
+    if (!stop){
 
-    // total_requests++;
+        for (u_int32_t i = 0; i < 0xFFF; i++){
+            comms.write(address_a, i);
 
-    // DEBUG_PRINT_STR("wrong hit: "); DEBUG_PRINT_INT(wrong_counter); 
-    //     DEBUG_PRINT_STR(" out of "); DEBUG_PRINT_INT(total_requests); DEBUG_PRINTLN();
+            for (u_int32_t j = 0; j < 0xFFF; j++){
+                comms.write(address_b, j);
 
-    u_int32_t rx;
-    address.data = 0;
+                // no need to delay since the core is a simple adder, and should
+                // already be done with the calculation
+                rx = comms.read(address_c);
 
-    comms.write(address, 1);
+                total_requests++;
 
-    address.data = 1;
-    comms.write(address, 2);
+                if ((rx != i + j) ^ (total_requests % 1000 == 0)) {
+                    
+                    if (rx != i + j) 
+                        wrong_counter++;
 
-    address.data = 2;
-    rx = comms.read(address);
+                    DEBUG_PRINTLN(); DEBUG_PRINT_HEX(i); DEBUG_PRINT_STR(" + "); DEBUG_PRINT_HEX(j);
+                        DEBUG_PRINT_STR(" = "); DEBUG_PRINT_HEX(rx);
+                        DEBUG_PRINT_STR(" (missed ");  DEBUG_PRINT_INT(wrong_counter);
+                        DEBUG_PRINT_STR(" out of ");  DEBUG_PRINT_INT(total_requests); DEBUG_PRINT_STR(")");
+                }
+                delay(1);
+            }
+        }
 
-    comms.repeat(); // should see data pointer reset to 0
+        stop = true;
 
-    if (rx != 3)
-        wrong_counter++;
+        DEBUG_PRINTLN(); DEBUG_PRINT_STR("[stop] missed ");  DEBUG_PRINT_INT(wrong_counter);
+                    DEBUG_PRINT_STR(" out of ");  DEBUG_PRINT_INT(total_requests); DEBUG_PRINTLN();
 
-    total_requests++;
-
-    DEBUG_PRINT_STR("got: ") + DEBUG_PRINT_HEX(rx) + DEBUG_PRINT_STR(" expected 3 (missed ");
-        DEBUG_PRINT_INT(wrong_counter); DEBUG_PRINT_STR(" out of "); DEBUG_PRINT_INT(total_requests);
-        DEBUG_PRINTLN_STR(")");
-
-    delay(100);
+    } else if (stop) {
+        DEBUG_PRINT_STR("-");
+        delay(1000);
+    }
 }
