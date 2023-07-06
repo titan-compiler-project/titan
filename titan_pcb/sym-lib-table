@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "teensy")(type "Legacy")(uri "/home/kris/Downloads/teensy.lib")(options "")(descr ""))
   (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "/home/kris/repos/KiCad-RP-Pico/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.kicad_sym")(options "")(descr ""))
+  (lib (name "SSD1306-128x64_OLED")(type "Legacy")(uri "/home/kris/repos/KiCad-SSD1306-128x64/library/SSD1306-128x64_OLED.lib")(options "")(descr ""))
 )

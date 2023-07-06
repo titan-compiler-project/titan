@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "teensy")(type "KiCad")(uri "/home/kris/repos/teensy.pretty")(options "")(descr ""))
   (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "/home/kris/repos/KiCad-RP-Pico/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.pretty")(options "")(descr ""))
+  (lib (name "SSD1306")(type "KiCad")(uri "/home/kris/repos/KiCad-SSD1306-128x64/library/SSD1306.pretty")(options "")(descr ""))
 )
