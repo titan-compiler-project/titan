@@ -91,8 +91,10 @@ byte TitanComms::_nop_and_read8(){
 }
 
 u_int16_t TitanComms::_nop_and_read16(){
-    // TODO: how to format 0x0404 as TRANSFER, TRANSFER instead of using magic value
-    u_int16_t temp = SPI.transfer16(0x0404);
+    // pack byte instruction into a 2 byte one
+    // i.e. INSTRUCTION = 0x01
+    // formatted = 0x0101 etc
+    u_int16_t temp = SPI.transfer16((byte)((TRANSFER << 8) + TRANSFER));
     return temp;
 }
 
@@ -137,4 +139,20 @@ u_int32_t TitanComms::read(u_int24 address){
     u_int32_t final_val = (value_high << 16) + value_low;
 
     return final_val;
+}
+
+
+void TitanComms::set_core_interrupt(u_int24 address){
+    u_int8_t addr_hi;
+    _extract_byte_from_int(address, 2, &addr_hi);
+
+    u_int16_t merged_instr_addr_hi = (BIND_INTERRUPT << 8) + addr_hi;
+    u_int16_t addr_mid_lo = address.data;
+
+    SPI.beginTransaction(_spi_settings);
+    _chip_select();
+    SPI.transfer16(merged_instr_addr_hi);
+    SPI.transfer16(addr_mid_lo);
+    _chip_deselect();
+    SPI.endTransaction();
 }
