@@ -94,7 +94,7 @@ u_int16_t TitanComms::_nop_and_read16(){
     // pack byte instruction into a 2 byte one
     // i.e. INSTRUCTION = 0x01
     // formatted = 0x0101 etc
-    u_int16_t temp = SPI.transfer16((byte)((TRANSFER << 8) + TRANSFER));
+    u_int16_t temp = SPI.transfer16(((TRANSFER << 8) + TRANSFER));
     return temp;
 }
 
