@@ -18,11 +18,12 @@ module instruction_handler # (
     logic instruction_received = 0;
     logic [7:0] current_instruction;
     logic [63:0] rebuilt_instruction;
+    logic [ADDRESS_WIDTH-1:0] interrupt_address, stream_address;
 
     logic [7:0] expected_byte_count = 0;
     logic [7:0] received_byte_count = 0;
  
-    wire logic got_all_data;
+    (*keep = 1*) wire logic got_all_data;
     assign got_all_data = expected_byte_count == received_byte_count ? 1'b1 : 1'b0;
 	 
     logic [1:0] data_pointer = 2'b01;
@@ -34,7 +35,7 @@ module instruction_handler # (
         // if the instruction is WRITE, READ or STREAM (long instruction)
 
         if (spi_rx_valid) begin
-            if (!instruction_received & (spi_rx_byte >= 1 & spi_rx_byte <= 3)) begin
+            if (!instruction_received & (spi_rx_byte >= WRITE & spi_rx_byte <= BIND_ADDRESS)) begin
                 data_pointer <= 1;
                 instruction_received <= 1;
                 current_instruction <= spi_rx_byte;
@@ -42,11 +43,19 @@ module instruction_handler # (
 
                 unique case (spi_rx_byte)
                     WRITE: begin
-                        expected_byte_count = 8;
+                        expected_byte_count <= 8;
                     end
 
                     READ: begin
-                        expected_byte_count = 4;
+                        expected_byte_count <= 4;
+                    end
+
+                    BIND_INTERRUPT: begin
+                        expected_byte_count <= 4;
+                    end
+
+                    BIND_ADDRESS: begin
+                        expected_byte_count <= 4;
                     end
 
                     default: begin
@@ -56,7 +65,7 @@ module instruction_handler # (
 
                 
             // otherwise if the instruction is TRANSFER or REPEAT
-            end else if (!instruction_received & (spi_rx_byte >= 4 & spi_rx_byte <= 5)) begin
+            end else if (!instruction_received & (spi_rx_byte >= TRANSFER & spi_rx_byte <= REPEAT)) begin
                 current_instruction <= spi_rx_byte;
 
                 // reset datapointer if we need to send entire thing again
@@ -78,7 +87,9 @@ module instruction_handler # (
                 // shift any and all data into the register
                 rebuilt_instruction <= {rebuilt_instruction[56:0], spi_rx_byte};
 
+        // on the negative edge of spi_rx_valid
         end else if (~spi_rx_valid) begin
+            // if instruction got and all bytes got then reset counters
             if (instruction_received & (received_byte_count == expected_byte_count)) begin
                 instruction_received <= 0;
                 received_byte_count <= 0;
@@ -100,6 +111,18 @@ module instruction_handler # (
                 end
 
                 READ: begin
+                    instruction_bus = rebuilt_instruction[32:24];
+                    address_bus = rebuilt_instruction[23:0];
+                    value_bus = 'h0;
+                end
+
+                BIND_INTERRUPT: begin
+                    instruction_bus = rebuilt_instruction[32:24];
+                    address_bus = rebuilt_instruction[23:0];
+                    value_bus = 'h0;
+                end
+
+                BIND_ADDRESS: begin
                     instruction_bus = rebuilt_instruction[32:24];
                     address_bus = rebuilt_instruction[23:0];
                     value_bus = 'h0;

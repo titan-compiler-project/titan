@@ -3,11 +3,13 @@ module add_2 (
 	input wire clock,
 	input logic [31:0] a,
 	input logic [31:0] b,
-	output wire [31:0] c
+	output wire [31:0] c,
+	output wire done
 );
 	logic [31:0] titan_id_0;
 	always_ff @ (posedge clock) begin
 		titan_id_0 <= a + b;
 	end
 	assign c = titan_id_0;
+	assign done = clock;
 endmodule

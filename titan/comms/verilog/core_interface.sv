@@ -16,7 +16,8 @@ module core_interface # (
     input wire [INSTRUCTION_WIDTH-1:0] instruction,
     input wire [ADDRESS_WIDTH-1:0] address,
     input wire [VALUE_WIDTH-1:0] value,
-    output wire [VALUE_WIDTH-1:0] output_value
+    output wire [VALUE_WIDTH-1:0] output_value,
+    output wire core_interrupt
 );
 
     localparam LAST_INPUT_ADDRESS = END_ADDRESS - TOTAL_OUTPUTS;
@@ -35,14 +36,25 @@ module core_interface # (
     logic [VALUE_WIDTH-1:0] input_memory [0:1];  // use params to calculate required depth
     logic [VALUE_WIDTH-1:0] output_memory; // if only one output, we can't make instance using [0]
 
+    (*keep = 1*) logic interrupt_enabled = 0;
+    logic core_done_signal;
 
+    assign core_interrupt = interrupt_enabled;
+	 
     reg [VALUE_WIDTH-1:0] output_val_internal;
 
     add_2 uut_add2 (
-        .clock(clock), .a(input_memory[0]), .b(input_memory[1]), .c(output_memory)
+        .clock(clock), .a(input_memory[0]), .b(input_memory[1]), .c(output_memory), .done(core_done_signal)
     );    
 
 	 always @ (posedge clock) begin
+
+        // if we're not being talked to, but there is another BIND_INTERRUPT instruction
+        // means that we have to release the bus
+        // if (!interface_enable & instruction == BIND_INTERRUPT) begin
+        //     interrupt_enabled = 0;
+        // end
+
         if (interface_enable) begin
             unique case (instruction)
 
@@ -63,7 +75,14 @@ module core_interface # (
                     end
                 end
 
+                BIND_INTERRUPT: begin
+                    interrupt_enabled <= 1;    
+                    input_memory[0] <= input_memory[0] + 1;
+                end
+
             endcase
+        end else if (!interface_enable & (instruction == BIND_INTERRUPT)) begin
+            interrupt_enabled <= 0;
         end
     end
 

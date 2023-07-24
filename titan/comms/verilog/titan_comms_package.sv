@@ -7,7 +7,13 @@ package TitanComms;
     //  } instructions;
 
     typedef enum int {
-        WRITE = 1, READ = 2, STREAM = 3, TRANSFER = 4, REPEAT = 5
+        WRITE = 1, 
+        READ = 2, 
+        STREAM = 3, 
+        BIND_INTERRUPT = 4,
+        BIND_ADDRESS = 5,
+        TRANSFER = 6, 
+        REPEAT = 7
     } instructions;
 
 endpackage
