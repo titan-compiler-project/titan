@@ -101,40 +101,23 @@ module instruction_handler # (
 
 
     always @ (posedge got_all_data) begin
-        if (got_all_data) begin
-            unique case (current_instruction)
 
-                WRITE: begin
-                    instruction_bus = rebuilt_instruction[63:56];
-                    address_bus = rebuilt_instruction[55:32];
-                    value_bus = rebuilt_instruction[31:0];
-                end
+        if (current_instruction == WRITE) begin
+            instruction_bus <= rebuilt_instruction[63:56];
+            address_bus <= rebuilt_instruction[55:32];
+            value_bus <= rebuilt_instruction[31:0];
 
-                READ: begin
-                    instruction_bus = rebuilt_instruction[32:24];
-                    address_bus = rebuilt_instruction[23:0];
-                    value_bus = 'h0;
-                end
+        end else if ((current_instruction >= READ) & (current_instruction <= BIND_ADDRESS)) begin
+            instruction_bus <= rebuilt_instruction[32:24];
+            address_bus <= rebuilt_instruction[23:0];
+            value_bus <= 'h0;
 
-                BIND_INTERRUPT: begin
-                    instruction_bus = rebuilt_instruction[32:24];
-                    address_bus = rebuilt_instruction[23:0];
-                    value_bus = 'h0;
-                end
-
-                BIND_ADDRESS: begin
-                    instruction_bus = rebuilt_instruction[32:24];
-                    address_bus = rebuilt_instruction[23:0];
-                    value_bus = 'h0;
-                end
-
-                default: begin
-                    instruction_bus = 'h0;
-                    address_bus = 'h0;
-                    value_bus = 'h0;
-                end
-            endcase
+        end else begin
+            instruction_bus <= 'h0;
+            address_bus <= 'h0;
+            value_bus <= 'h0;
         end
+
     end
 
 endmodule
