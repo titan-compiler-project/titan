@@ -362,12 +362,30 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         self._tree = ast.parse(open(file, "r").read())
 
         # self.spirv = machine.SPIRV_ASM()
-        self.spirv_helper = _SPIRVHelperGenerator(disable_debug=False)
+        self.spirv_helper = _SPIRVHelperGenerator(disable_debug=True)
 
     def crawl(self):
         # wrapper function for visiting the top of the tree
         self.visit(self._tree)
         self.spirv_helper.dump()
+
+    # TODO: probably inefficient
+    def create_file_as_string(self):
+        fake_file = ""
+
+        # key=section, value=list of lines
+        for lines in self.spirv_helper.generated_spirv.values():
+            for line in lines:
+                fake_file += f"{line}\n"
+
+        return fake_file
+    
+    def output_to_file(self, filename:str):
+        ff = self.create_file_as_string()
+
+        with open(f"{filename}.spvasm", "w") as f:
+            for line in ff:
+                f.write(line)
     
     def _get_python_type_from_string(self, type: str):
         """returns python type from <class 'x'> string"""
@@ -608,7 +626,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
         self.spirv_helper.add_line(
             self.spirv_helper.Sections.FUNCTIONS,
-            f"OpStore %{node.targets[0].id} {eval_id}"
+            f"OpStore %{node.targets[0].id} %{eval_id.strip('%')}"
         )
 
         
@@ -631,7 +649,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
         self.spirv_helper.add_line(
             self.spirv_helper.Sections.FUNCTIONS,
-            f"OpStore %{node.target.id} {t_id} {eval_id}"
+            f"OpStore %{node.target.id} {eval_id}"
         )
 
 
@@ -996,7 +1014,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 c_ctx = self.spirv_helper.ConstContext(type(value), value * -1)
 
                 if not self.spirv_helper.const_exists(c_ctx):
-                    id = f"%const_{self._return_string_from_type(type(value))}_n{value}"
+                    id = f"%const_{self._return_string_from_type(type(value))}_n{str(value).replace('.', '_')}"
                     # self.spirv_helper.add_const(c_ctx, id)
                     self.spirv_helper.add_const_if_nonexistant(c_ctx, True)
                     return id, c_ctx
@@ -1018,7 +1036,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
             if not self.spirv_helper.const_exists(c_ctx):
                 # TODO: check if type also exists?
-                id = f"const_{self._return_string_from_type(type(node.value))}_{node.value}"
+                id = f"%const_{self._return_string_from_type(type(node.value))}_{node.value}"
                 # self.spirv_helper.add_const(c_ctx, id)
                 self.spirv_helper.add_const_if_nonexistant(c_ctx)
                 return id, c_ctx
