@@ -36,6 +36,9 @@ class _SPIRVHelperGenerator():
     def __init__(self, disable_debug=True):
         self.entry_point = ""
         self._disable_debug = disable_debug
+        self._latest_ifexp_selector_id = None
+        self._latest_compare_id = None
+
 
         class symbol_type_hint(typing.TypedDict):
             symbol: str
@@ -59,6 +62,11 @@ class _SPIRVHelperGenerator():
 
         self.input_port_list: symbol_type_hint = {}
         self.output_port_list: symbol_type_hint = {}
+
+        # attempts to align the output type list with the output port/symbol list
+        # this is so that the correct id (assuming that it is handled in order) will be assigned the correct type
+        # perhaps slightly over-engineered?
+        self._internal_output_port_list_counter = 0 
         self.output_type_list = []
 
         # TODO: probably remove 
@@ -68,6 +76,7 @@ class _SPIRVHelperGenerator():
 
         self.location_id = 0
         self.intermediate_id = 0
+        self.return_id = 0
         self.intermediate_ids: intermediate_id_type_hint = {}
 
         self.declared_constants: declared_constants_hint = {}
@@ -124,7 +133,14 @@ class _SPIRVHelperGenerator():
     def add_output_type(self, type):
         self.output_type_list.append(type)
 
+    def add_output_symbol(self, symbol:str):
+        self.output_port_list[symbol] = self.output_type_list[self._internal_output_port_list_counter]
+        self._internal_output_port_list_counter += 1
+
     def symbol_exists(self, symbol: str):
+        """
+        @param symbol: str: symbol name without SPIRV %
+        """
         # return True if symbol in self.symbols_and_types else False
         return True if symbol in self.symbol_info else False
 
@@ -223,7 +239,7 @@ class _SPIRVHelperGenerator():
 
     
     def intermediate_id_exists(self, intermediate_id: str):
-        return True if intermediate_id in self.intermediate_lines else False
+        return True if intermediate_id in self.intermediate_ids else False
     
     def add_intermediate_id(self, intermediate_id: str, type: titan_type.DataType):
         self.intermediate_ids[intermediate_id] = type
@@ -394,15 +410,48 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             # TODO: better to error or assume?
             self.spirv_helper.entry_point = node.body[0].name
 
+        # spirv boilerplate
+        self.spirv_helper.add_line(
+            self.spirv_helper.Sections.CAPABILITY_AND_EXTENSION,
+            f"OpCapability Shader"
+        )
+
+        self.spirv_helper.add_line(
+            self.spirv_helper.Sections.CAPABILITY_AND_EXTENSION,
+            f"OpMemoryModel Logical GLSL450"
+        )
+
         for fn in node.body:
             # print(f"function: {fn.name} returns {fn.returns.id}")
             self.visit_FunctionDef(fn)
+
+            # if the function is our entry point, we want to capture its params
+            # TODO: this will fail if the entry point is not the first function in the list,
+            #       since the lists/dicts will contain previous function entries, messing with the names
+            if fn.name == self.spirv_helper.entry_point:
+                # take contents of input/output ports and convert them into ids
+                ports_str = ""
+
+                for symbol, s_ctx in self.spirv_helper.symbol_info.items():
+                    if s_ctx.location == (titan_type.StorageType.IN or titan_type.StorageType.OUT):
+                        ports_str += f"%{symbol} "
+
+                self.spirv_helper.add_line(
+                    self.spirv_helper.Sections.ENTRY_AND_EXEC_MODES,
+                    f"OpEntryPoint %{fn.name} \"{fn.name}\" {ports_str}"
+                )
+
+            self.spirv_helper.add_line(
+                self.spirv_helper.Sections.ENTRY_AND_EXEC_MODES,
+                f"OpExecutionMode %{fn.name} OriginUpperLeft"
+            )
+
             print(f"exit function {fn.name}\n")
 
 
     
     def visit_FunctionDef(self, node):
-        print(f"function {node.name} returns type {node.returns}\n\t{node._fields}")
+        print(f"function {node.name} returns type {node.returns.id}\n\t{node._fields}")
         
         self.spirv_helper.add_line(
             self.spirv_helper.Sections.DEBUG_STATEMENTS,
@@ -414,7 +463,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             titan_type.DataType.VOID, titan_type.StorageType.NONE
         )
 
-        self.spirv_helper.add_type_if_nonexistant(
+        t_void_id = self.spirv_helper.add_type_if_nonexistant(
             void_ctx,
             f"%type_void"
         )
@@ -424,10 +473,22 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             titan_type.DataType.VOID, titan_type.StorageType.NONE, False, False, True
         )
 
-        self.spirv_helper.add_type_if_nonexistant(
+        t_fn_void_id = self.spirv_helper.add_type_if_nonexistant(
             fn_ctx,
             f"%type_function_{(titan_type.DataType.VOID.name).lower()}"
         )
+
+        # mark start of function
+        self.spirv_helper.add_line(
+            self.spirv_helper.Sections.FUNCTIONS,
+            f"%{node.name} = OpFunction {t_void_id} None {t_fn_void_id}"
+        )
+
+        self.spirv_helper.add_line(
+            self.spirv_helper.Sections.FUNCTIONS,
+            f"%label_{node.name} = OpLabel"
+        )
+
 
         # iterate through each arg, make type & pointer type
         for args in node.args.args:
@@ -473,7 +534,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         # TODO: needs implementation for multiple returns
         # handle returns (types for now)
         if isinstance(node.returns, ast.Call):
-            raise Exception(f"multiple returns not handled yet")
+            raise Exception(f"multiple returns/function calls not handled yet")
         elif isinstance(node.returns, ast.Name):
             type_class = self._get_python_type_from_string(node.returns.id)
             self.spirv_helper.add_output_type(type_class)
@@ -503,7 +564,18 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         super().generic_visit(node)
         print(f"body end {node.name}")
 
-        # TODO: handle return variable here
+        # TODO: add function that lets me add lists of strings instead of having to
+        #       write this every time
+        # spirv boilerplate for end of function
+        self.spirv_helper.add_line(
+            self.spirv_helper.Sections.FUNCTIONS,
+            f"OpReturn"
+        )
+
+        self.spirv_helper.add_line(
+            self.spirv_helper.Sections.FUNCTIONS,
+            f"OpFunctionEnd"
+        )
 
 
     def visit_Call(self, node):
@@ -565,7 +637,9 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
 
     def visit_Return(self, node):
-
+        """
+        handle return nodes
+        """
         if isinstance(node.value, ast.Constant):
             print(f"returning const: {node.value.value}")
         elif isinstance(node.value, ast.Name):
@@ -592,19 +666,61 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
             # print(f"orelse: {self._extract_content(node.value.orelse)}")
 
+            # TODO: need to get ID somehow, move the IfExp function to something else accessible and call it directly?
             super().generic_visit(node)
 
+            # because this is direct return, we have to make a temp symbol into which we can return (in spirv terms)
+            # we have to also add it to the symbols list, making sure that it has the same type as the indicated return type
+            # and that it doesn't clash with the return type
+
+            out_str_id = f"titan_return_id_{self.spirv_helper.return_id}"
+            self.spirv_helper.return_id += 1
+            # TODO: make sure names don't clash?
+            self.spirv_helper.add_symbol_if_nonexistant(
+                out_str_id, self.spirv_helper.output_type_list[0], titan_type.StorageType.OUT
+            )
+
+            self.spirv_helper.add_output_symbol(out_str_id)
+
+            # store titan_id_x into the newly created return variable
+            self.spirv_helper.add_line(
+                self.spirv_helper.Sections.FUNCTIONS,
+                f"OpStore %{out_str_id} %{self.spirv_helper._latest_ifexp_selector_id}"
+            )
+
+
             # print(f"return {node.value.body.id} if {node.value.test.left.id} {node.value.test.ops[0].__class__.__name__} {self._extract_content(node.value.test.comparators[0])} else {self._extract_content(node.value.orelse)}")
+        elif isinstance(node.value, ast.BinOp):
+            raise Exception("TODO implement handling binops for return values")
+
+            id, ctx = self._eval_line(node.value)
+            print(f"returning binop val ({id})")
+
+            if self.spirv_helper.symbol_exists(id):
+                print("this was a symbol")
+            elif self.spirv_helper.intermediate_id_exists(id):
+                print("this was a temp id")
+            else:
+                raise Exception("idk")
 
         else:
-            print(f"returning unknown {type(node.value)}")
+            raise Exception(f"unhandled type during return node evaluation {node} {type(node)}")
 
 
-    def visit_Name(self, node):
-        pass
-        # print(f"{node.id} {node.ctx}")
+    def visit_Name(self, node): pass
 
     
+    def _get_id_of_node(self, node):
+        if isinstance(node, ast.Name):
+            if self.spirv_helper.symbol_exists(node.id):
+                return node.id
+            else:
+                raise Exception(f"symbol referenced but does not exist")
+        elif isinstance(node, ast.Constant):
+            return self.spirv_helper.get_const_id(node.value, titan_type.DataType(type(node.value)))
+        else:
+            raise Exception(f"unhandled node {node} {type(node)}")
+
     def visit_IfExp(self, node):
         print(f"[visit_IfExp] {node} {node._fields}")
 
@@ -614,13 +730,25 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             # print(f"\t\t{node.test.ops[i].__class__.__name__} {self._extract_content(node.test.comparators[i])}")
         print(f"\torelse: {self._extract_content(node.orelse)}")
 
-
-        # TODO: make selector
-        print("[visit_ifexp call]")
+        # this should take care of the comparison node
         super().generic_visit(node)
-        print("[visit_ifexp end call]")
 
+        # TODO: probably should check if both types match, but as a hack we check only the left one and pray
         t_id = self.spirv_helper.get_primative_type_id(self.spirv_helper.get_symbol_type(node.test.left.id))
+
+        body_id = self._get_id_of_node(node.body)
+        orelse_id = self._get_id_of_node(node.orelse)
+
+        self.spirv_helper.add_line(
+            self.spirv_helper.Sections.FUNCTIONS,
+            #TODO:                                                                  vvv should this just be always -1 of the current id?
+            f"%titan_id_{self.spirv_helper.intermediate_id} = OpSelect {t_id} {self.spirv_helper._latest_compare_id} %{body_id} %{orelse_id}"
+        )
+
+        # add id, set it as latest, increment by 1
+        self.spirv_helper.add_intermediate_id(f"titan_id_{self.spirv_helper.intermediate_id}", bool)
+        self.spirv_helper._latest_ifexp_selector_id = f"titan_id_{self.spirv_helper.intermediate_id}"
+        self.spirv_helper.intermediate_id += 1
 
 
 
@@ -648,6 +776,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         target_type = self.spirv_helper.get_symbol_type(node.left.id) # this will need to be changed to whatever object the left operand is
 
         # if we're dealing with a symbol
+        # TODO: implement for right node
         if isinstance(node.left, ast.Name):
             # lets just make sure it actually exists...
             if not self.spirv_helper.symbol_exists(node.left.id):
@@ -722,9 +851,10 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         self.spirv_helper.add_intermediate_id(f"titan_id_{self.spirv_helper.intermediate_id}", type(node.comparators[0].value))
         self.spirv_helper.add_line(
             self.spirv_helper.Sections.FUNCTIONS,
-            f"%titan_id_{self.spirv_helper.intermediate_id} = {opcode} {t_id} {left_id} {right_id}"
+            f"%titan_id_{self.spirv_helper.intermediate_id} = {opcode} {t_id} %{left_id} %{right_id}"
         )
 
+        self.spirv_helper._latest_compare_id = f"%titan_id_{self.spirv_helper.intermediate_id}"
         self.spirv_helper.intermediate_id += 1
 
     # TODO: figure out exactly what info is needed from here, if any
@@ -736,6 +866,9 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         print(f"{node.__class__.__name__} {node._fields}")
 
     def _extract_content(self, node):
+        """
+        returns value if node is ast.Constant, id if node is ast.Name
+        """
         
         if isinstance(node, ast.Constant):
             return node.value
@@ -754,6 +887,9 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             return context.value
 
     def _eval_line(self, node):
+        """
+        returns line id and line context
+        """
         if isinstance(node, ast.BinOp):
 
             left_id, left_ctx = self._eval_line(node.left)
@@ -893,6 +1029,9 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             print(f"unexpected {type(node)} to parse")
 
     def _eval_line_wrap(self, node):
+        """
+        works on ast.Assign or ast.AnnAssign nodes
+        """
         # print(node._fields)
 
         if isinstance(node, ast.Assign):
