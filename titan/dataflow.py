@@ -52,7 +52,10 @@ class Node:
         r_node_val = None if context.input_right == None else context.input_right.tick
 
         if context.is_comparison:
-            return Node._calculate_tick(l_node_val, r_node_val, context.data[0].tick)
+            # return Node._calculate_tick(l_node_val, r_node_val, context.data[0].tick)
+            # TODO: do we have to account for the tick of the input nodes, if the selector is guaranteed to come after?
+            #                                                                               is it even guaranteed to come right after? idk
+            return Node._calculate_tick(0, 0, context.data[0].tick) 
         else:
             return Node._calculate_tick(l_node_val, r_node_val)
 
@@ -108,8 +111,8 @@ class Node:
 
     # TODO: make this look better
     def __str__(self):
-        return f"({self.__class__.__name__}: [{self.spirv_line_no}:{self.spirv_id}], type_id: [{self.type_id}], left: [{None if self.input_left is None else self.input_left.spirv_id}], right: [{None if self.input_right is None else self.input_right.spirv_id}], op: {self.operation}, data: {self.data}, tick: {self.tick})"
+        return f"({self.__class__.__name__}: [{self.spirv_line_no}:{self.spirv_id}], type_id: [{self.type_id}], left: [{None if self.input_left is None else self.input_left.spirv_id}], right: [{None if self.input_right is None else self.input_right.spirv_id}], op: {self.operation}, data: {self.data},  is_comparison: {self.is_comparison}, tick: {self.tick})"
 
 
     def __repr__(self):
-        return f"({self.__class__.__name__}: [{self.spirv_line_no}:{self.spirv_id}], type_id: [{self.type_id}], left: [{self.input_left}], right: [{self.input_right}], op: {self.operation}, data: {self.data}, tick: {self.tick})"
+        return f"({self.__class__.__name__}: [{self.spirv_line_no}:{self.spirv_id}], type_id: [{self.type_id}], left: [{self.input_left}], right: [{self.input_right}], op: {self.operation}, data: {self.data},  is_comparison: {self.is_comparison}, tick: {self.tick})"
