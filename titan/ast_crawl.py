@@ -1022,7 +1022,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
             self.spirv_helper.add_line(
                 self.spirv_helper.Sections.FUNCTIONS,
-                f"%{spirv_line_str} = {opcode} {chosen_type_id} %{left_id} %{right_id}"
+                f"%{spirv_line_str} = {opcode} {chosen_type_id} %{left_id.strip('%')} %{right_id.strip('%')}"
             )
 
 
