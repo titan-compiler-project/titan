@@ -354,6 +354,9 @@ class _SPIRVHelperGenerator():
     def get_const_id(self, value, type):
         temp_c_ctx = self.ConstContext(type, value)
         return self.declared_constants[temp_c_ctx]
+    
+    def get_const_id_with_ctx(self, context: ConstContext):
+        return self.declared_constants[context]
 
 class GenerateSPIRVFromAST(ast.NodeVisitor):
 
@@ -362,7 +365,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         self._tree = ast.parse(open(file, "r").read())
 
         # self.spirv = machine.SPIRV_ASM()
-        self.spirv_helper = _SPIRVHelperGenerator(disable_debug=True)
+        self.spirv_helper = _SPIRVHelperGenerator(disable_debug=False)
 
     def crawl(self):
         # wrapper function for visiting the top of the tree
@@ -451,12 +454,13 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 ports_str = ""
 
                 for symbol, s_ctx in self.spirv_helper.symbol_info.items():
-                    if s_ctx.location == (titan_type.StorageType.IN or titan_type.StorageType.OUT):
+                    # print(s_ctx.location)
+                    if (s_ctx.location is titan_type.StorageType.IN) or (s_ctx.location is titan_type.StorageType.OUT):
                         ports_str += f"%{symbol} "
 
                 self.spirv_helper.add_line(
                     self.spirv_helper.Sections.ENTRY_AND_EXEC_MODES,
-                    f"OpEntryPoint %{fn.name} \"{fn.name}\" {ports_str}"
+                    f"OpEntryPoint Fragment %{fn.name} \"{fn.name}\" {ports_str}"
                 )
 
             self.spirv_helper.add_line(
@@ -658,6 +662,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         """
         handle return nodes
         """
+        # TODO: add calls to _eval_line to get proper id for node
         if isinstance(node.value, ast.Constant):
             print(f"returning const: {node.value.value}")
         elif isinstance(node.value, ast.Name):
@@ -706,6 +711,18 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 f"OpStore %{out_str_id} %{self.spirv_helper._latest_ifexp_selector_id}"
             )
 
+            ptr_t_out_ctx = self.spirv_helper.TypeContext(
+                titan_type.DataType(self.spirv_helper.output_type_list[0]), titan_type.StorageType.OUT,
+                False, True, False
+            )
+
+            ptr_t_out_id = self.spirv_helper.get_type_id(ptr_t_out_ctx)
+
+            self.spirv_helper.add_line(
+                self.spirv_helper.Sections.VAR_CONST_DECLARATIONS,
+                f"%{out_str_id} = OpVariable %{ptr_t_out_id.strip('%')} Output"
+            )
+            
 
             # print(f"return {node.value.body.id} if {node.value.test.left.id} {node.value.test.ops[0].__class__.__name__} {self._extract_content(node.value.test.comparators[0])} else {self._extract_content(node.value.orelse)}")
         elif isinstance(node.value, ast.BinOp):
@@ -735,7 +752,17 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             else:
                 raise Exception(f"symbol referenced but does not exist")
         elif isinstance(node, ast.Constant):
-            return self.spirv_helper.get_const_id(node.value, titan_type.DataType(type(node.value)))
+
+            c_ctx = self.spirv_helper.ConstContext(titan_type.DataType(type(node.value)), node.value)
+            if self.spirv_helper.const_exists(c_ctx):
+                return self.spirv_helper.get_const_id_with_ctx(node.value, c_ctx)
+            else:
+                # TODO: does not account for negative numbers, probably need an UnaryOp section 
+                c_id = self.spirv_helper.add_const_if_nonexistant(
+                    c_ctx, False
+                )
+                return c_id
+            # return self.spirv_helper.get_const_id(node.value, titan_type.DataType(type(node.value)))
         else:
             raise Exception(f"unhandled node {node} {type(node)}")
 
@@ -1014,7 +1041,8 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 c_ctx = self.spirv_helper.ConstContext(type(value), value * -1)
 
                 if not self.spirv_helper.const_exists(c_ctx):
-                    id = f"%const_{self._return_string_from_type(type(value))}_n{str(value).replace('.', '_')}"
+                    # id = f"%const_{self._return_string_from_type(type(value))}_n{str(value).replace('.', '_')}"
+                    id = f"%const_{titan_type.DataType(type(value)).name.lower()}_n{str(value).replace('.', '_')}"
                     # self.spirv_helper.add_const(c_ctx, id)
                     self.spirv_helper.add_const_if_nonexistant(c_ctx, True)
                     return id, c_ctx
@@ -1036,7 +1064,8 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
             if not self.spirv_helper.const_exists(c_ctx):
                 # TODO: check if type also exists?
-                id = f"%const_{self._return_string_from_type(type(node.value))}_{node.value}"
+                # id = f"%const_{self._return_string_from_type(type(node.value))}_{node.value}"
+                id = f"%const_{titan_type.DataType(type(node.value)).name.lower()}_{str(node.value).replace('.', '_')}"
                 # self.spirv_helper.add_const(c_ctx, id)
                 self.spirv_helper.add_const_if_nonexistant(c_ctx)
                 return id, c_ctx
