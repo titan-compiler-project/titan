@@ -1,8 +1,10 @@
-import sys
+import sys, io
 from pathlib import Path
 from options import Options
 import machine, parse, generate, symbols
 from errors import TitanErrors
+
+import ast_crawl
 
 # py -3.10-64 main.py
 
@@ -85,13 +87,24 @@ def main():
             return -1                    
             
     # handle python -> spirv
-    parse.preprocess(machine_object)
-    parse.parse_processed_python(machine_object)
-    generate.generate_symbols(machine_object, symbol_table)
-    generate.generate_spirv_asm(machine_object, symbol_table)
+    # parse.preprocess(machine_object)
+    # parse.parse_processed_python(machine_object)
+    # generate.generate_symbols(machine_object, symbol_table)
+    # generate.generate_spirv_asm(machine_object, symbol_table)
 
     # handle spirv -> verilog
-    parse_result = parse.parse_spriv(machine_object)
+    # parse_result = parse.parse_spriv(machine_object)
+
+
+    # assumes that there is only one file
+    input_python_file = machine_object.files[0]
+    x = ast_crawl.GenerateSPIRVFromAST(input_python_file)
+    x.crawl() # generates spirv TODO: rename function probably
+
+    parse_result = None
+    with io.StringIO(x.create_file_as_string()) as y:
+        parse_result = parse.TitanSPIRVGrammar.spirv_body.parse_file(y)
+
     generate.generate_verilog(parse_result)
 
 if __name__ == "__main__":
