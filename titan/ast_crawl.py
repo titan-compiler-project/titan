@@ -150,7 +150,12 @@ class _SPIRVHelperGenerator():
     def add_symbol(self, symbol_id: str, type, location: titan_type.StorageType):
         self.symbol_info[symbol_id] = self.SymbolInfo(titan_type.DataType(type), location)
 
-
+    def get_symbol_info(self, symbol_id: str) -> SymbolInfo:
+        return self.symbol_info[symbol_id]
+    
+    # basically works the same as add_symbol
+    def update_symbol_info(self, symbol_id:str, info: SymbolInfo):
+        self.symbol_info[symbol_id] = info
         
     def add_symbol_if_nonexistant(self, symbol: str, type, location: titan_type.StorageType):
 
@@ -665,8 +670,50 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         # TODO: add calls to _eval_line to get proper id for node
         if isinstance(node.value, ast.Constant):
             print(f"returning const: {node.value.value}")
+            raise Exception("TODO: return constant value")
         elif isinstance(node.value, ast.Name):
             print(f"returning name: {node.value.id}")
+            id, ctx = self._eval_line(node.value)
+
+            if self.spirv_helper.symbol_exists(id):
+                s_info = self.spirv_helper.get_symbol_info(id)
+
+                if s_info.location == titan_type.StorageType.FUNCTION_VAR:
+                    s_info_new = self.spirv_helper.SymbolInfo(
+                        ctx, titan_type.StorageType.OUT
+                    )
+
+                    self.spirv_helper.update_symbol_info(id, s_info_new)
+
+                    ptr_t_id = self.spirv_helper.get_type_id(
+                        self.spirv_helper.TypeContext(
+                            ctx, titan_type.StorageType.FUNCTION_VAR, False, True
+                        )
+                    )
+
+                    ptr_t_out_id = self.spirv_helper.get_type_id(
+                        self.spirv_helper.TypeContext(
+                            ctx, titan_type.StorageType.OUT, False, True
+                        )
+                    )
+
+                    self.spirv_helper.add_line(
+                        self.spirv_helper.Sections.VAR_CONST_DECLARATIONS,
+                        f"%{id} = OpVariable {ptr_t_out_id} Output"
+                    )
+
+                    str_to_match = f"%{id} = OpVariable {ptr_t_id} Function"
+                    
+                    # TODO: implement better method
+                    # bruteforce remove reference of symbol declaration in FUNCTIONS section
+                    i = 0
+                    for line in self.spirv_helper.generated_spirv[self.spirv_helper.Sections.FUNCTIONS.name]:
+                        if line == str_to_match:
+                            self.spirv_helper.generated_spirv[self.spirv_helper.Sections.FUNCTIONS.name].pop(i)
+                            break
+                        i += 1
+
+
         elif isinstance(node.value, ast.IfExp):
             # print(f"returning if expression")
             # print(node.value._fields)
