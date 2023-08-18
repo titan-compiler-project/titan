@@ -245,7 +245,7 @@ class Verilog_ASM():
         if not self.does_node_exist(fn_name, node.spirv_id):
             self.content[fn_name].body_nodes[node.spirv_id] = []
 
-        print(f"-[Verilog_ASM.add_body_node_to_function] adding {node} with id {node.spirv_id} to function {fn_name}")
+        # print(f"-[Verilog_ASM.add_body_node_to_function] adding {node} with id {node.spirv_id} to function {fn_name}")
         self.content[fn_name].body_nodes[node.spirv_id].append(node)
 
     def add_type_context_to_function(self, fn_name: str, type_id: str, type_context: _VerilogTypeContext):
@@ -491,7 +491,7 @@ class Verilog_ASM():
         best = self.__find_best_parents(current_node)
         node_names = []
 
-        print(f"BEST EVAL---- {best}")
+        # print(f"BEST EVAL---- {best}")
 
         # print(f"best parents for node {current_node} is:")
 
@@ -553,6 +553,7 @@ class Verilog_ASM():
 
             # shift all declarations into the new dict (tick=0, consts + vars)
             # print('='*10)
+            # handle all nodes at tick = 0
             for node in tick_ordered_nodes[0]:
                 # print(f"-[Verilog_ASM.clean_graph] node: {node}", end="")
                 if node.spirv_id not in clean_nodes:
@@ -566,7 +567,7 @@ class Verilog_ASM():
             # print(f"-[Verilog_ASM.clean_graph] clean_nodes: {clean_nodes}")
 
             print()
-            for tick in range(1, len(tick_ordered_nodes.keys())):
+            for tick in range(1, len(tick_ordered_nodes.keys())): #TODO: remove .keys() call
                 print(f"-[Verilog_ASM.clean_graph] tick: {tick}")
                 for node in tick_ordered_nodes[tick]:
                     print(f"\tnode: {node}", end="")
@@ -577,22 +578,6 @@ class Verilog_ASM():
 
                     print()
 
-                    # print("="*10)
-                    # print(len(clean_nodes))
-                    # print("="*10)
-
-                    # ctx = self._eval_parents_for_non_temp_id(node)
-                    # print(f"node: {node} evalutes to context: \n\t{ctx}")
-                    # new_node = d.Node(ctx)
-                    # print(f"new node is: {new_node}\n\n")
-                    
-                    # if new_node.spirv_id not in clean_nodes:
-                    #     clean_nodes[new_node.spirv_id] = [new_node]
-                    # else:
-                    #     clean_nodes[new_node.spirv_id].append(new_node)
-
-
-
                     # if _eval_parents_for_non_temp_id(node) returns a spirv id
                     # we should just try and reference the latest one in the clean
                     # nodes dict
@@ -602,17 +587,6 @@ class Verilog_ASM():
 
                     if len(best_node_names) == 1:
                         print(f"returned with one node: {best_node_names[0]}")
-                        # n = _fetch_last_node(clean_nodes, best_node_names[0])
-                        # print(f"\n{n}")
-
-                        # new_ctx = d.NodeContext(
-                        #     node.spirv_line_no, node.spirv_id, node.type_id,
-                        #     n, None, node.operation, node.data
-                        # )
-
-                        # _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
-
-                        # print(self.does_node_exist_in_dict(clean_nodes, node.spirv_id))
 
                         if self.does_node_exist_in_dict(clean_nodes, node.spirv_id):
                             n = _fetch_last_node(clean_nodes, best_node_names[0])
@@ -628,14 +602,17 @@ class Verilog_ASM():
                             # print(f"-[Verilog_ASM.clean_graph] node {node} does not exist in clean dict")
 
                             if node.is_comparison:
+                                # accessing the node data should fetch the related comparison line & its info
+                                # we assume that it is in the 0th index
                                 n = _fetch_last_node(clean_nodes, node.data[0].spirv_id)
-                                
+
                                 new_ctx = d.NodeContext(
                                     node.spirv_line_no, node.spirv_id, node.type_id,
                                     node.input_left, node.input_right,
                                     node.operation, [n], node.is_comparison
                                 )
                             else:
+                                # TODO: does this every actually get hit? may be something redundant
                                 new_ctx = d.NodeContext(
                                     node.spirv_line_no, node.spirv_id, node.type_id,
                                     node.input_left, node.input_right, 
