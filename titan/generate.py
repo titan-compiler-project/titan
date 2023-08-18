@@ -736,19 +736,25 @@ def _get_spirv_function_locations(parsed_spirv):
     line_no = fn_start = 0
     fn_name = ""
     fn_locations = []
+    _marked_start = False
+    _marked_end = False
     for line in parsed_spirv:
         match line.opcode:
             case "Function":
                 fn_start = line_no
                 fn_name = line.id[1:] # slice to remove '%'
+                _marked_start = True
             case "FunctionEnd":
                 fn_locations.append(_FunctionLocation(fn_start, line_no, fn_name))
                 fn_name = ""
+                _marked_end = True      
 
         line_no += 1
 
-    del fn_start, line_no, fn_name
-    return fn_locations
+    if (_marked_start and _marked_end):
+        return fn_locations
+    else:
+        raise Exception(f"failed to determine start/end point of function (start: {_marked_start}, end: {_marked_end})")
 
 
 
@@ -981,7 +987,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                 case "Select":
                         #                          0           1               2             3
                         # %result_id = OpSelect %type_id %comparison_id %true_value_id %false_value_id
-                        
+
                         l = verilog.get_node(fn_name, line.opcode_args[2])
                         r = verilog.get_node(fn_name, line.opcode_args[3])
 
@@ -1145,10 +1151,11 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
 
     print()
     verilog.generate_dot_graph()
-    # print(verilog.declared_symbols)
+    # _generate_verilog_text(verilog)
+    print(verilog.declared_symbols)
     verilog.clean_graph()
-    _generate_verilog_text(verilog)
     verilog.generate_dot_graph("clean_nodes")
+    _generate_verilog_text(verilog)
     # print("t_a" in verilog.declared_symbols)
 
 
@@ -1194,7 +1201,7 @@ def _generate_verilog_text(v: m.Verilog_ASM):
 
         # for tick in sorted_nodes.keys():
         for tick in range(len(sorted_nodes.keys())):
-            print(tick)
+            print(f"{tick} has {len(sorted_nodes[tick])} nodes")
 
             io_length_tracker = 0
             # for node in sorted_nodes[tick]:
