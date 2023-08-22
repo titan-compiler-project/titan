@@ -11,9 +11,14 @@
 
 class TitanComms {
     public:
-        TitanComms(int cs_pin, SPISettings spi_settings); // pass cs & spi settings?
-        // enum instruction : byte; // need data type otherwise it complains about forward declaration
-        
+        #if !defined(ARDUINO_ARCH_RP2040)
+            TitanComms(int cs_pin, SPISettings spi_settings); // pass cs & spi settings?
+        #elif defined(ARDUINO_ARCH_RP2040)
+            TitanComms(int MISO, int MOSI, int CS, int SCLK, SPISettings spi_settings);
+        #else
+            #error "unsupported target"
+        #endif
+       
         enum instruction {
             NOP = 0x00,
             WRITE = 0x01,
@@ -43,6 +48,19 @@ class TitanComms {
         void _chip_select();
         void _chip_deselect();
         u_int8_t _xor_checksum(u_int32_t input);
+
+        // create different class depending on target architecture
+        //              v extract from verbose compilation
+        // target rpi: ARDUINO_ARCH_RP2040
+        // target teensy3.2: ARDUINO_TEENSY32
+        #if defined(ARDUINO_TEENSY32)
+            SPIClass *_spi;
+        #elif defined(ARDUINO_ARCH_RP2040)
+            arduino::MbedSPI *_spi;
+            int _miso, _mosi, _sclk;
+        #else
+            #error "unsupported target"
+        #endif
 };
 
 #endif

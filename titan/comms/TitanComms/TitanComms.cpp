@@ -11,10 +11,23 @@
 #include "SPI.h"
 
 // constructor
-TitanComms::TitanComms(int cs_pin, SPISettings spi_settings){
-    _cs_pin = cs_pin;
-    _spi_settings = spi_settings;
-}
+#if defined(ARDUINO_TEENSY32)
+    TitanComms::TitanComms(int cs_pin, SPISettings spi_settings){
+        _cs_pin = cs_pin;
+        _spi_settings = spi_settings;
+        // _spi = SPI; // unneeded?
+    }
+#elif defined(ARDUINO_ARCH_RP2040)
+    TitanComms::TitanComms(int MISO, int MOSI, int CS, int SCLK, SPISettings spi_settings){
+        _cs_pin = CS;
+        _miso = MISO;
+        _mosi = MOSI;
+        _sclk = SCLK;
+        _spi_settings = spi_settings;
+
+        _spi = new arduino::MbedSPI(MISO, MOSI, SCLK);
+    }
+#endif
 
 void TitanComms::_chip_select(){
     digitalWrite(_cs_pin, LOW);
@@ -27,7 +40,7 @@ void TitanComms::_chip_deselect(){
 void TitanComms::begin(){
     pinMode(_cs_pin, OUTPUT);
     digitalWrite(_cs_pin, HIGH); // cs is active low, so setting to high means its disabled
-    SPI.begin();
+    _spi->begin();
 }
 
 void TitanComms::_extract_byte_from_int(u_int24 data, int byte_index, u_int8_t* storage_byte){
@@ -71,14 +84,14 @@ void TitanComms::write(u_int24 address, u_int32_t value){
     u_int16_t lower_data = value; // auto truncated?
 
 
-    SPI.beginTransaction(_spi_settings);
+    _spi->beginTransaction(_spi_settings);
     _chip_select();
-    SPI.transfer16(merged_instr_addr_high);
-    SPI.transfer16(addr_mid_and_low);
-    SPI.transfer16(upper_data);
-    SPI.transfer16(lower_data);
+    _spi->transfer16(merged_instr_addr_high);
+    _spi->transfer16(addr_mid_and_low);
+    _spi->transfer16(upper_data);
+    _spi->transfer16(lower_data);
     _chip_deselect();
-    SPI.endTransaction();
+    _spi->endTransaction();
 
     // DEBUG_PRINT_STR("---L "); DEBUG_PRINT_HEX(addr_low); DEBUG_PRINTLN();
     // DEBUG_PRINT_STR("---M "); DEBUG_PRINT_HEX(addr_mid); DEBUG_PRINTLN();
@@ -86,7 +99,7 @@ void TitanComms::write(u_int24 address, u_int32_t value){
 }
 
 byte TitanComms::_nop_and_read8(){
-    byte temp = SPI.transfer(TRANSFER);
+    byte temp = _spi->transfer(TRANSFER);
     return temp;
 }
 
@@ -94,16 +107,16 @@ u_int16_t TitanComms::_nop_and_read16(){
     // pack byte instruction into a 2 byte one
     // i.e. INSTRUCTION = 0x01
     // formatted = 0x0101 etc
-    u_int16_t temp = SPI.transfer16(((TRANSFER << 8) + TRANSFER));
+    u_int16_t temp = _spi->transfer16(((TRANSFER << 8) + TRANSFER));
     return temp;
 }
 
 void TitanComms::_repeat() {
-    SPI.beginTransaction(_spi_settings);
+    _spi->beginTransaction(_spi_settings);
     _chip_select();
-    SPI.transfer(REPEAT);
+    _spi->transfer(REPEAT);
     _chip_deselect();
-    SPI.endTransaction();
+    _spi->endTransaction();
 }
 
 
@@ -121,11 +134,11 @@ u_int32_t TitanComms::read(u_int24 address){
     u_int8_t recieved_checksum, calculated_checksum;
 
     
-    SPI.beginTransaction(_spi_settings);
+    _spi->beginTransaction(_spi_settings);
     
     _chip_select();
-    SPI.transfer16(merged_instr_addr_high);
-    SPI.transfer16(addr_mid_and_low);
+    _spi->transfer16(merged_instr_addr_high);
+    _spi->transfer16(addr_mid_and_low);
     
     value_high = _nop_and_read16();
     value_low = _nop_and_read16();
@@ -134,7 +147,7 @@ u_int32_t TitanComms::read(u_int24 address){
     // recieved_checksum = _nop_and_read8();
     
     _chip_deselect();
-    SPI.endTransaction();
+    _spi->endTransaction();
 
     u_int32_t final_val = (value_high << 16) + value_low;
 
@@ -149,10 +162,10 @@ void TitanComms::set_core_interrupt(u_int24 address){
     u_int16_t merged_instr_addr_hi = (BIND_INTERRUPT << 8) + addr_hi;
     u_int16_t addr_mid_lo = address.data;
 
-    SPI.beginTransaction(_spi_settings);
+    _spi->beginTransaction(_spi_settings);
     _chip_select();
-    SPI.transfer16(merged_instr_addr_hi);
-    SPI.transfer16(addr_mid_lo);
+    _spi->transfer16(merged_instr_addr_hi);
+    _spi->transfer16(addr_mid_lo);
     _chip_deselect();
-    SPI.endTransaction();
+    _spi->endTransaction();
 }
