@@ -17,18 +17,19 @@ module core_interface # (
     input wire [ADDRESS_WIDTH-1:0] address,
     input wire [VALUE_WIDTH-1:0] value,
     output wire [VALUE_WIDTH-1:0] output_value,
+    output wire [VALUE_WIDTH-1:0] stream_bus,
     output wire core_interrupt
 );
 
     localparam LAST_INPUT_ADDRESS = END_ADDRESS - TOTAL_OUTPUTS;
-    TitanComms::instructions instr_enum;
 
     // need address in normal range to index memory, not global range
     wire [ADDRESS_WIDTH-1:0] normalised_input_address = address - START_ADDRESS;
     wire [ADDRESS_WIDTH-1:0] normalised_ouput_address = address - LAST_INPUT_ADDRESS;
 
     
-    wire interface_enable = (address >= START_ADDRESS) & (address <= END_ADDRESS);
+    // if we're getting talked to, and which parts specifically
+    wire interface_enable = ((address >= START_ADDRESS) & (address <= END_ADDRESS));
     wire addressing_inputs = (address >= START_ADDRESS) & (address <= LAST_INPUT_ADDRESS);
     wire addressing_outputs = (address > LAST_INPUT_ADDRESS) & (address <= END_ADDRESS);
     
@@ -40,6 +41,11 @@ module core_interface # (
     logic core_done_signal;
 
     assign core_interrupt = interrupt_enabled;
+    
+    logic stream_enabled = 0;
+    // logic stream_i_or_o = 0; // 0 = inputs, 1 = outputs
+    logic [ADDRESS_WIDTH-1:0] normalised_stream_read_address;
+    logic [ADDRESS_WIDTH-1:0] normalised_stream_write_address;
 	 
     reg [VALUE_WIDTH-1:0] output_val_internal;
 
@@ -48,14 +54,21 @@ module core_interface # (
     );    
 
 	 always @ (posedge clock) begin
+        // if not being addressed but the current instruction is BINDx then we need to disable our stream output 
+        if (!interface_enable & ((instruction == BIND_READ_ADDRESS) | (instruction == BIND_WRITE_ADDRESS))) begin
+            stream_enabled <= 0;
+        end
 
-        // if we're not being talked to, but there is another BIND_INTERRUPT instruction
-        // means that we have to release the bus
-        // if (!interface_enable & instruction == BIND_INTERRUPT) begin
-        //     interrupt_enabled = 0;
-        // end
+        // TODO: if (stream_enabled) here instead?
+        if (instruction == STREAM) begin
+            if (stream_enabled) begin
+                input_memory[normalised_stream_write_address] <= value;
 
-        if (interface_enable) begin
+                // need to replace with index if multiple outputs
+                stream_bus <= output_memory;
+            end
+        end else if (interface_enable) begin
+        // if (interface_enable) begin
             unique case (instruction)
 
                 READ: begin
@@ -80,10 +93,35 @@ module core_interface # (
                     input_memory[0] <= input_memory[0] + 1;
                 end
 
+                BIND_READ_ADDRESS: begin
+                    if (addressing_outputs) begin
+                        stream_enabled <= 1;
+                        normalised_stream_read_address <= address - LAST_INPUT_ADDRESS;
+                    end
+                end
+
+                BIND_WRITE_ADDRESS: begin
+                    if (addressing_inputs) begin
+                        stream_enabled <= 1;
+                        normalised_stream_write_address <= address - START_ADDRESS;
+                    end
+                end
+
+                // STREAM: begin
+                //     if(stream_enabled) begin
+                //         input_memory[normalised_stream_write_address] <= value;
+
+                //         // need to replace with index if multiple outputs
+                //         stream_bus <= output_memory; 
+                //      end
+                // end
             endcase
         end else if (!interface_enable & (instruction == BIND_INTERRUPT)) begin
             interrupt_enabled <= 0;
         end
+        // end else if (!interface_enable & (instruction == (BIND_READ_ADDRESS | BIND_WRITE_ADDRESS))) begin
+            // stream_enabled <= 0;
+        // end
     end
 
 

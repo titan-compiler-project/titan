@@ -11,9 +11,10 @@ package TitanComms;
         READ = 2, 
         STREAM = 3, 
         BIND_INTERRUPT = 4,
-        BIND_ADDRESS = 5,
-        TRANSFER = 6, 
-        REPEAT = 7
+        BIND_READ_ADDRESS = 5,
+        BIND_WRITE_ADDRESS = 6,
+        TRANSFER = 7, 
+        REPEAT = 8
     } instructions;
 
 endpackage
