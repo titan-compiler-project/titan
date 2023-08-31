@@ -154,6 +154,66 @@ u_int32_t TitanComms::read(u_int24 address){
     return final_val;
 }
 
+u_int32_t TitanComms::stream(u_int32_t value){
+    u_int16_t ans1, ans2;
+
+    _spi->beginTransaction(_spi_settings);
+    _chip_select();
+    _spi->transfer((u_int8_t)STREAM);
+    ans1 = _spi->transfer16(value >> 16);
+    ans2 = _spi->transfer16((u_int16_t)value);
+    _chip_deselect();
+    _spi->endTransaction();
+
+    // DEBUG_PRINT_STR("[stream (rx)]: ");
+    // DEBUG_PRINT_HEX(ans1); DEBUG_PRINT_STR(" ");
+    // DEBUG_PRINT_HEX(ans2); DEBUG_PRINT_STR(" ");
+    // DEBUG_PRINT_HEX(ans3); DEBUG_PRINTLN();
+
+    return (u_int32_t) ((ans1 << 16) + ans2);
+}
+
+// void TitanComms::bind_address(u_int24 address){
+//     u_int16_t instr_addr_hi = (BIND_ADDRESS) << 8 + (address.data >> 16);
+    
+//     DEBUG_PRINT_HEX(instr_addr_hi); DEBUG_PRINT_STR(" ");
+//     DEBUG_PRINT_HEX((uint16_t)address.data); DEBUG_PRINTLN();
+
+//     _spi->beginTransaction(_spi_settings);
+//     _chip_select();
+//     _spi->transfer16(instr_addr_hi);
+//     _spi->transfer16((uint16_t)address.data);
+//     _chip_deselect();
+//     _spi->endTransaction();
+// }
+
+void TitanComms::set_stream_read_address(u_int32_t address){
+    u_int16_t instr_addr_hi = (BIND_READ_ADDRESS << 8) + ((address << 8) >> 24);
+    u_int16_t addr_mid_lo = address;
+
+    _spi->beginTransaction(_spi_settings);
+    _chip_select();
+    _spi->transfer16(instr_addr_hi);
+    _spi->transfer16(addr_mid_lo);
+    _chip_deselect();
+    _spi->endTransaction();
+}
+
+void TitanComms::set_stream_write_address(u_int32_t address){
+    u_int16_t instr_addr_hi = (BIND_WRITE_ADDRESS << 8) + ((address << 8) >> 24);
+    u_int16_t addr_mid_lo = address;
+
+    DEBUG_PRINT_STR("[set_stream_write_address] ");
+    DEBUG_PRINT_HEX(instr_addr_hi); DEBUG_PRINT_STR(" "); DEBUG_PRINT_HEX(addr_mid_lo);
+    DEBUG_PRINTLN();
+
+    _spi->beginTransaction(_spi_settings);
+    _chip_select();
+    _spi->transfer16(instr_addr_hi);
+    _spi->transfer16(addr_mid_lo);
+    _chip_deselect();
+    _spi->endTransaction();
+}
 
 void TitanComms::set_core_interrupt(u_int24 address){
     u_int8_t addr_hi;

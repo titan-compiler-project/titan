@@ -25,9 +25,10 @@ class TitanComms {
             READ = 0x02,
             STREAM = 0x03,
             BIND_INTERRUPT = 0x04,
-            BIND_ADDRESS = 0x05,
-            TRANSFER = 0x06,
-            REPEAT = 0x07,
+            BIND_READ_ADDRESS = 0x05,
+            BIND_WRITE_ADDRESS = 0x06,
+            TRANSFER = 0x07,
+            REPEAT = 0x08,
             GET_METADATA = 0xFF
         };
         
@@ -35,8 +36,14 @@ class TitanComms {
             u_int32_t data : 24;
         };
         void begin(); // handles hardware config
-        void write(u_int24 address, u_int32_t value);
         u_int32_t read(u_int24 address);
+        void write(u_int24 address, u_int32_t value);
+        u_int32_t stream(u_int32_t value);
+        void set_stream_write_address(u_int32_t address);
+        void set_stream_read_address(u_int32_t address);
+
+        // do not use
+        void bind_address(u_int24 address);
         void set_core_interrupt(u_int24 address);
     private:
         int _cs_pin;
