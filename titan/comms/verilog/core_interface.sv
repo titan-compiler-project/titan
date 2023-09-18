@@ -17,7 +17,7 @@ module core_interface # (
     input wire [ADDRESS_WIDTH-1:0] address,
     input wire [VALUE_WIDTH-1:0] value,
     output wire [VALUE_WIDTH-1:0] output_value,
-    output wire [VALUE_WIDTH-1:0] stream_bus,
+    inout reg [VALUE_WIDTH-1:0] stream_bus,
     output wire core_interrupt
 );
 
@@ -57,6 +57,7 @@ module core_interface # (
         // if not being addressed but the current instruction is BINDx then we need to disable our stream output 
         if (!interface_enable & ((instruction == BIND_READ_ADDRESS) | (instruction == BIND_WRITE_ADDRESS))) begin
             stream_enabled <= 0;
+            // stream_bus <= 'hz;
         end
 
         // TODO: if (stream_enabled) here instead?
@@ -69,7 +70,7 @@ module core_interface # (
             end
         end else if (interface_enable) begin
         // if (interface_enable) begin
-            unique case (instruction)
+           unique case (instruction)
 
                 READ: begin
                     if (addressing_inputs) begin

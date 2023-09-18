@@ -9,7 +9,7 @@ module instruction_handler # (
     input wire spi_rx_valid,
     input wire [7:0] spi_rx_byte,
     input wire [VALUE_WIDTH-1:0] value_from_core,
-    input wire [VALUE_WIDTH-1:0] stream_bus,
+    inout reg [VALUE_WIDTH-1:0] stream_bus,
     output logic [INSTRUCTION_WIDTH-1:0] instruction_bus,
     output logic [ADDRESS_WIDTH-1:0] address_bus,
     output logic [VALUE_WIDTH-1:0] value_bus,
@@ -79,7 +79,7 @@ module instruction_handler # (
                 current_instruction <= spi_rx_byte;
                 received_byte_count <= 1;
 
-                unique case (spi_rx_byte)
+                case (spi_rx_byte)
                     WRITE: begin
                         expected_byte_count <= 8;
                     end
