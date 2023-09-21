@@ -17,7 +17,7 @@ module core_interface # (
     input wire [ADDRESS_WIDTH-1:0] address_i,
     input wire [VALUE_WIDTH-1:0] value_i,
     output wire [VALUE_WIDTH-1:0] result_o,
-    inout reg [VALUE_WIDTH-1:0] stream_o,
+    output reg [VALUE_WIDTH-1:0] stream_o,
     output wire core_interrupt_wo
 );
 
