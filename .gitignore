@@ -3,6 +3,12 @@ __pycache__
 build
 *.spv
 *.spvasm
+sim_build/
+dots/
+*.vcd
+*.gtkw
+yosys*.txt
+*.zip
 
 # kicad
 # For PCBs designed using KiCad: https://www.kicad.org/
