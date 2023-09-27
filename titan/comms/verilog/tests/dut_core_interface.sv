@@ -1,4 +1,4 @@
-module dut_test_core_interface (
+module dut_core_interface (
     input wire clk_i,
     input wire [7:0] instruction_i,
     input wire [23:0] address_i,
@@ -9,7 +9,7 @@ module dut_test_core_interface (
 
     `ifdef COCOTB_SIM
         initial begin
-            $dumpfile ("dut_test_core_interface_waves.vcd");
+            $dumpfile ("waves_dut_core_interface.vcd");
             // https://stackoverflow.com/questions/37368155/what-does-unable-to-bind-wire-error-mean
             $dumpvars (0, uut_core_interface);
             #1;
