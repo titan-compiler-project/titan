@@ -249,6 +249,11 @@ class _SPIRVHelperGenerator():
     def add_intermediate_id(self, intermediate_id: str, type: titan_type.DataType):
         self.intermediate_ids[intermediate_id] = type
 
+    def get_type_of_intermediate_id(self, intermediate_id: str):
+        """
+        returns the type of an intermediate ID, *not the type ID*
+        """
+        return self.intermediate_ids[intermediate_id]
 
     # type helpers
     def type_exists(self, type: TypeContext):
@@ -802,7 +807,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
             c_ctx = self.spirv_helper.ConstContext(titan_type.DataType(type(node.value)), node.value)
             if self.spirv_helper.const_exists(c_ctx):
-                return self.spirv_helper.get_const_id_with_ctx(node.value, c_ctx)
+                return self.spirv_helper.get_const_id_with_ctx(c_ctx)
             else:
                 # TODO: does not account for negative numbers, probably need an UnaryOp section 
                 c_id = self.spirv_helper.add_const_if_nonexistant(
@@ -816,13 +821,9 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
     def visit_IfExp(self, node):
         print(f"[visit_IfExp] {node} {node._fields}")
 
-        print(f"\tbody: {node.body.id} {node.body.ctx.__class__.__name__}")
-        # print(f"\ttest & ops (testing against {node.test.left.id}):")
-        # for i in range(len(node.test.ops)):
-            # print(f"\t\t{node.test.ops[i].__class__.__name__} {self._extract_content(node.test.comparators[i])}")
-        print(f"\torelse: {self._extract_content(node.orelse)}")
 
         # this should take care of the comparison node
+        # --- only if IfExp is visited by this function, and not _eval_line
         super().generic_visit(node)
 
         # TODO: probably should check if both types match, but as a hack we check only the left one and pray
@@ -883,7 +884,6 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         else:
             raise Exception(f"unhandled instance when evaluating left operand {node.left} {type(node.left)}")
         
-        print(f"COMPARATOR: {node.comparators[0]} {type(node.comparators[0])}")
 
         if isinstance(node.comparators[0], ast.Constant):
             print(node.comparators[0].value)
@@ -969,14 +969,21 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         else:
             raise Exception(f"idk what to do for {type(node)}")
 
-    def _extract_type(self, context):
 
+    def _extract_type(self, context):
+        """
+        attempts to extract the primative type from given context
+        """
         if isinstance(context, self.spirv_helper.TypeContext):
             return context.primative_type
         elif isinstance(context, self.spirv_helper.ConstContext):
             return context.primative_type
         elif isinstance(context, titan_type.DataType):
             return context.value
+        elif context is bool or int:
+            return context
+        else:
+            raise Exception(f"unable to extract type from context - {context} {type(context)}")
 
     def _eval_line(self, node):
         """
@@ -1118,23 +1125,41 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 return id, c_ctx
             else:
                 return self.spirv_helper.get_const_id(node.value, type(node.value)), c_ctx
-                
+        
+        elif isinstance(node, ast.IfExp):
+            self.visit_IfExp(node)
+
+            # return the context of the comparison node, because that'll indicate the type
+            # whereas the the ifexp_selector would only be bool due to the comparison condition
+            ctx = self.spirv_helper.get_type_of_intermediate_id(self.spirv_helper._latest_compare_id[1:])
+            return self.spirv_helper._latest_ifexp_selector_id, ctx
+
+        
+        elif isinstance(node, ast.Compare):
+            self.visit_Compare(node)
+
         else:
-            print(f"unexpected {type(node)} to parse")
+            raise Exception(f"unexpected {type(node)} to parse in eval_line, probably not implemented yet")
 
     def _eval_line_wrap(self, node):
         """
         works on ast.Assign or ast.AnnAssign nodes
         """
-        # print(node._fields)
+        
+        # this will call _eval_line on various nodes, including IfExp instead of going through visit_IfExp
+        # is this going to be an issue?
 
         if isinstance(node, ast.Assign):
-            for target in node.targets:
-                print(target.id, end="")
+            if len(node.targets) > 1:
+                raise Exception("multiple assignments not supported")
 
-                evaluated = self._eval_line(node.value)
-                print(f" = {evaluated}")
-                return evaluated
+            # for target in node.targets:
+            target = node.targets[0]
+            print(target.id, end="")
+
+            evaluated = self._eval_line(node.value)
+            print(f" = {evaluated}")
+            return evaluated
 
         elif isinstance(node, ast.AnnAssign):
             print(node.target.id, end="")
