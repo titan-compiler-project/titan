@@ -1,3 +1,4 @@
+import logging
 from enum import Enum
 
 class TitanErrors(Enum):
@@ -19,3 +20,9 @@ class TitanErrors(Enum):
     UNKNOWN_SPIRV_OPCODE = "unknown SPIR-V opcode"
     UNEXPECTED = "unexpected exception"
     BAD_TYPES = "bad/unsupported type(s) for operation"
+
+class LoggedException(Exception):
+    """ An exception that also logs the msg to the given logger. """
+    def __init__(self, logger: logging.Logger, msg: str):
+        logger.error(msg)
+        super().__init__(msg)

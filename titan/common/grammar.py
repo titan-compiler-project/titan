@@ -1,6 +1,6 @@
 import pyparsing as pp
 from typing import NamedTuple
-import operators as o
+import common.operators as o
 
 # slow performance when evaluating comparison statements
 # https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html?highlight=infix_notation#pyparsing.ParserElement.enable_packrat
