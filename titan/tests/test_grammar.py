@@ -1,6 +1,6 @@
 import pytest
-import grammar as g
-import operators as o
+import common.grammar as g
+import common.operators as o
 
 
 @pytest.mark.parametrize("num_val_list, expected_type_list",[

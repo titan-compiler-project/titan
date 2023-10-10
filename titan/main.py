@@ -1,8 +1,8 @@
-import sys, io
+import sys, io, logging, datetime
 from pathlib import Path
-from options import Options
+from common.options import Options
 import machine, parse, generate, symbols
-from errors import TitanErrors
+from common.errors import TitanErrors
 
 import ast_crawl
 
@@ -71,19 +71,30 @@ def _print_debug(machine_object: machine.Machine):
 def main():
 
     # debug
-    print(f"SYS ARG: {sys.argv}")
+    logging.basicConfig(
+        level=logging.DEBUG,
+        handlers=[
+            logging.FileHandler("compiler_log.txt"),
+            logging.StreamHandler()
+        ],
+        format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"
+    )
+
+    logging.info(f"--- New run, time is: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')} ---")
+    logging.debug(f"Arguments: {sys.argv}")
 
     machine_object = machine.Machine()
     symbol_table = symbols.SymbolTable()
 
     # argument parse call and error handle
     if len(sys.argv[1:]) == 0:
-        print(f"got no arguments")
+        logging.error("Got no arguments. Exiting.")
+        return -1
     else:
         try:
             _parse_options(machine_object)
         except Exception as err:
-            print(f"{err.args[0]} : ({err.args[1]})")
+            logging.error(f"{err.args[0]} ({err.args[1]})")
             return -1                    
             
     # handle python -> spirv
@@ -96,6 +107,7 @@ def main():
     # parse_result = parse.parse_spriv(machine_object)
 
 
+    logging.info(f"Generating SPIR-V from {machine_object.files[0]} ...")
     # assumes that there is only one file
     input_python_file = machine_object.files[0]
     x = ast_crawl.GenerateSPIRVFromAST(input_python_file)
@@ -105,7 +117,8 @@ def main():
     with io.StringIO(x.create_file_as_string()) as y:
         parse_result = parse.TitanSPIRVGrammar.spirv_body.parse_file(y)
 
+    logging.info(f"Generating RTL...")
     generate.generate_verilog(parse_result)
 
 if __name__ == "__main__":
-    main()  
+    main()
