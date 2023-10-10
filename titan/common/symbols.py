@@ -1,6 +1,6 @@
 from enum import Enum, auto
 from typing import NamedTuple, TYPE_CHECKING
-from type import *
+from common.type import *
 
 # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
 # if TYPE_CHECKING:
@@ -50,7 +50,7 @@ class Operation_Type(set, Enum):
     ARITHMETIC = {Operation.ADD, Operation.SUB, Operation.MULT, Operation.DIV}
     GENERIC_CONSTANT_DECLARATION = {Operation.CONSTANT_DECLARATION, Operation.GLOBAL_CONST_DECLARATION}
     GENERIC_VARIABLE_DECLARATION = {Operation.VARIABLE_DECLARATION, Operation.GLOBAL_VAR_DECLARATION}
-    COMPARISON = {Operation.DECISION, Operation.LESS_THAN, Operation.LESS_OR_EQ, 
+    COMPARISON = {Operation.LESS_THAN, Operation.LESS_OR_EQ, 
                   Operation.GREATER_THAN, Operation.GREATER_OR_EQ, 
                   Operation.EQUAL_TO, Operation.NOT_EQUAL_TO}
     BITWISE = {Operation.SHIFT_LEFT, Operation.SHIFT_RIGHT}
