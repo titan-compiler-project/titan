@@ -2,6 +2,7 @@ import logging
 from enum import Enum
 
 class TitanErrors(Enum):
+    """a collection of enums and associated error messages"""
 
     PARSE_BAD_OPTION = "unknown option"
     PARSE_OPTION_FAILURE = "unable to parse option" 
