@@ -9,7 +9,7 @@ module instruction_handler # (
     input wire spi_rx_valid_i,
     input wire [7:0] spi_rx_byte_i,
     input wire [VALUE_WIDTH-1:0] result_i,
-    inout reg [VALUE_WIDTH-1:0] stream_i,
+    input wire [VALUE_WIDTH-1:0] stream_i,
     output logic [INSTRUCTION_WIDTH-1:0] instruction_o,
     output logic [ADDRESS_WIDTH-1:0] address_o,
     output logic [VALUE_WIDTH-1:0] value_o,
@@ -55,7 +55,7 @@ module instruction_handler # (
     logic [1:0] data_pointer = 2'b01;
 
     always_ff @ (posedge clk_i) begin
-        $monitor("(%g) data pointer %h", $time, data_pointer);
+        // $monitor("(%g) data pointer %h", $time, data_pointer);
 
         // might cause issues with adding new instructions because they might be out of range?
         // if the instruction is WRITE, READ or STREAM (long instruction)
@@ -68,7 +68,6 @@ module instruction_handler # (
 
                 // TODO: fix this weird offset issue, lets try and get data_pointer = 0
                 // set datapointer to appropriate value
-                // STREAM sets data_pointer to 2 because we're immediately indexing
                 if (spi_rx_byte_i == STREAM) begin
                     data_pointer <= 2'd0;
                 end else begin
@@ -101,13 +100,13 @@ module instruction_handler # (
                     end
 
                     STREAM: begin
-                        expected_byte_count <= 8'd5;
+                        expected_byte_count <= 8'd5; // 1 byte instruction + 4 bytes to transfer
                         spi_tx_byte_o <= stream_i[31:24]; // upper most byte
                         // spi_tx_byte_o <= stream_i[31 - (8*data_pointer) -: 8];
                     end
 
                     default: begin
-                        expected_byte_count = 8'hx;
+                        expected_byte_count <= 8'hx;
                     end
                 endcase
 
@@ -137,7 +136,7 @@ module instruction_handler # (
             end
 
                 // shift any and all data into the register
-                rebuilt_instruction <= {rebuilt_instruction[56:0], spi_rx_byte_i};
+                rebuilt_instruction <= {rebuilt_instruction[55:0], spi_rx_byte_i};
 
         // on the negative edge of spi_rx_valid_i
         end else if (~spi_rx_valid_i) begin
