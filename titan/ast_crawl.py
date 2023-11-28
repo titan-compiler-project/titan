@@ -1,14 +1,17 @@
 # TODO:
 # - update all add_symbol calls
 # - check return types for _eval_line function
-import ast, typing, enum
+import ast, typing, enum, logging, json
 
-import type as titan_type
+import common.type as titan_type
 import machine
+import common.errors as errors
 
 class _SPIRVHelperGenerator():
+    """huge wrapper around helper functions relating to SPIR-V generation"""
 
     class Sections(enum.Enum):
+        """enum containing sections which make up the final SPIR-V file"""
         CAPABILITY_AND_EXTENSION = enum.auto()
         ENTRY_AND_EXEC_MODES = enum.auto()
         DEBUG_STATEMENTS = enum.auto()
@@ -18,6 +21,10 @@ class _SPIRVHelperGenerator():
         FUNCTIONS = enum.auto()
 
     class TypeContext(typing.NamedTuple):
+        """class/tuple that is used to give types some context about their use
+        
+        this is to account for how SPIR-V handles types, and how there can be various composites
+        """
         primative_type: titan_type.DataType
         storage_type: titan_type.StorageType = titan_type.StorageType.NONE
         is_constant: bool = False
@@ -25,10 +32,15 @@ class _SPIRVHelperGenerator():
         is_function_typedef: bool = False
         
     class ConstContext(typing.NamedTuple):
+        """class/tuple that gives some context about constants
+        
+        contains a primative type and the value of the constant
+        """
         primative_type: titan_type.DataType
         value: typing.Union[int, float, bool, None]
 
     class SymbolInfo(typing.NamedTuple):
+        """class/tuple that gives context for a type and SPIR-V storage location"""
         type: titan_type.DataType
         location: titan_type.StorageType
 
@@ -38,6 +50,9 @@ class _SPIRVHelperGenerator():
         self._disable_debug = disable_debug
         self._latest_ifexp_selector_id = None
         self._latest_compare_id = None
+        self._latest_function_name = None
+
+        self._decorator_dict = {}
 
 
         class symbol_type_hint(typing.TypedDict):
@@ -94,43 +109,46 @@ class _SPIRVHelperGenerator():
         }
 
     def dump(self):
+        """spew a whole bunch of debug info"""
         if not self._disable_debug:
 
-            print(f"[debug info _SPIRVHelperGenerator]\nentry point: {self.entry_point}")
-            print(f"input port list: {self.input_port_list}")
-            print(f"output port list: {self.output_port_list}")
-            print(f"output type list: {self.output_type_list}")
+            logging.debug(f"[debug info _SPIRVHelperGenerator]")
+            logging.debug(f"entry point: {self.entry_point}")
+            logging.debug(f"input port list: {self.input_port_list}")
+            logging.debug(f"output port list: {self.output_port_list}")
+            logging.debug(f"output type list: {self.output_type_list}")
 
-            print(f"symbols with info:")
+            logging.debug(f"symbols with info:")
             for id, info in self.symbol_info.items():
-                print(f"\t{id} -> {info}")
+                logging.debug(f"\t{id} -> {info}")
 
-            print(f"declared constants:")
+            logging.debug(f"declared constants:")
             for info, id in self.declared_constants.items():
-                print(f"\t{id} -> {info}")
+                logging.debug(f"\t{id} -> {info}")
 
 
-            print(f"declared types:")
+            logging.debug(f"declared types:")
             for info, id in self.declared_types.items():
-                print(f"\t{id} -> {info}")
+                logging.debug(f"\t{id} -> {info}")
 
-            print(f"intermediate line id & type:")
+            logging.debug(f"intermediate line id & type:")
             for id, type in self.intermediate_ids.items():
-                print(f"\t{id} -> {type}")
+                logging.debug(f"\t{id} -> {type}")
 
-            print(f"generated spirv:")
+            logging.debug(f"generated spirv:")
             for section in self.generated_spirv.keys():
-                print(f"section: {section}")
+                logging.debug(f"section: {section}")
 
                 for value in self.generated_spirv[section]:
-                    print(f"\t{value}")
+                    logging.debug(f"\t{value}")
 
      
     def add_line(self, section: Sections, line:str):
-        # self.body.append(line)
+        """add a line of generated SPIR-V to a certain section"""
         self.generated_spirv[section.name].append(line)
 
     def add_output_type(self, type):
+        """add an output type (SPIR-V typing)"""
         self.output_type_list.append(type)
 
     def add_output_symbol(self, symbol:str):
@@ -138,16 +156,19 @@ class _SPIRVHelperGenerator():
         self._internal_output_port_list_counter += 1
 
     def symbol_exists(self, symbol: str):
-        """
-        @param symbol: str: symbol name without SPIRV %
+        """check if a symbol exists
+        
+        - symbol: str: symbol name without SPIR-V %
         """
         # return True if symbol in self.symbols_and_types else False
         return True if symbol in self.symbol_info else False
 
-    def add_symbol(self, symbol_id: str, info: SymbolInfo):
-        self.symbol_info[symbol_id] = info
+    # no overloading
+    # def add_symbol(self, symbol_id: str, info: SymbolInfo):
+        # self.symbol_info[symbol_id] = info
 
     def add_symbol(self, symbol_id: str, type, location: titan_type.StorageType):
+        """add a symbol to a dict using the type (DataType) and location (StorageType)"""
         self.symbol_info[symbol_id] = self.SymbolInfo(titan_type.DataType(type), location)
 
     def get_symbol_info(self, symbol_id: str) -> SymbolInfo:
@@ -293,6 +314,7 @@ class _SPIRVHelperGenerator():
                     case titan_type.StorageType.FUNCTION_VAR:
                         storage_type = "Function"
                     case _:
+                        logging.exception(f"no text for storage type for {type.storage_type}", exc_info=False)
                         raise Exception(f"no text for storage type for {type.storage_type}")
 
                 spirv_txt += f"OpTypePointer {storage_type} {prim_tid}"
@@ -310,8 +332,10 @@ class _SPIRVHelperGenerator():
                     case titan_type.DataType.FLOAT:
                         spirv_txt += f"OpTypeFloat 32"
                     case _:
-                        raise Exception(f"type text for {type} not implemented yet")
+                        logging.exception(f"type text for {type} not implemented yet (did you wrap the type in a DataType() call to enum?)", exc_info=False)
+                        raise Exception(f"type text for {type} not implemented yet (did you wrap the type in a DataType() call to enum?)")
             else:
+                logging.exception(f"unable to generate spirv text for type {id} -> {type}", exc_info=False)
                 raise Exception(f"unable to generate spirv text for type {id} -> {type}")
 
             self.add_line(
@@ -331,25 +355,25 @@ class _SPIRVHelperGenerator():
         self.declared_constants[c_ctx] = spirv_id
 
     def add_const_if_nonexistant(self, const: ConstContext, negative_val:bool = False):
+        """adds a constant (and defines type) if it does not exist, otherwise it returns the constant"""
 
         if const not in self.declared_constants:
             txt_val = str(const.value)
-
             const_str = f"const_{titan_type.DataType(const.primative_type).name.lower()}"
-            # print(f"[add_const_if_nonexistant] const_str: {const_str}")
 
-
+            # format the string properly
             if negative_val:
                 txt_val = txt_val.replace("-", "n")
 
             if const.primative_type is float:
                 txt_val = txt_val.replace(".", "_")
 
-            # const_str += f"_{str(const.value).replace('.', '_')}"
-
             const_str += f"_{txt_val}"
 
             self.declared_constants[const] = const_str
+
+            # check if type has been declared
+            self.add_type_if_nonexistant(self.TypeContext(titan_type.DataType(const.primative_type)),f"%type_{(titan_type.DataType(const.primative_type).name).lower()}")
 
             self.add_line(
                 self.Sections.VAR_CONST_DECLARATIONS,
@@ -374,7 +398,6 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         self._target_file = file
         self._tree = ast.parse(open(file, "r").read())
 
-        # self.spirv = machine.SPIRV_ASM()
         self.spirv_helper = _SPIRVHelperGenerator(disable_debug=False)
 
     def crawl(self):
@@ -406,6 +429,10 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
     # TODO: can these be turned into enums instead?
     def _return_string_from_type(self, type):
+        """returns a string depending on the type() of a variable
+
+        works on int, float and bool, otherwise raises an exception
+        """
         if (type is int):
             return "int"
         elif (type is float):
@@ -413,9 +440,14 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         elif (type is bool):
             return "bool"
         else:
+            logging.exception(f"unexpected type {type}", exc_info=False)
             raise Exception(f"unexpected type {type}")
         
     def _return_type_from_string(self, type_as_string: str):
+        """returns a type class depending on the recieved string
+
+        works on int, float and bool, otherwise raises an exception
+        """
         if type_as_string == "int":
             return int
         elif type_as_string == "float":
@@ -423,13 +455,19 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         elif type_as_string == "bool":
             return bool
         else:
+            logging.exception(f"unexpected type as string {type_as_string}", exc_info=False)
             raise Exception(f"unexpected type as string {type_as_string}")
 
+
+
+
+    # ---------- start of AST functions ----------
+    # see: https://docs.python.org/3/library/ast.html
 
     def visit_Module(self, node):
         _module_contains_step_function = False
 
-        print(f"found {len(node.body)} functions\n")
+        logging.debug(f"found {len(node.body)} functions")
 
         for i in range(len(node.body)):
             if node.body[i].name == "step":
@@ -478,13 +516,15 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 f"OpExecutionMode %{fn.name} OriginUpperLeft"
             )
 
-            print(f"exit function {fn.name}\n")
+            logging.debug(f"exit function {fn.name}")
 
 
     
     def visit_FunctionDef(self, node):
-        print(f"function {node.name} returns type {node.returns.id}\n\t{node._fields}")
-        
+        logging.debug(f"function {node.name} returns type {node.returns.id} -- {node._fields}")
+        self.spirv_helper._latest_function_name = node.name
+
+
         self.spirv_helper.add_line(
             self.spirv_helper.Sections.DEBUG_STATEMENTS,
             f"OpName %{node.name} \"{node.name}\""
@@ -566,6 +606,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         # TODO: needs implementation for multiple returns
         # handle returns (types for now)
         if isinstance(node.returns, ast.Call):
+            logging.exception(f"multiple returns/function calls no handled yet", exc_info=False)
             raise Exception(f"multiple returns/function calls not handled yet")
         elif isinstance(node.returns, ast.Name):
             type_class = self._get_python_type_from_string(node.returns.id)
@@ -592,9 +633,9 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
             
     
-        print(f"body start {node.name}")
+        logging.debug(f"body start {node.name}")
         super().generic_visit(node)
-        print(f"body end {node.name}")
+        logging.debug(f"body end {node.name}")
 
         # TODO: add function that lets me add lists of strings instead of having to
         #       write this every time
@@ -611,22 +652,73 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
 
     def visit_Call(self, node):
-        print(f"{node.__class__.__name__} {node._fields}")
-        print(f"{node.func.id}")
-        # print(f"{node.args}")
+        logging.debug(f"TODO: function calls/decorators properly")
+        logging.debug(ast.dump(node))
 
-        for arg in node.args:
-            print(f"{arg.id}")
+        if isinstance(node.func, ast.Attribute):
+            # logging.debug(f"attribute hit with name {node.func.value.id}.{node.func.attr} with args {node.args}, targeting {self.spirv_helper._latest_function_name}")
+
+            match node.func.attr:
+                case "lag":
+                    logging.debug(f"lagging decorator found")
+
+                    if len(node.args) != 1:
+                        raise Exception(f"unexpected amount of args, wanted 1 got {len(node.args)}")
+
+                    decorator_args = node.args[0] # there should only be one entry, and this should be a list
+
+                    if not isinstance(decorator_args, ast.List):
+                        raise Exception(f"expecting list for decorator, got {type(decorator_args)} instead")
+                    
+                    list_of_inputs_and_lags = decorator_args.elts
+
+                    # {function_name: {
+                    #                   input1: 2,
+                    #                   input2: 5
+                    #                 }
+                    # }
+
+                    temp_dict = {}
+
+                    for element in list_of_inputs_and_lags:
+                        # still working with ast.Lists here
+                        if len(element.elts) != 2:
+                            raise Exception(f"unexpected amount of elements, wanted 2 got {len(element.elts)}")
+                        
+                        target_input = self._extract_content(element.elts[0])
+                        target_lag_depth = self._extract_content(element.elts[1])
+                        temp_dict[target_input] = target_lag_depth
+
+                    self.spirv_helper._decorator_dict[self.spirv_helper._latest_function_name] = temp_dict
+                    logging.debug(f"lagging decorator produced: {self.spirv_helper._decorator_dict}")
+
+                    logging.info(f"Generating JSON (contains lagging information)...")
+                    with open(f"{self.spirv_helper._latest_function_name}_lagging_info.json", "w+") as f:
+                        f.write(json.dumps(self.spirv_helper._decorator_dict, indent=4))
+
+
+                case "recursive":
+                    raise Exception("TODO")
+                case _:
+                    raise Exception("unexpected attribute when handling a call")
+            
 
 
     def visit_Assign(self, node):
         if len(node.targets) > 1:
+            logging.exception(f"multiple assignments not supported", exc_info=False)
             raise Exception("multiple assignments not supported")
 
-        eval_id, eval_ctx = self._eval_line_wrap(node)
+        try:
+            eval_id, eval_ctx = self._eval_line_wrap(node)
+        except Exception as e:
+            logging.exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
+            raise Exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
+
         type_class = self._extract_type(eval_ctx)
 
         if type_class is None:
+            logging.exception(f"evaluated type as None for variable with no type declaration", exc_info=False)
             raise Exception("evaluated type as None for variable with no type declaration")
         
         t_id = self.spirv_helper.add_type_if_nonexistant(
@@ -652,11 +744,17 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             self.spirv_helper.TypeContext(titan_type.DataType(type_class)),
             f"%type_{titan_type.DataType(type_class).name.lower()}"
         )
+        try:
+            eval_id, eval_ctx = self._eval_line_wrap(node)
+        except Exception as e:
+            logging.exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
+            raise Exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
 
-        eval_id, eval_ctx = self._eval_line_wrap(node)
+
         eval_type = self._extract_type(eval_ctx)
 
         if eval_type != type_class:
+            logging.exception(f"mismatched types: eval_type {eval_type} - type_class {type_class}", exc_info=False)
             raise Exception(f"mismatched types: eval_type {eval_type} - type_class {type_class}")
 
         self.spirv_helper.add_symbol_if_nonexistant(node.target.id, type_class, titan_type.StorageType.FUNCTION_VAR)
@@ -674,10 +772,12 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         """
         # TODO: add calls to _eval_line to get proper id for node
         if isinstance(node.value, ast.Constant):
-            print(f"returning const: {node.value.value}")
+            logging.debug(f"returning const: {node.value.value}")
+            logging.exception(f"TODO: return constant value", exc_info=False)
             raise Exception("TODO: return constant value")
+        
         elif isinstance(node.value, ast.Name):
-            print(f"returning name: {node.value.id}")
+            logging.debug(f"returning name: {node.value.id}")
             id, ctx = self._eval_line(node.value)
 
             if self.spirv_helper.symbol_exists(id):
@@ -778,6 +878,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
             # print(f"return {node.value.body.id} if {node.value.test.left.id} {node.value.test.ops[0].__class__.__name__} {self._extract_content(node.value.test.comparators[0])} else {self._extract_content(node.value.orelse)}")
         elif isinstance(node.value, ast.BinOp):
+            logging.exception(f"TODO implement handling binops for return values", exc_info=False)
             raise Exception("TODO implement handling binops for return values")
 
             id, ctx = self._eval_line(node.value)
@@ -791,6 +892,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 raise Exception("idk")
 
         else:
+            logging.exception(f"unhandled type during return node evaluation {node}", exc_info=False)
             raise Exception(f"unhandled type during return node evaluation {node} {type(node)}")
 
 
@@ -802,7 +904,8 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             if self.spirv_helper.symbol_exists(node.id):
                 return node.id
             else:
-                raise Exception(f"symbol referenced but does not exist")
+                logging.exception(f"symbol referenced but does not exist: {node.id}", exc_info=False)
+                raise Exception(f"symbol referenced but does not exist: {node.id}")
         elif isinstance(node, ast.Constant):
 
             c_ctx = self.spirv_helper.ConstContext(titan_type.DataType(type(node.value)), node.value)
@@ -816,10 +919,11 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 return c_id
             # return self.spirv_helper.get_const_id(node.value, titan_type.DataType(type(node.value)))
         else:
+            logging.exception(f"unhandled node {node}", exc_info=False)
             raise Exception(f"unhandled node {node} {type(node)}")
 
     def visit_IfExp(self, node):
-        print(f"[visit_IfExp] {node} {node._fields}")
+        logging.debug(f"[visit_IfExp] {node} {node._fields}")
 
 
         # this should take care of the comparison node
@@ -848,13 +952,12 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
     # comparison only, do not need to worry about the "orelse" value
     def visit_Compare(self, node):
-        # print(f"compare: {node._fields}")
+        # also fails to do a > b -- "failed to unpack evaluation, unhandled instance when checking Name object"
 
         if len(node.ops) > 1:
             # TODO: will probably need recursive function to evaluate all comparisons?
+            logging.exception(f"TODO: cannot handle multiple comparisons yet", exc_info=False)
             raise Exception("TODO: cannot handle multiple comparisons yet")
-
-        # print(f"left: {node.left.id} op:{node.ops[0].__class__.__name__} comparator:{self._extract_content(node.comparators[0])}")
 
         t_id = self.spirv_helper.add_type_if_nonexistant(
             self.spirv_helper.TypeContext(
@@ -863,87 +966,66 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             f"%type_{titan_type.DataType.BOOLEAN.name.lower()}"
         )
 
-        left_id = None
-        right_id = None
-        opcode = None
-        target_type = self.spirv_helper.get_symbol_type(node.left.id) # this will need to be changed to whatever object the left operand is
+        # left_id = None
+        # right_id = None
+        # opcode = None
 
-        # if we're dealing with a symbol
-        # TODO: implement for right node
+        # fails to do 1 > b -- "constant object has no attribute id"
+        # TODO: needs typechecking to determine correct type of node
+        # target_type = self.spirv_helper.get_symbol_type(node.left.id) # this will need to be changed to whatever object the left operand is
+
+        eval_left_id, left_ctx = self._eval_line(node.left)
+        eval_right_id, right_ctx = self._eval_line(node.comparators[0])
+
+        left_type = self._extract_type(left_ctx)
+        right_type = self._extract_type(right_ctx)
+
+
+        # big chance that this will have to get changed since it may cause issues if you're not super specific with types
+        if left_type is not right_type:
+            logging.exception(f"{errors.TitanErrors.TYPE_MISMATCH.value}, L: {left_type} R: {right_type} ({errors.TitanErrors.TYPE_MISMATCH.name})")
+            raise Exception(f"{errors.TitanErrors.TYPE_MISMATCH.value}, L: {left_type} R: {right_type} ({errors.TitanErrors.TYPE_MISMATCH.name})")
+        else:
+            target_type = left_type
+            target_type_id = self.spirv_helper.get_primative_type_id(target_type)
+
+
+        # handle left node
         if isinstance(node.left, ast.Name):
-            # lets just make sure it actually exists...
-            if not self.spirv_helper.symbol_exists(node.left.id):
-                raise Exception(f"got ast.Name object implying a symbol, but no related symbol was found... {node.left.id}")
-            
-            left_type_id = self.spirv_helper.get_primative_type_id(self.spirv_helper.get_symbol_type(node.left.id))
-            left_id = f"temp_{node.left.id}"
+            # if name, that means symbol, so we have to load it
+            load_str = f"temp_{node.left.id}"
             self.spirv_helper.add_line(
                 self.spirv_helper.Sections.FUNCTIONS,
-                f"%{left_id} = OpLoad {left_type_id} %{node.left.id}"
+                f"%{load_str} = OpLoad {target_type_id} %{node.left.id}"
             )
+            eval_left_id = load_str # use updated id
+
+        elif isinstance(node.left, ast.Constant):
+            # possibly do nothing, or simply set variables? although we already have info from _eval_line
+            pass
         else:
-            raise Exception(f"unhandled instance when evaluating left operand {node.left} {type(node.left)}")
-        
+            logging.exception(f"possibly unhandled left node when evaluating comparison: {node.left} {type(node.left)}")
+            raise Exception(f"possibly unhandled left node when evaluating comparison: {node.left} {type(node.left)}")
 
-        if isinstance(node.comparators[0], ast.Constant):
-            print(node.comparators[0].value)
-            print(node.comparators[0].kind)
-            
-            # TODO: is there a better way of getting the type?
-            # right_id = self.spirv_helper.get_const_id(node.comparators[0].value, type(node.comparators[0].value))
 
-            right_id = self.spirv_helper.add_const_if_nonexistant(
-                self.spirv_helper.ConstContext(
-                    titan_type.DataType(type(node.comparators[0].value)), 
-                    node.comparators[0].value
-                )
+        # handle comparators
+        # - at the moment this can only handle 1 comparator, so dont do nesting
+        # - might need some recursive function to handle various depths of comparisons i.e. for each comparison, call _eval_line?
+        if isinstance(node.comparators[0], ast.Name):
+            load_str = f"temp_{node.comparators[0].id}"
+            self.spirv_helper.add_line(
+                self.spirv_helper.Sections.FUNCTIONS,
+                f"%{load_str} = OpLoad {target_type_id} %{node.comparators[0].id}"
             )
+            eval_right_id = load_str
 
-        else:
-            raise Exception(f"unhandled instance when checking comparator {node.comparators[0]} {type(node.comparators[0])}")
+        # node.ops contains a list of operators (as ast.LtE, ast.Gt etc etc), we take the zeroth one since atm we can only do 1 comparison
+        opcode = self.__return_correct_opcode(target_type, node.ops[0])
 
-
-        # if int .. if float
-        # opcode = relevant opcode for comparison 
-        _operator = node.ops[0]
-        # error prone? might not always be guaranteed to be a titan_type
-        if target_type.value is int:
-            match type(node.ops[0]):
-                case ast.Eq:
-                    opcode = "OpIEqual"
-                case ast.NotEq:
-                    opcode = "OpINotEqual"
-                case ast.Lt:
-                    opcode = "OpSLessThan"
-                case ast.LtE:
-                    opcode = "OpSLessThanEqual"
-                case ast.Gt:
-                    opcode = "OpSGreaterThan"
-                case ast.GtE:
-                    opcode = "OpSGreaterThanEqual"
-
-        elif target_type.value is float:
-            match type(node.ops[0]):
-                case ast.Eq:
-                    opcode = "OpFOrdEqual"
-                case ast.NotEq:
-                    opcode = "OpFOrdNotEqual"
-                case ast.Lt:
-                    opcode = "OpFOrdLessThan"
-                case ast.LtE:
-                    opcode = "OpFOrdLessThanEqual"
-                case ast.Gt:
-                    opcode = "OpFOrdGreaterThan"
-                case ast.GtE:
-                    opcode = "OpFOrdGreaterThanEqual"
-
-        else:
-            raise Exception(f"unhandled type during comparison {target_type}")
-        
-        self.spirv_helper.add_intermediate_id(f"titan_id_{self.spirv_helper.intermediate_id}", type(node.comparators[0].value))
+        self.spirv_helper.add_intermediate_id(f"titan_id_{self.spirv_helper.intermediate_id}", target_type)
         self.spirv_helper.add_line(
             self.spirv_helper.Sections.FUNCTIONS,
-            f"%titan_id_{self.spirv_helper.intermediate_id} = {opcode} {t_id} %{left_id} %{right_id}"
+            f"%titan_id_{self.spirv_helper.intermediate_id} = {opcode} {t_id} %{eval_left_id.strip('%')} %{eval_right_id.strip('%')}"
         )
 
         self.spirv_helper._latest_compare_id = f"%titan_id_{self.spirv_helper.intermediate_id}"
@@ -955,7 +1037,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
     def visit_Constant(self, node): pass
 
     def generic_visit(self, node):
-        print(f"{node.__class__.__name__} {node._fields}")
+        logging.debug(f"generic visit {node.__class__.__name__} {node._fields}")
 
     def _extract_content(self, node):
         """
@@ -967,12 +1049,15 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         elif isinstance(node, ast.Name):
             return node.id
         else:
+            logging.exception(f"idk what to do for {type(node)}", exc_info=False)
             raise Exception(f"idk what to do for {type(node)}")
 
 
     def _extract_type(self, context):
         """
-        attempts to extract the primative type from given context
+        attempts to extract the primative type from a given context
+
+        - handles TypeContext, ConstContext, DataType, bool and int
         """
         if isinstance(context, self.spirv_helper.TypeContext):
             return context.primative_type
@@ -983,12 +1068,55 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         elif context is bool or int:
             return context
         else:
+            logging.exception(f"unable to extract type from context - {context} {type(context)}", exc_info=False)
             raise Exception(f"unable to extract type from context - {context} {type(context)}")
+
+    def __return_correct_opcode(self, chosen_type, operation):
+        logging.debug(f"determining opcode for {operation} (type: {chosen_type})")
+
+        opcode_dict = {
+            (ast.Add, int) : "OpIAdd",
+            (ast.Sub, int) : "OpISub",
+            (ast.Mult, int) : "OpIMul",
+            (ast.Div, int) : "OpSDiv",
+            (ast.LShift, int) : "OpShiftLeftLogical",
+            (ast.RShift, int) : "OpShiftRightLogical",
+            (ast.Eq, int) : "OpIEqual",
+            (ast.NotEq, int) : "OpINotEqual",
+            (ast.Lt, int) : "OpSLessThan",
+            (ast.LtE, int) : "OpSLessThanEqual",
+            (ast.Gt, int) : "OpSGreaterThan",
+            (ast.GtE, int) : "OpSGreaterThanEqual",
+
+            (ast.Add, float) : "OpFAdd",
+            (ast.Sub, float) : "OpFSub",
+            (ast.Div, float) : "OpFDiv",
+            (ast.Mult, float) : "OpFMult",
+            (ast.Eq, float) : "OpFOrdEqual",
+            (ast.NotEq, float) : "OpFOrdNotEqual",
+            (ast.Lt, float) : "OpFOrdLessThan",
+            (ast.LtE, float) : "OpFOrdLessThanEqual",
+            (ast.Gt, float) : "OpFOrdGreaterThan",
+            (ast.GtE, float) : "OpFOrdGreaterThanEqual"
+        }
+
+        try:
+            # need __class__ to avoid indexing with object instance
+            return opcode_dict[(operation.__class__, chosen_type)]
+        except KeyError:
+            logging.exception(f"unable to index opcode: ({operation.__class__}, {chosen_type})")
+            raise
+        except Exception as e:
+            logging.exception(f"{e}")
+            raise
 
     def _eval_line(self, node):
         """
-        returns line id and line context
+        recursively evaluates a line and returns the final line id and line context
         """
+        logging.debug(f"evaluating node: {node.__class__}")
+
+
         if isinstance(node, ast.BinOp):
 
             left_id, left_ctx = self._eval_line(node.left)
@@ -1010,6 +1138,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             # print(f"{node.op.__class__.__name__} {isinstance(node.op, ast.Add)}")
 
             if left_type is not right_type:
+                logging.exception(f"mismatched types l: {left_type} r: {right_type}", exc_info=False)
                 raise Exception(f"mismatched types l: {left_type}  r: {right_type}")
 
             if left_type is None:
@@ -1022,6 +1151,7 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 return_ctx = left_ctx
                 chosen_type = left_type
             else:
+                logging.exception(f"unable to determine return type (L: {left_type} , R: {right_type})", exc_info=False)
                 raise Exception(f"unable to determine return type (L: {left_type} , R: {right_type})")
 
             if self.spirv_helper.symbol_exists(left_id):
@@ -1047,49 +1177,29 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
             # set the appropriate opcode
             opcode = None
-            if chosen_type is int:
-                match type(node.op):
-                    case ast.Add:
-                        opcode = "OpIAdd"
-                    case ast.Sub:
-                        opcode = "OpISub"
-                    case ast.Mult:
-                        opcode = "OpIMul"
-                    case ast.Div:
-                        opcode = "OpSDiv"
-
-            elif chosen_type is float:
-                match type(node.op):
-                    case ast.Add:
-                        opcode = "OpFAdd"
-                    case ast.Sub:
-                        opcode = "OpFSub"
-                    case ast.Mult:
-                        opcode = "OpFMult"
-                    case ast.Div:
-                        opcode = "OpFDiv"
-            else:
-                raise Exception(f"unexpected operator {node.op}")
+            opcode = self.__return_correct_opcode(chosen_type, node.op)
             
             if opcode is None:
-                raise Exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id}")
+                logging.exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id} {left_type} {right_type}", exc_info=False)
+                raise Exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id} {left_type} {right_type}")
 
             self.spirv_helper.add_line(
                 self.spirv_helper.Sections.FUNCTIONS,
                 f"%{spirv_line_str} = {opcode} {chosen_type_id} %{left_id.strip('%')} %{right_id.strip('%')}"
             )
 
-
             # TODO: check which type is not None, and propagate that back up
             # TODO: should we change the type for a symbol?
             self.spirv_helper.intermediate_id += 1
             return spirv_line_str, return_ctx
+        
         elif isinstance(node, ast.UnaryOp):
 
             if isinstance(node.op, ast.USub):
                 value = node.operand.value
 
                 if type(value) not in [int, float, bool]:
+                    logging.exception(f"got unexpected constant value type {type(value)}", exc_info=False)
                     raise Exception(f"got unexpected constant value type {type(value)}")
 
                 c_ctx = self.spirv_helper.ConstContext(type(value), value * -1)
@@ -1103,12 +1213,14 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 else:
                     return self.spirv_helper.get_const_id(value*-1, type(value)), c_ctx
 
+            logging.exception(f"unhandled additional operator in unaryop class {node.op}", exc_info=False)
             raise Exception(f"unhandled additional operator in unaryop class {node.op}")
             # return f"{node.op.__class__.__name__} {node.operand.value} {type(node.operand.value)} ({isinstance(node.op,ast.USub)})"
 
         elif isinstance(node, ast.Name):
             if not self.spirv_helper.symbol_exists(node.id):
-                raise Exception(f"symbol does not exist {node.id}")
+                logging.exception(f"symbol '{node.id}' does not exist", exc_info=False)
+                raise Exception(f"symbol '{node.id}' does not exist")
 
             return f"{node.id}", self.spirv_helper.get_symbol_type(node.id)
 
@@ -1138,7 +1250,11 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         elif isinstance(node, ast.Compare):
             self.visit_Compare(node)
 
+            ctx = self.spirv_helper.get_type_of_intermediate_id(self.spirv_helper._latest_compare_id[1:])
+            return self.spirv_helper._latest_compare_id, ctx
+
         else:
+            logging.exception(f"unexpected {type(node)} to parse in eval_line, probably not implemented yet", exc_info=False)
             raise Exception(f"unexpected {type(node)} to parse in eval_line, probably not implemented yet")
 
     def _eval_line_wrap(self, node):
@@ -1151,19 +1267,20 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
         if isinstance(node, ast.Assign):
             if len(node.targets) > 1:
+                logging.exception(f"multiple assignments not supported", exc_info=False)
                 raise Exception("multiple assignments not supported")
 
             # for target in node.targets:
             target = node.targets[0]
-            print(target.id, end="")
+            logging.debug(f"{target.id}")
 
             evaluated = self._eval_line(node.value)
-            print(f" = {evaluated}")
+            logging.debug(f" = {evaluated}")
             return evaluated
 
         elif isinstance(node, ast.AnnAssign):
-            print(node.target.id, end="")
+            logging.debug(f"{node.target.id}")
             
             evaluated = self._eval_line(node.value)
-            print(f" = {evaluated}")
+            logging.debug(f" = {evaluated}")
             return evaluated

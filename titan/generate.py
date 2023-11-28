@@ -1,11 +1,13 @@
-import options
+import logging
+
+import common.options as options
 import machine as m
-import symbols as s
-import type as t
-import operators as o
+import common.symbols as s
+import common.type as t
+import common.operators as o
 import dataflow as d
 import pyparsing as pp
-from errors import TitanErrors
+from common.errors import TitanErrors
 from typing import NamedTuple
 # from pyparsing import ParseResults
 
@@ -18,9 +20,11 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
         if func_count == 0:
             # raise Exception("no parsed source code to generate SPIR-V from", "no_source")
+            logging.exception(f"{TitanErrors.NO_PARSED_SOURCE_CODE.value} ({TitanErrors.NO_PARSED_SOURCE_CODE.name})", exc_info=False)
             raise Exception(TitanErrors.NO_PARSED_SOURCE_CODE.value, TitanErrors.NO_PARSED_SOURCE_CODE.name)
         elif func_count > 1:
             # raise Exception(f"undefined top module when there are {func_count} modules, use the -t option to set the top.", "no_top_set")
+            logging.exception(f"{TitanErrors.UNDEFINED_TOP_MODULE.value} ({TitanErrors.UNDEFINED_TOP_MODULE.name})", exc_info=False)
             raise Exception(TitanErrors.UNDEFINED_TOP_MODULE.value, TitanErrors.UNDEFINED_TOP_MODULE.name)
         else:
             machine_object.name_of_top_module = machine_object.functions[0].name
@@ -119,6 +123,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             case _:
                 # raise Exception("got unknown type while trying to generate SPIR-V", "unknown_type")
+                logging.exception(f"{TitanErrors.PARSED_UNKNOWN_TYPE.value} : {t_ctx} for {id} ({TitanErrors.PARSED_UNKNOWN_TYPE.name})", exc_info=False)
                 raise Exception(f"{TitanErrors.PARSED_UNKNOWN_TYPE.value} : {t_ctx} for {id}", TitanErrors.PARSED_UNKNOWN_TYPE.name)
 
     for symbol, info in symbol_table.content.items():
@@ -157,6 +162,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                                 f"{ptr_id} = OpTypePointer Input {spirv.get_type_id(spirv.TypeContext(info.datatype, None, False, False))}"
                             )
                     case _:
+                        logging.exception(f"{TitanErrors.NOT_IMPLEMENTED} (function input variable parameter datatype ({info.datatype}) declaration) ({TitanErrors.NOT_IMPLEMENTED.name})", exc_info=False)
                         raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function input variable parameter datatype ({info.datatype}) declaration)", TitanErrors.NOT_IMPLEMENTED.name)
 
             case s.Operation.FUNCTION_OUT_VAR_PARAM:
@@ -175,6 +181,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                             )
                     case _:
                         # raise Exception("not implemented", "not_implemented")
+                        logging.exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function output variable parameter datatype ({info.datatype}) declaration) ({TitanErrors.NOT_IMPLEMENTED.name})", exc_info=False)
                         raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function output variable parameter datatype ({info.datatype}) declaration)", TitanErrors.NOT_IMPLEMENTED.name)
                     
             case s.Operation.VARIABLE_DECLARATION:
@@ -193,12 +200,13 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                             )
                     case _:
                         # raise Exception("not implemented", "not_implemented")
+                        logging.exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (variable datatype ({info.datatype}) declaration) ({TitanErrors.NOT_IMPLEMENTED.name})", exc_info=False)
                         raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (variable datatype ({info.datatype}) declaration)", TitanErrors.NOT_IMPLEMENTED.name)
 
     for func in machine_object.functions:
         # TODO: the same for params
 
-        print(f"SYMBOL TABLE: {symbol_table.content}")
+        logging.debug(f"SYMBOL TABLE: {symbol_table.content}")
 
         for input in func.params:
             # print(input)
@@ -206,7 +214,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             if symbol_table.exists(input.parameter):
                 info = symbol_table.get(input.parameter)
-                print(info)
+                logging.debug(info)
 
                 match info.datatype:
                     case t.DataType.INTEGER:
@@ -218,6 +226,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                         )
 
                     case _:
+                        logging.exception(f"{TitanErrors.UNEXPECTED.value}: generate_spirv_asm got an unhandled datatype ({info.datatype}) ({TitanErrors.UNEXPECTED.name})", exc_info=False)
                         raise Exception(f"{TitanErrors.UNEXPECTED.value}: generate_spirv_asm got an unhandled datatype ({info.datatype})", TitanErrors.UNEXPECTED.name)
 
 
@@ -237,6 +246,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
                     case _:
                         # raise Exception("not implemented", "not_implemented")
+                        logging.exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (returned variable type ({info.datatype}) id) ({TitanErrors.NOT_IMPLEMENTED.name})", exc_info=False)
                         raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (returned variable type ({info.datatype}) id)", TitanErrors.NOT_IMPLEMENTED.name)
 
 
@@ -244,6 +254,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
     def _extract_type(info):
         if info is None:
             # raise Exception("unable to extract type", "fail_type_extract")
+            logging.exception(f"{TitanErrors.TYPE_EXTRACT_FAILED.value} ({TitanErrors.TYPE_EXTRACT_FAILED.name})", exc_info=False)
             raise Exception(TitanErrors.TYPE_EXTRACT_FAILED.value, TitanErrors.TYPE_EXTRACT_FAILED.name)
         else:
             match type(info):
@@ -253,12 +264,13 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     return info.datatype.value
                 case _:
                     # raise Exception("got unknown type", "unknown_type_while_extracting")
+                    logging.exception(f"{TitanErrors.UNKNOWN_TYPE_EXTRACTED.value} ({info}) ({TitanErrors.UNKNOWN_TYPE_EXTRACTED.name})", exc_info=False)
                     raise Exception(f"{TitanErrors.UNKNOWN_TYPE_EXTRACTED.value} ({info})", TitanErrors.UNKNOWN_TYPE_EXTRACTED.name)
 
     # TODO: move this outside of the generate_spirv_asm function
     def _eval_line(line):
 
-        print(f"[_eval_line]: line is type {type(line)} containing {line}")
+        logging.debug(f"[_eval_line]: line is type {type(line)} containing {line}")
 
         if isinstance(line, o.TernaryCondOp):
             # check if bool datatype has been created
@@ -275,10 +287,6 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             b = false_val_id, false_val_ctx = _eval_line(line.false_val)
             c = cond_id, cond_ctx = _eval_line(line.condition)
 
-            # print("-"*10)
-            # print(f"{a}\n{b}\n{c}")
-            # print("-"*10)
-
             selector_line_id = f"%titan_id_{spirv.id}"
 
             if not spirv.line_exists(selector_line_id):
@@ -289,6 +297,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             # sanity check
             if true_val_type != false_val_type:
+                logging.exception(f"{TitanErrors.TYPE_MISMATCH.value} value {true_val_ctx} with id {true_val_id} does not match value {false_val_ctx} with id {false_val_id} ({TitanErrors.TYPE_MISMATCH.name})", exc_info=False)
                 raise Exception(f"{TitanErrors.TYPE_MISMATCH.value} value {true_val_ctx} with id {true_val_id} does not match value {false_val_ctx} with id {false_val_id}")
 
 
@@ -337,6 +346,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                     # TODO
                     # use Op(S|F)Negate when dealing with variables
                     # raise Exception("got unexpected type whilst parsing arithmetic", "unexpected_type")
+                    logging.exception(f"{TitanErrors.UNKNOWN_TYPE_IN_ARITHMETIC.value} ({TitanErrors.UNKNOWN_TYPE_IN_ARITHMETIC.name})", exc_info=False)
                     raise Exception(TitanErrors.UNKNOWN_TYPE_IN_ARITHMETIC.value, TitanErrors.UNKNOWN_TYPE_IN_ARITHMETIC.name)
             # ---- the unary op is only ever used when there is a negative value, redundant to have this here?
             # else:
@@ -393,6 +403,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 return f"%{line}", symbol_table.get(line)
             else:
                 # raise Exception("symbol does not exist!", "no_symbol")
+                logging.exception(f"{TitanErrors.NON_EXISTENT_SYMBOL.value} ({line}) ({TitanErrors.NON_EXISTENT_SYMBOL.name})", exc_info=False)
                 raise Exception(f"{TitanErrors.NON_EXISTENT_SYMBOL.value} ({line})", TitanErrors.NON_EXISTENT_SYMBOL.name)
 
         elif isinstance(line, o.BinaryOp):
@@ -404,6 +415,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             if t_0 is not t_1:
                 if line.operator not in s.LiteralSymbolGroup.BITWISE:
+                    logging.exception(f"{TitanErrors.TYPE_MISMATCH.value} t_0 = {t_0}, t_1 = {t_1} on line {line} ({TitanErrors.TYPE_MISMATCH.name})", exc_info=False)
                     raise Exception(f"{TitanErrors.TYPE_MISMATCH.value} t_0 = {t_0}, t_1 = {t_1} on line {line}", TitanErrors.TYPE_MISMATCH.name)    
 
             # print(f"line: {line}")
@@ -452,6 +464,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                                 case s.Operation.DIV:
                                     opcode = "OpFDiv"
                         else:
+                            logging.exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value} for arithmetic operator ({TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name})", exc_info=False)
                             raise Exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value} for arithmetic operator", TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name)
 
                     # handle comparison
@@ -493,15 +506,18 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                                     opcode = "OpFOrdGreaterThanEqual"
 
                         else:
+                            logging.exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value} for comparison operator ({TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name})", exc_info=False)
                             raise Exception(f"{TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.value} for comparison operator", TitanErrors.UNKNOWN_TYPE_DURING_GENERATION.name)
 
                     case line.operator if line.operator in s.LiteralSymbolGroup.BITWISE:
 
                         if t_0 is float:
+                            logging.exception(f"{TitanErrors.BAD_TYPES.value}: bitwise shift operators require the result variable to be of type integer ({TitanErrors.BAD_TYPES.name})", exc_info=False)
                             raise Exception(f"{TitanErrors.BAD_TYPES.value}: bitwise shift operators require the result variable to be of type integer", TitanErrors.BAD_TYPES.name)
 
                         if t_1 is float:
-                            raise Exception(f"{TitanErrors.BAD_TYPES}: bitwise shift value must be of type integer")
+                            logging.exception(f"{TitanErrors.BAD_TYPES.value}: bitwise shift value must be of type integer ({TitanErrors.BAD_TYPES.name})", exc_info=False)
+                            raise Exception(f"{TitanErrors.BAD_TYPES.value}: bitwise shift value must be of type integer", TitanErrors.BAD_TYPES.name)
                         
                         special_opset = s.Operation_Type.BITWISE
                         op = s.Operation(line.operator)
@@ -516,6 +532,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                                 opcode = "OpShiftRightArithmetic"
 
                     case _:
+                        logging.exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} - failed to match line operator {line.operator} during generation ({TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name})", exc_info=False)
                         raise Exception(f"{TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.value} - failed to match line operator {line.operator} during generation", TitanErrors.UNKNOWN_OPERATOR_DURING_GENERATION.name)
                         
                 # we already checked if the types matches so it doesn't really matter if we mix its use
@@ -568,6 +585,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
             return line_id, info_0
         
         else:
+            logging.exception(f"{TitanErrors.UNEXPECTED.value}: _eval_line function got unhandled line instance ({line} if of type {type(line)}) ({TitanErrors.UNEXPECTED.name})", exc_info=False)
             raise Exception(f"{TitanErrors.UNEXPECTED.value}: _eval_line function got unhandled line instance ({line} is of type {type(line)})", TitanErrors.UNEXPECTED.name)
     
 
@@ -586,6 +604,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
                 )
             case _:
                 # raise Exception("not implemented", "not_implemented")
+                logging.exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function type ({info.datatype}) declaration) ({TitanErrors.NOT_IMPLEMENTED.name})", exc_info=False)
                 raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} (function type ({info.datatype}) declaration)", TitanErrors.NOT_IMPLEMENTED.name)
 
         spirv.append_code(
@@ -615,7 +634,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
 
             # TODO: maybe make a wrapper function so that we don't need to drop one of the return values?
             line_id, _ = _eval_line(entry[2])
-            print(f"line: {entry} has final evaluation id of {line_id}")
+            logging.debug(f"line: {entry} has final evaluation id of {line_id}")
 
             if entry[1] == "=":
                 opcode = "OpStore"
@@ -640,7 +659,7 @@ def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
     # print()
     # print()
     spirv.print_contents()
-    print(f"-[generate_spirv_asm] {spirv.generated_lines}")
+    logging.debug(f"-[generate_spirv_asm] {spirv.generated_lines}")
     machine_object.SPIRV_asm_obj = spirv
     # print()
     # print()
@@ -661,6 +680,7 @@ def _get_datatype_from_string(type_string):
         case "bool":
             return s.DataType.BOOLEAN
         case _:
+            logging.exception(f"{TitanErrors.UNEXPECTED.value} unexpected type {type_string} ({TitanErrors.UNEXPECTED.name})", exc_info=False)
             raise Exception(f"{TitanErrors.UNEXPECTED.value} unexpected type {type_string}", TitanErrors.UNEXPECTED.name)            
 
 
@@ -699,7 +719,7 @@ def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
             if len(function.returns) > 0:
                 for param in function.returns:
                     # print(f"[WARN]: return value for {param} is still assumed to be an integer. (generate.generate_symbols line:504)")
-                    print(f"[WARN]: return value for {param} is {function.return_type} (multiple return types are not yet supported) (generate.generate_symbols line:492)")
+                    logging.warn(f"return value for {param} is {function.return_type} (multiple return types are not yet supported)")
                     
                     # if not symbol_table.exists(param):
                         # symbol_table.add(param, s.Information(s.DataType.INTEGER, s.Operation.FUNCTION_OUT_VAR_PARAM))
@@ -754,6 +774,7 @@ def _get_spirv_function_locations(parsed_spirv):
     if (_marked_start and _marked_end):
         return fn_locations
     else:
+        logging.exception(f"failed to determine start/end point of function (start: {_marked_start}, end: {_marked_end})", exc_info=False)
         raise Exception(f"failed to determine start/end point of function (start: {_marked_start}, end: {_marked_end})")
 
 
@@ -770,7 +791,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
     # deal with headers
     for x in range(0, fn_locations[0].start_pos):
         line = parsed_spirv[x]
-        print(line)
+        logging.debug(line)
 
         match line.opcode:
             case "EntryPoint":
@@ -797,6 +818,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                         )
                     )
                 else:
+                    logging.exception(f"{TitanErrors.NON_EXISTENT_SYMBOL.value} ({line.opcode_args[0]} on line {x}) ({TitanErrors.NON_EXISTENT_SYMBOL.name})", exc_info=False)
                     raise Exception(f"{TitanErrors.NON_EXISTENT_SYMBOL.value} ({line.opcode_args[0]} on line {x})", TitanErrors.NON_EXISTENT_SYMBOL.name)
             
             case "Variable":
@@ -859,6 +881,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                 )
             
             case "TypeFloat":
+                logging.exception(f"{TitanErrors.NOT_IMPLEMENTED.value} TypeFloat ({TitanErrors.NOT_IMPLEMENTED.name})", exc_info=False)
                 raise Exception(f"{TitanErrors.NOT_IMPLEMENTED.value} TypeFloat", TitanErrors.NOT_IMPLEMENTED.name)
             
             case "TypeBool":
@@ -876,7 +899,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
         # for pos in range()
         for pos in range(fn.start_pos, fn.end_pos + 1):
             line = parsed_spirv[pos]
-            print(line)
+            logging.debug(line)
 
             match line.opcode:
 
@@ -908,6 +931,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
 
                         verilog.modify_node(fn_name, line.opcode_args[0], 0, value_node, s.Operation.STORE)
                     else:
+                        logging.exception(f"does not exist {fn_name} {line.opcode_args[1]}", exc_info=False)
                         raise Exception(f"DOES NOT EXIST {fn_name} {line.opcode_args[1]}")
                     
 
@@ -1104,8 +1128,8 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                         )
                     )
 
-                # TODO: this might need to handle "OpShiftRightLogical"
-                case "ShiftRightArithmetic":
+                # TODO: this might need to handle "OpShiftRightArithmetic"
+                case "OpShiftRightLogical":
                     l = verilog.get_node(fn_name, line.opcode_args[1])
                     r = verilog.get_node(fn_name, line.opcode_args[2])
 
@@ -1126,6 +1150,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                     if line.opcode == "Function" or line.opcode == "Label" or line.opcode == "Return" or line.opcode == "FunctionEnd":
                         continue
                     else:
+                        logging.exception(f"{TitanErrors.UNKNOWN_SPIRV_OPCODE.value} ({line.opcode}) ({TitanErrors.UNKNOWN_SPIRV_OPCODE.name})", exc_info=False)
                         raise Exception(f"{TitanErrors.UNKNOWN_SPIRV_OPCODE.value} ({line.opcode})", TitanErrors.UNKNOWN_SPIRV_OPCODE.name) 
 
 
@@ -1149,7 +1174,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
     #         print()
 
 
-    print()
+    # print()
     verilog.generate_dot_graph()
     # _generate_verilog_text(verilog)
     print(verilog.declared_symbols)
@@ -1167,7 +1192,9 @@ def _generate_verilog_text(v: m.Verilog_ASM):
         else:
             return node.spirv_id[1:]
 
-    print(f"{v.content}\n\n{v.declared_symbols}\n\n{v.marked_symbols_for_deletion}\n\n")
+    logging.debug(f"content: {v.content}")
+    logging.debug(f"declared symbols: {v.declared_symbols}")
+    logging.debug(f"marked symbols for deletion: {v.marked_symbols_for_deletion}")
 
     writer = m.Verilog_Text()
 
@@ -1177,6 +1204,8 @@ def _generate_verilog_text(v: m.Verilog_ASM):
     )
 
     for fn in v.content.keys():
+    # for i in range(len(v.content.keys())):
+        # fn = list(v.content.keys())[i]
 
         writer.append_code(
             writer.Sections.MODULE_AND_PORTS,
@@ -1201,19 +1230,19 @@ def _generate_verilog_text(v: m.Verilog_ASM):
 
         # for tick in sorted_nodes.keys():
         for tick in range(len(sorted_nodes.keys())):
-            print(f"{tick} has {len(sorted_nodes[tick])} nodes")
+            logging.debug(f"tick {tick} has {len(sorted_nodes[tick])} nodes")
 
             io_length_tracker = 0
             # for node in sorted_nodes[tick]:
             # print(f"--=-=-=-=-= LENGTH: {len(sorted_nodes[tick])}")
-            writer_deferred_due_to_comparison = False
             for x in range(len(sorted_nodes[tick])):
                 node = sorted_nodes[tick][x]
-                print(f"\t{node}")
+                logging.debug(f"\t{node}")
 
                 if node.operation is s.Operation.GLOBAL_VAR_DECLARATION:
                     # this should only ever get hit on tick 0 but just in case
                     if tick != 0:
+                        logging.exception(f"variable declaration outside of tick 0 ({TitanErrors.UNEXPECTED.name})", exc_info=False)
                         raise Exception("variable declaration outside of tick 0", TitanErrors.UNEXPECTED.name)
 
                     type_ctx = v.get_type_context_from_function(fn, node.type_id)
@@ -1246,6 +1275,7 @@ def _generate_verilog_text(v: m.Verilog_ASM):
                                 f"\tassign {node.spirv_id[1:]} = {node.input_left.spirv_id[1:]};"
                             )
                         case _:
+                            logging.exception(f"{TitanErrors.UNEXPECTED.value} node: {node} ({TitanErrors.UNEXPECTED.name})", exc_info=False)
                             raise Exception(f"{TitanErrors.UNEXPECTED.value}\nnode: {node}", TitanErrors.UNEXPECTED.name)
 
 
@@ -1283,13 +1313,53 @@ def _generate_verilog_text(v: m.Verilog_ASM):
                         line
                     )
 
-                # if node.operation in s.Operation_Type.COMPARISON and node.operation is not s.Operation.DECISION:
-                if node.operation in s.Operation_Type.COMPARISON and node.operation is not s.Operation.DECISION:
-                    writer_deferred_due_to_comparison = True
+                if node.operation in s.Operation_Type.COMPARISON:
+                    defer_node_creation = False
+
+                    logging.debug(f"checking 1 tick ahead...({tick} + 1 = {tick+1})")
+
+                    for future_node in sorted_nodes[tick+1]:
+                        if defer_node_creation:
+                            break
+
+                        if future_node.operation == s.Operation.DECISION:
+                            if future_node.data[0].spirv_id == node.spirv_id:
+                                logging.debug("found a reference")
+                                defer_node_creation = True
+
+                            else:
+                                logging.debug("no reference found")
+
+                    logging.debug(f"stopped checking 1 tick ahead...\n")
+
+                    if not defer_node_creation:
+                        # TODO: add node stuff here - need to make the logic thingy and then add a line somehow idk
+
+                        # 1. make logic value
+                        # 2. assign logic value with comparison operation
+
+                        # logging.error(f"{v.get_type_context_from_function(fn, node.type_id)}")
+                        # width = int(v.get_type_context_from_function(fn, node.type_id).data[0])
+                     
+                        writer.append_code(
+                           writer.Sections.INTERNAL,
+                            f"\tlogic {node.spirv_id[1:]};"
+                        )
+
+                        # TODO: need to get logical operators not bitwise... 
+                        compare_op = s.Operation(node.operation).value
+                        line = f"\t\t{node.spirv_id[1:]} <= {__get_correct_id(node.input_left)} {compare_op} {__get_correct_id(node.input_right)};"
+
+                        writer.append_code(
+                            writer.Sections.ALWAYS_BLOCK,
+                            line
+                        )
+
+
                 
                 if node.operation is s.Operation.DECISION:
                     # paired_decision_node = sorted_nodes[tick+1][x+1]
-
+                    logging.debug(f"in decision: {node}")
                     comparison_node = node.data[0]
 
                     # comparison node holds the comparison operator, and the comparison itself
@@ -1308,24 +1378,7 @@ def _generate_verilog_text(v: m.Verilog_ASM):
                         f"\tlogic [{width-1}:0] {node.spirv_id[1:]};"
                     )
 
-                    compare_op = ""
-
-                    # TODO: replace with enum values instead, since they're just numbers via auto() atm
-                    match comparison_node.operation:
-                        case s.Operation.LESS_THAN:
-                            compare_op = "<"
-                        case s.Operation.LESS_OR_EQ:
-                            compare_op = "<="
-                        case s.Operation.GREATER_THAN:
-                            compare_op = ">"
-                        case s.Operation.GREATER_OR_EQ:
-                            compare_op = ">="
-                        case s.Operation.EQUAL_TO:
-                            compare_op = "=="
-                        case s.Operation.NOT_EQUAL_TO:
-                            compare_op = "!="
-                        case _:
-                            raise Exception(f"{TitanErrors.UNEXPECTED.value} failed to match operator {node.operation}", TitanErrors.UNEXPECTED.name)
+                    compare_op = s.Operation(comparison_node.operation).value
 
                     # TODO: __get_correct_id(node) was returning the string representation of the node instead, why?
                     line = f"\t\t{node.spirv_id[1:]} <= {__get_correct_id(comparison_node.input_left)} {compare_op} {__get_correct_id(comparison_node.input_right)} ? {__get_correct_id(node.input_left)} : {__get_correct_id(node.input_right)};"
