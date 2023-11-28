@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import graphviz
+import graphviz, logging
 
-import type
+import common.type as type
 import dataflow as d
-from errors import TitanErrors
-from symbols import Operation, Operation_Type
+from common.errors import TitanErrors
+from common.symbols import Operation, Operation_Type
 from enum import Enum, auto
 from typing import NamedTuple, TypedDict, Union, List
 
@@ -22,11 +22,6 @@ class Machine:
         self.SPIRV_asm_obj: SPIRV_ASM = None
 
 class Function:
-    # name = ""
-    # params = []
-    # body = []
-    # returns = []
-
     def __init__(self, name, params, body, returns, return_type):
         self.name = name
         self.params = params
@@ -103,12 +98,12 @@ class SPIRV_ASM:
         self.generated_spirv[section.name].append(code)
 
     def print_contents(self):
-        print("-"*10)
+        logging.debug(f"---- printing spirv ----")
         for section, code in self.generated_spirv.items():
-            print(f"{section}")
+            logging.debug(f"{section}")
             for entry in code:
-                print(f"\t{entry}")
-        print("-"*10)
+                logging.debug(f"\t{entry}")
+        logging.debug(f"---- end printing spirv ----")
 
     def create_file_as_string(self):
 
@@ -123,9 +118,10 @@ class SPIRV_ASM:
 
     def output_to_file(self, name):
 
+        logging.info(f"Writing SPIR-V to file ({name}.spvasm)")
         with open(f"{name}.spvasm", "w") as f:
             for k, v in self.generated_spirv.items():
-                print(f"writing {k}")
+                logging.debug(f"writing {k}")
                 
                 for line in v:
                     f.write(line)
@@ -344,8 +340,6 @@ class Verilog_ASM():
     
 
     def generate_dot_graph(self, file_name_suffix: str = "", clean_nodes = None):
-        # print("===graph gen===") # debug
-
 
         for key in self.content.keys():
             dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}{file_name_suffix}.dot", directory="dots") 
@@ -566,27 +560,33 @@ class Verilog_ASM():
 
             # print(f"-[Verilog_ASM.clean_graph] clean_nodes: {clean_nodes}")
 
-            print()
+            # print()
             for tick in range(1, len(tick_ordered_nodes.keys())): #TODO: remove .keys() call
-                print(f"-[Verilog_ASM.clean_graph] tick: {tick}")
+                logging.debug(f"tick: {tick}")
+                _debug_str = f"node: {node}"
                 for node in tick_ordered_nodes[tick]:
-                    print(f"\tnode: {node}", end="")
+                    # print(f"\tnode: {node}", end="")
 
                     if node.spirv_id not in self.declared_symbols and node.operation is Operation.LOAD:
-                        print(f"....ignored ({node.spirv_id})")
+                        # print(f"....ignored ({node.spirv_id})")
+                        _debug_str = _debug_str + f"....ignored ({node.spirv_id})"
                         continue
 
-                    print()
+                    # print()
+                    logging.debug(_debug_str)
 
                     # if _eval_parents_for_non_temp_id(node) returns a spirv id
                     # we should just try and reference the latest one in the clean
                     # nodes dict
-                    print(f"-->[Verilog_ASM.clean_graph] current node: {node}")
+                    # print(f"-->[Verilog_ASM.clean_graph] current node: {node}")
+                    logging.debug(f"current node: {node}")
                     best_node_names = self._eval_parents_for_non_temp_id(node)
-                    print(f"-->[Verilog_ASM.clean_graph] returned with {best_node_names}")
+                    # print(f"-->[Verilog_ASM.clean_graph] returned with {best_node_names}")
+                    logging.debug(f"returned with {best_node_names}")
 
                     if len(best_node_names) == 1:
-                        print(f"returned with one node: {best_node_names[0]}")
+                        # print(f"returned with one node: {best_node_names[0]}")
+                        logging.debug(f"returned with one node: {best_node_names[0]}")
 
                         if self.does_node_exist_in_dict(clean_nodes, node.spirv_id):
                             n = _fetch_last_node(clean_nodes, best_node_names[0])
@@ -624,11 +624,14 @@ class Verilog_ASM():
 
 
                     elif len(best_node_names) == 2:
-                        print(f"returned with two nodes: {best_node_names}")
+                        # print(f"returned with two nodes: {best_node_names}")
+                        logging.debug(f"returned with two nodes: {best_node_names}")
                         n1 = _fetch_last_node(clean_nodes, best_node_names[0])
                         n2 = _fetch_last_node(clean_nodes, best_node_names[1])
 
-                        print(f"\t{n1}\n\t{n2}")
+                        # print(f"\t{n1}\n\t{n2}")
+                        logging.debug(f"\tnode 1:{n1}")
+                        logging.debug(f"\tnode 2: {n2}")
 
                         new_ctx = d.NodeContext(
                             node.spirv_line_no, node.spirv_id, node.type_id,
@@ -642,14 +645,18 @@ class Verilog_ASM():
                             # clean_nodes[node.spirv_id] = [d.Node(new_ctx)]
 
 
-            print("="*10)
+            # print("="*10)
             # print(clean_nodes)
+            logging.debug(f"---- symbol dump ----")
             for symbol in clean_nodes:
-                print(symbol)
+                logging.debug(symbol)
+                # print(symbol)
                 for node in clean_nodes[symbol]:
-                    print(f"\t{node}")
-                print()
-            print("="*10)
+                    # print(f"\t{node}")
+                    logging.debug(f"\t{node}")
+                # print()
+            logging.debug(f"---- end symbol dump ----")
+            # print("="*10)
 
             # print(type(self.content[function].body_nodes))
             # self.content[function].body_nodes = clean_nodes
@@ -678,20 +685,21 @@ class Verilog_Text():
         self.generated_verilog[section.name].append(code)
 
     def print_contents(self):
-        print("-"*10)
+        logging.debug(f"---- printing generated verilog ---")
         for section, code_list in self.generated_verilog.items():
-            print(f"{section}")
+            logging.debug(f"{section}")
 
             for entry in code_list:
-                print(f"{entry}")
+                logging.debug(f"{entry}")
 
-        print("-"*10)
+        logging.debug(f"---- end generated verilog ---")
 
     def output_to_file(self, name):
 
+        logging.info(f"Writing SystemVerilog to file ({name}.sv)")
         with open(f"{name}.sv", "w") as f:
             for k, v in self.generated_verilog.items():
-                print(f"writing {k}")
+                logging.debug(f"writing {k}")
                 
                 for line in v:
                     f.write(line)

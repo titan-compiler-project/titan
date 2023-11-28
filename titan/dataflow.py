@@ -1,7 +1,7 @@
 from __future__ import annotations # https://peps.python.org/pep-0484/#the-problem-of-forward-declarations
-import type as t
+import common.type as t
 from typing import NamedTuple, List
-from symbols import Operation
+from common.symbols import Operation
 
 
 class NodeContext(NamedTuple):

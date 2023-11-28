@@ -1,6 +1,6 @@
 import tokenize, machine, io
 from typing import NamedTuple
-from grammar import *
+from common.grammar import *
 import pyparsing as pp
 
 
