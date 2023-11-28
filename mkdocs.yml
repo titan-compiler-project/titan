@@ -1,0 +1,56 @@
+site_name: Titan Compiler Project
+
+theme:
+  name: "material"
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to light mode
+
+plugins:
+- mkdocstrings
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.superfences:
+      custom_fences:
+      - name: mermaid
+        class: mermaid
+        format: !!python/name:pymdownx.superfences.fence_code_format
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - abbr
+  - attr_list
+  - pymdownx.snippets
+    #  auto_append:
+      #  - includes/abbreviations.md
+  - md_in_html
+
+extra_css:
+  - extra/card_grid.css
+
+nav:
+  - Concept: "concept.md"
+    # - "Introduction": "concept/intro.md"
+  - User Guide:
+    - "Getting Started": "user_guide/getting_started.md"
+    - "Command Line Options Reference": "user_guide/cli_options.md"
+  - Reference Docs:
+    - "Compiler":
+      - "Introduction" : "compiler/intro.md"
+      - "Python to SPIR-V" : "compiler/python_spirv.md"
+      - "SPIR-V to SystemVerilog" : "compiler/spirv_systemverilog.md"
+    - "Communications":
+      - "Introduction": "comms/intro.md"
+    - "Synthesised Modules":
+      - "Introduction": "synthesised_modules/intro.md"
+  - About: "about.md"
+  - License: "license.md"
