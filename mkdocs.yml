@@ -41,16 +41,14 @@ nav:
   - Concept: "concept.md"
     # - "Introduction": "concept/intro.md"
   - User Guide:
-    - "Getting Started": "user_guide/getting_started.md"
-    - "Command Line Options Reference": "user_guide/cli_options.md"
-  - Reference Docs:
+    - "Getting Started": "user-guide/getting-started.md"
+    - "Command Line Options Reference": "user-guide/cli-options.md"
     - "Compiler":
-      - "Introduction" : "compiler/intro.md"
-      - "Python to SPIR-V" : "compiler/python_spirv.md"
-      - "SPIR-V to SystemVerilog" : "compiler/spirv_systemverilog.md"
-    - "Communications":
-      - "Introduction": "comms/intro.md"
-    - "Synthesised Modules":
-      - "Introduction": "synthesised_modules/intro.md"
+      - "Introduction" : "user-guide/compiler/intro.md"
+      - "Python to SPIR-V" : "user-guide/compiler/python-spirv.md"
+      - "SPIR-V to SystemVerilog" : "user-guide/compiler/spirv-systemverilog.md"
+    - "Communications": "user-guide/comms.md"
+    - "Synthesised Modules": "user-guide/synthesised-modules.md"
+  # - Reference Docs:
   - About: "about.md"
   - License: "license.md"

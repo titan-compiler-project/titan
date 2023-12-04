@@ -18,3 +18,11 @@ Packets of information can only be 8 bytes long at maximum, being segmented into
 The first byte must be a valid instruction (``READ``, ``WRITE``, ``STREAM``, ``BIND_WRITE_ADDRESS``, ``BIND_READ_ADDRESS``, ``TRANSFER``, ``REPEAT``), followed up by additional information if required. For example, if you are executing a ``WRITE`` instruction, you need to provide a 3-byte address and a 4-byte value which gets written to the address; whilst a ``READ`` instruction only requires the 3-byte address as additional data.
 
 In theory any device which implements this protocol will be able to communicate with the FPGA, so it isn't limited to only microcontrollers. This could be done on a PC which bit-bangs the wires, though its unlikely to be useful in that context.
+
+## Arduino Library
+!!! info inline end
+    The library is currently on the ``dev`` branch, under ``titan/titan/comms/TitanComms``
+
+A very simple Arduino library is provided for use on the Pico or Teensy 3.2 microcontrollers. It provides functionality for reading, writing and streaming to the core.
+
+However, it is not necessary to use this library. Any device with an SPI connection that implements the protocol is able to communicate to the core.
