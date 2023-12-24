@@ -6,7 +6,7 @@
     <div class="card">
         <i class="fas fa-circle-info"></i>
         <h2>Curious about the project?</h2>
-        <p>Check out the <a href="/concept/">concept</a> page.</p>
+        <p>Check out the concept page.</p>
     </div>
     <div class="card">
         <i class="fa-brands fa-readme"></i>
@@ -21,7 +21,7 @@
     <div class="card">
         <i class="fa-solid fa-face-smile"></i>
         <h2>Check out the authors</h2>
-        <p>Visit the <a href="/about/">about page</a> for some more info.</p>
+        <p>Visit the about page for some more info.</p>
     </div>
 </div>
 

@@ -14,6 +14,7 @@ theme:
 
 plugins:
 - mkdocstrings
+- search
 
 markdown_extensions:
   - admonition
@@ -49,6 +50,20 @@ nav:
       - "SPIR-V to SystemVerilog" : "user-guide/compiler/spirv-systemverilog.md"
     - "Communications": "user-guide/comms.md"
     - "Synthesised Modules": "user-guide/synthesised-modules.md"
-  # - Reference Docs:
+  - Reference Docs:
+    - "Compiler":
+      - "common":
+        - "errors.py": "reference-docs/compiler/common/errors.md"
+        - "grammar.py": "reference-docs/compiler/common/grammar.md"
+        - "options.py": "reference-docs/compiler/common/options.md"
+        - "symbols.py": "reference-docs/compiler/common/symbols.md"
+        - "type.py": "reference-docs/compiler/common/type.md"
+
+      - "ast_crawl.py": "reference-docs/compiler/ast_crawl.md"
+      - "dataflow.py" : "reference-docs/compiler/dataflow.md"
+      - "generate.py" : "reference-docs/compiler/generate.md"
+      - "machine.py" : "reference-docs/compiler/machine.md"
+      - "main.py" : "reference-docs/compiler/main.md"
+      - "parse.py" : "reference-docs/compiler/parse.md"
   - About: "about.md"
   - License: "license.md"
