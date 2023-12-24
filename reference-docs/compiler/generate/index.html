@@ -1,0 +1,2628 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../dataflow/">
+      
+      
+        <link rel="next" href="../machine/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.14">
+    
+    
+      
+        <title>generate.py - Titan Compiler Project</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fad675c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../extra/card_grid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#documentation-for-generatepy" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Titan Compiler Project" class="md-header__button md-logo" aria-label="Titan Compiler Project" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Titan Compiler Project
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              generate.py
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Titan Compiler Project" class="md-nav__button md-logo" aria-label="Titan Compiler Project" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Titan Compiler Project
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concept/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concept
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    User Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/cli-options/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Command Line Options Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Compiler
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Compiler
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/compiler/intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/compiler/python-spirv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python to SPIR-V
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/compiler/spirv-systemverilog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SPIR-V to SystemVerilog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/comms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Communications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/synthesised-modules/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Synthesised Modules
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference Docs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Reference Docs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Compiler
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Compiler
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1_1" id="__nav_3_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    common
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            common
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common/errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    errors.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common/grammar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    grammar.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common/options/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    options.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common/symbols/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    symbols.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common/type/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    type.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ast_crawl/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ast_crawl.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dataflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dataflow.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    generate.py
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    generate.py
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#titan.generate._get_spirv_function_locations" class="md-nav__link">
+    <span class="md-ellipsis">
+      _get_spirv_function_locations()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#titan.generate.generate_verilog" class="md-nav__link">
+    <span class="md-ellipsis">
+      generate_verilog()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#titan.generate._generate_verilog_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      _generate_verilog_text()
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../machine/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    machine.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../main/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    main.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parse/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    parse.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#titan.generate._get_spirv_function_locations" class="md-nav__link">
+    <span class="md-ellipsis">
+      _get_spirv_function_locations()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#titan.generate.generate_verilog" class="md-nav__link">
+    <span class="md-ellipsis">
+      generate_verilog()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#titan.generate._generate_verilog_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      _generate_verilog_text()
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="documentation-for-generatepy">Documentation for <code>generate.py</code></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Several functions within this file related to symbol table generation and SPIR-V generation have been replaced. Please head to <a href="../dataflow/">dataflow.py</a> for the new implementation.</p>
+<p>The following will only cover the SystemVerilog generation of this file.</p>
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h2 id="titan.generate._get_spirv_function_locations" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">titan</span><span class="o">.</span><span class="n">generate</span><span class="o">.</span><span class="n">_get_spirv_function_locations</span><span class="p">(</span><span class="n">parsed_spirv</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+
+          <details class="quote">
+            <summary>Source code in <code>titan/generate.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">754</span>
+<span class="normal">755</span>
+<span class="normal">756</span>
+<span class="normal">757</span>
+<span class="normal">758</span>
+<span class="normal">759</span>
+<span class="normal">760</span>
+<span class="normal">761</span>
+<span class="normal">762</span>
+<span class="normal">763</span>
+<span class="normal">764</span>
+<span class="normal">765</span>
+<span class="normal">766</span>
+<span class="normal">767</span>
+<span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span>
+<span class="normal">773</span>
+<span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span>
+<span class="normal">778</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">_get_spirv_function_locations</span><span class="p">(</span><span class="n">parsed_spirv</span><span class="p">):</span>
+    <span class="c1"># TODO: figure out how to improve this</span>
+    <span class="n">line_no</span> <span class="o">=</span> <span class="n">fn_start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">fn_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">fn_locations</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_marked_start</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_marked_end</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">parsed_spirv</span><span class="p">:</span>
+        <span class="k">match</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s2">&quot;Function&quot;</span><span class="p">:</span>
+                <span class="n">fn_start</span> <span class="o">=</span> <span class="n">line_no</span>
+                <span class="n">fn_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="c1"># slice to remove &#39;%&#39;</span>
+                <span class="n">_marked_start</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">case</span> <span class="s2">&quot;FunctionEnd&quot;</span><span class="p">:</span>
+                <span class="n">fn_locations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_FunctionLocation</span><span class="p">(</span><span class="n">fn_start</span><span class="p">,</span> <span class="n">line_no</span><span class="p">,</span> <span class="n">fn_name</span><span class="p">))</span>
+                <span class="n">fn_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">_marked_end</span> <span class="o">=</span> <span class="kc">True</span>      
+
+        <span class="n">line_no</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">_marked_start</span> <span class="ow">and</span> <span class="n">_marked_end</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fn_locations</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;failed to determine start/end point of function (start: </span><span class="si">{</span><span class="n">_marked_start</span><span class="si">}</span><span class="s2">, end: </span><span class="si">{</span><span class="n">_marked_end</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;failed to determine start/end point of function (start: </span><span class="si">{</span><span class="n">_marked_start</span><span class="si">}</span><span class="s2">, end: </span><span class="si">{</span><span class="n">_marked_end</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h2 id="titan.generate.generate_verilog" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">titan</span><span class="o">.</span><span class="n">generate</span><span class="o">.</span><span class="n">generate_verilog</span><span class="p">(</span><span class="n">parsed_spirv</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+  
+      <p>Generate SystemVerilog from parsed SPIR-V assembly.</p>
+<p>Loops through the parsed SPIR-V assembly, generating the corresponding SystemVerilog code.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>parsed_spirv</code></td>
+          <td>
+                <code><span title="pyparsing.ParseResults">ParseResults</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Parsed SPIR-V assembly, in <code>pyparsing.ParseResults</code> format.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>verilog</code></td>
+          <td>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Verilog helper class.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>fn_name</code></td>
+          <td>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Top-level function name.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>fn_locations</code></td>
+          <td>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Line numbers of SPIR-V functions.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+          <details class="quote">
+            <summary>Source code in <code>titan/generate.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 783</span>
+<span class="normal"> 784</span>
+<span class="normal"> 785</span>
+<span class="normal"> 786</span>
+<span class="normal"> 787</span>
+<span class="normal"> 788</span>
+<span class="normal"> 789</span>
+<span class="normal"> 790</span>
+<span class="normal"> 791</span>
+<span class="normal"> 792</span>
+<span class="normal"> 793</span>
+<span class="normal"> 794</span>
+<span class="normal"> 795</span>
+<span class="normal"> 796</span>
+<span class="normal"> 797</span>
+<span class="normal"> 798</span>
+<span class="normal"> 799</span>
+<span class="normal"> 800</span>
+<span class="normal"> 801</span>
+<span class="normal"> 802</span>
+<span class="normal"> 803</span>
+<span class="normal"> 804</span>
+<span class="normal"> 805</span>
+<span class="normal"> 806</span>
+<span class="normal"> 807</span>
+<span class="normal"> 808</span>
+<span class="normal"> 809</span>
+<span class="normal"> 810</span>
+<span class="normal"> 811</span>
+<span class="normal"> 812</span>
+<span class="normal"> 813</span>
+<span class="normal"> 814</span>
+<span class="normal"> 815</span>
+<span class="normal"> 816</span>
+<span class="normal"> 817</span>
+<span class="normal"> 818</span>
+<span class="normal"> 819</span>
+<span class="normal"> 820</span>
+<span class="normal"> 821</span>
+<span class="normal"> 822</span>
+<span class="normal"> 823</span>
+<span class="normal"> 824</span>
+<span class="normal"> 825</span>
+<span class="normal"> 826</span>
+<span class="normal"> 827</span>
+<span class="normal"> 828</span>
+<span class="normal"> 829</span>
+<span class="normal"> 830</span>
+<span class="normal"> 831</span>
+<span class="normal"> 832</span>
+<span class="normal"> 833</span>
+<span class="normal"> 834</span>
+<span class="normal"> 835</span>
+<span class="normal"> 836</span>
+<span class="normal"> 837</span>
+<span class="normal"> 838</span>
+<span class="normal"> 839</span>
+<span class="normal"> 840</span>
+<span class="normal"> 841</span>
+<span class="normal"> 842</span>
+<span class="normal"> 843</span>
+<span class="normal"> 844</span>
+<span class="normal"> 845</span>
+<span class="normal"> 846</span>
+<span class="normal"> 847</span>
+<span class="normal"> 848</span>
+<span class="normal"> 849</span>
+<span class="normal"> 850</span>
+<span class="normal"> 851</span>
+<span class="normal"> 852</span>
+<span class="normal"> 853</span>
+<span class="normal"> 854</span>
+<span class="normal"> 855</span>
+<span class="normal"> 856</span>
+<span class="normal"> 857</span>
+<span class="normal"> 858</span>
+<span class="normal"> 859</span>
+<span class="normal"> 860</span>
+<span class="normal"> 861</span>
+<span class="normal"> 862</span>
+<span class="normal"> 863</span>
+<span class="normal"> 864</span>
+<span class="normal"> 865</span>
+<span class="normal"> 866</span>
+<span class="normal"> 867</span>
+<span class="normal"> 868</span>
+<span class="normal"> 869</span>
+<span class="normal"> 870</span>
+<span class="normal"> 871</span>
+<span class="normal"> 872</span>
+<span class="normal"> 873</span>
+<span class="normal"> 874</span>
+<span class="normal"> 875</span>
+<span class="normal"> 876</span>
+<span class="normal"> 877</span>
+<span class="normal"> 878</span>
+<span class="normal"> 879</span>
+<span class="normal"> 880</span>
+<span class="normal"> 881</span>
+<span class="normal"> 882</span>
+<span class="normal"> 883</span>
+<span class="normal"> 884</span>
+<span class="normal"> 885</span>
+<span class="normal"> 886</span>
+<span class="normal"> 887</span>
+<span class="normal"> 888</span>
+<span class="normal"> 889</span>
+<span class="normal"> 890</span>
+<span class="normal"> 891</span>
+<span class="normal"> 892</span>
+<span class="normal"> 893</span>
+<span class="normal"> 894</span>
+<span class="normal"> 895</span>
+<span class="normal"> 896</span>
+<span class="normal"> 897</span>
+<span class="normal"> 898</span>
+<span class="normal"> 899</span>
+<span class="normal"> 900</span>
+<span class="normal"> 901</span>
+<span class="normal"> 902</span>
+<span class="normal"> 903</span>
+<span class="normal"> 904</span>
+<span class="normal"> 905</span>
+<span class="normal"> 906</span>
+<span class="normal"> 907</span>
+<span class="normal"> 908</span>
+<span class="normal"> 909</span>
+<span class="normal"> 910</span>
+<span class="normal"> 911</span>
+<span class="normal"> 912</span>
+<span class="normal"> 913</span>
+<span class="normal"> 914</span>
+<span class="normal"> 915</span>
+<span class="normal"> 916</span>
+<span class="normal"> 917</span>
+<span class="normal"> 918</span>
+<span class="normal"> 919</span>
+<span class="normal"> 920</span>
+<span class="normal"> 921</span>
+<span class="normal"> 922</span>
+<span class="normal"> 923</span>
+<span class="normal"> 924</span>
+<span class="normal"> 925</span>
+<span class="normal"> 926</span>
+<span class="normal"> 927</span>
+<span class="normal"> 928</span>
+<span class="normal"> 929</span>
+<span class="normal"> 930</span>
+<span class="normal"> 931</span>
+<span class="normal"> 932</span>
+<span class="normal"> 933</span>
+<span class="normal"> 934</span>
+<span class="normal"> 935</span>
+<span class="normal"> 936</span>
+<span class="normal"> 937</span>
+<span class="normal"> 938</span>
+<span class="normal"> 939</span>
+<span class="normal"> 940</span>
+<span class="normal"> 941</span>
+<span class="normal"> 942</span>
+<span class="normal"> 943</span>
+<span class="normal"> 944</span>
+<span class="normal"> 945</span>
+<span class="normal"> 946</span>
+<span class="normal"> 947</span>
+<span class="normal"> 948</span>
+<span class="normal"> 949</span>
+<span class="normal"> 950</span>
+<span class="normal"> 951</span>
+<span class="normal"> 952</span>
+<span class="normal"> 953</span>
+<span class="normal"> 954</span>
+<span class="normal"> 955</span>
+<span class="normal"> 956</span>
+<span class="normal"> 957</span>
+<span class="normal"> 958</span>
+<span class="normal"> 959</span>
+<span class="normal"> 960</span>
+<span class="normal"> 961</span>
+<span class="normal"> 962</span>
+<span class="normal"> 963</span>
+<span class="normal"> 964</span>
+<span class="normal"> 965</span>
+<span class="normal"> 966</span>
+<span class="normal"> 967</span>
+<span class="normal"> 968</span>
+<span class="normal"> 969</span>
+<span class="normal"> 970</span>
+<span class="normal"> 971</span>
+<span class="normal"> 972</span>
+<span class="normal"> 973</span>
+<span class="normal"> 974</span>
+<span class="normal"> 975</span>
+<span class="normal"> 976</span>
+<span class="normal"> 977</span>
+<span class="normal"> 978</span>
+<span class="normal"> 979</span>
+<span class="normal"> 980</span>
+<span class="normal"> 981</span>
+<span class="normal"> 982</span>
+<span class="normal"> 983</span>
+<span class="normal"> 984</span>
+<span class="normal"> 985</span>
+<span class="normal"> 986</span>
+<span class="normal"> 987</span>
+<span class="normal"> 988</span>
+<span class="normal"> 989</span>
+<span class="normal"> 990</span>
+<span class="normal"> 991</span>
+<span class="normal"> 992</span>
+<span class="normal"> 993</span>
+<span class="normal"> 994</span>
+<span class="normal"> 995</span>
+<span class="normal"> 996</span>
+<span class="normal"> 997</span>
+<span class="normal"> 998</span>
+<span class="normal"> 999</span>
+<span class="normal">1000</span>
+<span class="normal">1001</span>
+<span class="normal">1002</span>
+<span class="normal">1003</span>
+<span class="normal">1004</span>
+<span class="normal">1005</span>
+<span class="normal">1006</span>
+<span class="normal">1007</span>
+<span class="normal">1008</span>
+<span class="normal">1009</span>
+<span class="normal">1010</span>
+<span class="normal">1011</span>
+<span class="normal">1012</span>
+<span class="normal">1013</span>
+<span class="normal">1014</span>
+<span class="normal">1015</span>
+<span class="normal">1016</span>
+<span class="normal">1017</span>
+<span class="normal">1018</span>
+<span class="normal">1019</span>
+<span class="normal">1020</span>
+<span class="normal">1021</span>
+<span class="normal">1022</span>
+<span class="normal">1023</span>
+<span class="normal">1024</span>
+<span class="normal">1025</span>
+<span class="normal">1026</span>
+<span class="normal">1027</span>
+<span class="normal">1028</span>
+<span class="normal">1029</span>
+<span class="normal">1030</span>
+<span class="normal">1031</span>
+<span class="normal">1032</span>
+<span class="normal">1033</span>
+<span class="normal">1034</span>
+<span class="normal">1035</span>
+<span class="normal">1036</span>
+<span class="normal">1037</span>
+<span class="normal">1038</span>
+<span class="normal">1039</span>
+<span class="normal">1040</span>
+<span class="normal">1041</span>
+<span class="normal">1042</span>
+<span class="normal">1043</span>
+<span class="normal">1044</span>
+<span class="normal">1045</span>
+<span class="normal">1046</span>
+<span class="normal">1047</span>
+<span class="normal">1048</span>
+<span class="normal">1049</span>
+<span class="normal">1050</span>
+<span class="normal">1051</span>
+<span class="normal">1052</span>
+<span class="normal">1053</span>
+<span class="normal">1054</span>
+<span class="normal">1055</span>
+<span class="normal">1056</span>
+<span class="normal">1057</span>
+<span class="normal">1058</span>
+<span class="normal">1059</span>
+<span class="normal">1060</span>
+<span class="normal">1061</span>
+<span class="normal">1062</span>
+<span class="normal">1063</span>
+<span class="normal">1064</span>
+<span class="normal">1065</span>
+<span class="normal">1066</span>
+<span class="normal">1067</span>
+<span class="normal">1068</span>
+<span class="normal">1069</span>
+<span class="normal">1070</span>
+<span class="normal">1071</span>
+<span class="normal">1072</span>
+<span class="normal">1073</span>
+<span class="normal">1074</span>
+<span class="normal">1075</span>
+<span class="normal">1076</span>
+<span class="normal">1077</span>
+<span class="normal">1078</span>
+<span class="normal">1079</span>
+<span class="normal">1080</span>
+<span class="normal">1081</span>
+<span class="normal">1082</span>
+<span class="normal">1083</span>
+<span class="normal">1084</span>
+<span class="normal">1085</span>
+<span class="normal">1086</span>
+<span class="normal">1087</span>
+<span class="normal">1088</span>
+<span class="normal">1089</span>
+<span class="normal">1090</span>
+<span class="normal">1091</span>
+<span class="normal">1092</span>
+<span class="normal">1093</span>
+<span class="normal">1094</span>
+<span class="normal">1095</span>
+<span class="normal">1096</span>
+<span class="normal">1097</span>
+<span class="normal">1098</span>
+<span class="normal">1099</span>
+<span class="normal">1100</span>
+<span class="normal">1101</span>
+<span class="normal">1102</span>
+<span class="normal">1103</span>
+<span class="normal">1104</span>
+<span class="normal">1105</span>
+<span class="normal">1106</span>
+<span class="normal">1107</span>
+<span class="normal">1108</span>
+<span class="normal">1109</span>
+<span class="normal">1110</span>
+<span class="normal">1111</span>
+<span class="normal">1112</span>
+<span class="normal">1113</span>
+<span class="normal">1114</span>
+<span class="normal">1115</span>
+<span class="normal">1116</span>
+<span class="normal">1117</span>
+<span class="normal">1118</span>
+<span class="normal">1119</span>
+<span class="normal">1120</span>
+<span class="normal">1121</span>
+<span class="normal">1122</span>
+<span class="normal">1123</span>
+<span class="normal">1124</span>
+<span class="normal">1125</span>
+<span class="normal">1126</span>
+<span class="normal">1127</span>
+<span class="normal">1128</span>
+<span class="normal">1129</span>
+<span class="normal">1130</span>
+<span class="normal">1131</span>
+<span class="normal">1132</span>
+<span class="normal">1133</span>
+<span class="normal">1134</span>
+<span class="normal">1135</span>
+<span class="normal">1136</span>
+<span class="normal">1137</span>
+<span class="normal">1138</span>
+<span class="normal">1139</span>
+<span class="normal">1140</span>
+<span class="normal">1141</span>
+<span class="normal">1142</span>
+<span class="normal">1143</span>
+<span class="normal">1144</span>
+<span class="normal">1145</span>
+<span class="normal">1146</span>
+<span class="normal">1147</span>
+<span class="normal">1148</span>
+<span class="normal">1149</span>
+<span class="normal">1150</span>
+<span class="normal">1151</span>
+<span class="normal">1152</span>
+<span class="normal">1153</span>
+<span class="normal">1154</span>
+<span class="normal">1155</span>
+<span class="normal">1156</span>
+<span class="normal">1157</span>
+<span class="normal">1158</span>
+<span class="normal">1159</span>
+<span class="normal">1160</span>
+<span class="normal">1161</span>
+<span class="normal">1162</span>
+<span class="normal">1163</span>
+<span class="normal">1164</span>
+<span class="normal">1165</span>
+<span class="normal">1166</span>
+<span class="normal">1167</span>
+<span class="normal">1168</span>
+<span class="normal">1169</span>
+<span class="normal">1170</span>
+<span class="normal">1171</span>
+<span class="normal">1172</span>
+<span class="normal">1173</span>
+<span class="normal">1174</span>
+<span class="normal">1175</span>
+<span class="normal">1176</span>
+<span class="normal">1177</span>
+<span class="normal">1178</span>
+<span class="normal">1179</span>
+<span class="normal">1180</span>
+<span class="normal">1181</span>
+<span class="normal">1182</span>
+<span class="normal">1183</span>
+<span class="normal">1184</span>
+<span class="normal">1185</span>
+<span class="normal">1186</span>
+<span class="normal">1187</span>
+<span class="normal">1188</span>
+<span class="normal">1189</span>
+<span class="normal">1190</span>
+<span class="normal">1191</span>
+<span class="normal">1192</span>
+<span class="normal">1193</span>
+<span class="normal">1194</span>
+<span class="normal">1195</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generate_verilog</span><span class="p">(</span><span class="n">parsed_spirv</span><span class="p">:</span> <span class="n">pp</span><span class="o">.</span><span class="n">ParseResults</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Generate SystemVerilog from parsed SPIR-V assembly.</span>
+
+<span class="sd">        Loops through the parsed SPIR-V assembly, generating the corresponding SystemVerilog code.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            parsed_spirv: Parsed SPIR-V assembly, in ``pyparsing.ParseResults`` format.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            verilog: Verilog helper class.</span>
+<span class="sd">            fn_name: Top-level function name.</span>
+<span class="sd">            fn_locations: Line numbers of SPIR-V functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">verilog</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Verilog_ASM</span><span class="p">()</span>               
+
+    <span class="n">fn_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">fn_locations</span> <span class="o">=</span> <span class="n">_get_spirv_function_locations</span><span class="p">(</span><span class="n">parsed_spirv</span><span class="p">)</span>
+
+    <span class="c1"># print(f&quot;SPIRV: {parsed_spirv}&quot;)</span>
+
+    <span class="c1"># deal with headers</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">fn_locations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start_pos</span><span class="p">):</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">parsed_spirv</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">match</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s2">&quot;EntryPoint&quot;</span><span class="p">:</span>
+                <span class="n">fn_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">verilog</span><span class="o">.</span><span class="n">create_function</span><span class="p">(</span><span class="n">fn_name</span><span class="p">)</span>
+
+            <span class="k">case</span> <span class="s2">&quot;Constant&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">verilog</span><span class="o">.</span><span class="n">declared_symbols</span><span class="p">:</span>
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">declared_symbols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">verilog</span><span class="o">.</span><span class="n">type_exists_in_func</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">x</span><span class="p">,</span>
+                                <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="c1"># s.Operation.CONSTANT_DECLARATION,</span>
+                                <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">GLOBAL_CONST_DECLARATION</span><span class="p">,</span>
+                                <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">NON_EXISTENT_SYMBOL</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> on line </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">) (</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">NON_EXISTENT_SYMBOL</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">NON_EXISTENT_SYMBOL</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> on line </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">TitanErrors</span><span class="o">.</span><span class="n">NON_EXISTENT_SYMBOL</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">case</span> <span class="s2">&quot;Variable&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">verilog</span><span class="o">.</span><span class="n">declared_symbols</span><span class="p">:</span>
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">declared_symbols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+                <span class="k">match</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="k">case</span> <span class="s2">&quot;Output&quot;</span><span class="p">:</span>
+                        <span class="n">verilog</span><span class="o">.</span><span class="n">add_output_to_function</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                        <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                            <span class="n">fn_name</span><span class="p">,</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                                <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                    <span class="n">x</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                    <span class="n">verilog</span><span class="o">.</span><span class="n">get_primative_type_id_from_id</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                                    <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> 
+                                    <span class="c1"># s.Operation.VARIABLE_DECLARATION</span>
+                                    <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">GLOBAL_VAR_DECLARATION</span><span class="p">,</span>
+                                    <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">FUNCTION_OUT_VAR_PARAM</span><span class="p">]</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+
+                    <span class="k">case</span> <span class="s2">&quot;Input&quot;</span><span class="p">:</span>
+                        <span class="n">verilog</span><span class="o">.</span><span class="n">add_input_to_function</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+                        <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                            <span class="n">fn_name</span><span class="p">,</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                                <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                    <span class="n">x</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                    <span class="n">verilog</span><span class="o">.</span><span class="n">get_primative_type_id_from_id</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                                    <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">GLOBAL_VAR_DECLARATION</span><span class="p">,</span>
+                                    <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">FUNCTION_IN_VAR_PARAM</span><span class="p">]</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+
+                        <span class="c1"># raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)</span>
+
+            <span class="k">case</span> <span class="s2">&quot;TypePointer&quot;</span><span class="p">:</span>
+                <span class="n">verilog</span><span class="o">.</span><span class="n">add_type_context_to_function</span><span class="p">(</span>
+                    <span class="n">fn_name</span><span class="p">,</span>
+                    <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="c1"># %ptr_something_something id</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">_VerilogTypeContext</span><span class="p">(</span>
+                        <span class="n">verilog</span><span class="o">.</span><span class="n">get_datatype_from_id</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="c1"># returns types.DataType</span>
+                        <span class="p">[],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># line.opcode_args[1] = %type_something (primative)</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">case</span> <span class="s2">&quot;TypeInt&quot;</span><span class="p">:</span>
+                <span class="n">verilog</span><span class="o">.</span><span class="n">add_type_context_to_function</span><span class="p">(</span>
+                    <span class="n">fn_name</span><span class="p">,</span>
+                    <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">_VerilogTypeContext</span><span class="p">(</span>
+                        <span class="n">t</span><span class="o">.</span><span class="n">DataType</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">,</span>
+                        <span class="c1"># line.id,</span>
+                        <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">case</span> <span class="s2">&quot;TypeFloat&quot;</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">NOT_IMPLEMENTED</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> TypeFloat (</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">NOT_IMPLEMENTED</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">NOT_IMPLEMENTED</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> TypeFloat&quot;</span><span class="p">,</span> <span class="n">TitanErrors</span><span class="o">.</span><span class="n">NOT_IMPLEMENTED</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">case</span> <span class="s2">&quot;TypeBool&quot;</span><span class="p">:</span>
+                <span class="n">verilog</span><span class="o">.</span><span class="n">add_type_context_to_function</span><span class="p">(</span>
+                    <span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">_VerilogTypeContext</span><span class="p">(</span>
+                        <span class="n">t</span><span class="o">.</span><span class="n">DataType</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">,</span> <span class="p">[],</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+
+    <span class="k">for</span> <span class="n">fn_count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fn_locations</span><span class="p">)):</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">fn_locations</span><span class="p">[</span><span class="n">fn_count</span><span class="p">]</span>
+
+        <span class="c1"># for pos in range()</span>
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">start_pos</span><span class="p">,</span> <span class="n">fn</span><span class="o">.</span><span class="n">end_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">parsed_spirv</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+            <span class="k">match</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode</span><span class="p">:</span>
+
+                <span class="k">case</span> <span class="s2">&quot;Variable&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">verilog</span><span class="o">.</span><span class="n">declared_symbols</span><span class="p">:</span>
+                        <span class="n">verilog</span><span class="o">.</span><span class="n">declared_symbols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> 
+                                <span class="n">verilog</span><span class="o">.</span><span class="n">get_primative_type_id_from_id</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                                <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">VARIABLE_DECLARATION</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+
+                <span class="k">case</span> <span class="s2">&quot;Store&quot;</span><span class="p">:</span>
+                    <span class="c1"># print(verilog.get_node(fn_name, line.opcode_args[0]))</span>
+                    <span class="c1"># storage_node = verilog.get_node(fn_name, line.opcode_args[0])</span>
+
+                    <span class="c1"># if verilog.does_node_exist()</span>
+                    <span class="c1"># print(f&quot;---fn_name {fn_name} arg {line.opcode_args[1]}&quot;)</span>
+
+                    <span class="k">if</span> <span class="n">verilog</span><span class="o">.</span><span class="n">does_node_exist</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="n">value_node</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+                        <span class="n">verilog</span><span class="o">.</span><span class="n">modify_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value_node</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">STORE</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;does not exist </span><span class="si">{</span><span class="n">fn_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DOES NOT EXIST </span><span class="si">{</span><span class="n">fn_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+                <span class="k">case</span> <span class="s2">&quot;Load&quot;</span><span class="p">:</span>
+                    <span class="n">value_node</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value_node</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">LOAD</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># TODO: these arithmetic operations practically follow the same format, is there a way to minimise this repeating code?</span>
+                <span class="k">case</span> <span class="s2">&quot;IAdd&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">ADD</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;ISub&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">SUB</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)</span>
+                <span class="k">case</span> <span class="s2">&quot;IMul&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">MULT</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="c1"># raise Exception(TitanErrors.NOT_IMPLEMENTED.value, TitanErrors.NOT_IMPLEMENTED.name)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;SDiv&quot;</span><span class="p">:</span>
+                    <span class="c1"># print(f&quot;--------{line.opcode_args}&quot;)</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">DIV</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;Select&quot;</span><span class="p">:</span>
+                        <span class="c1">#                          0           1               2             3</span>
+                        <span class="c1"># %result_id = OpSelect %type_id %comparison_id %true_value_id %false_value_id</span>
+
+                        <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+                        <span class="n">compare_node</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="c1"># print(f&quot;-[generate_verilog] [select case for OpSelect] {compare_node}&quot;)</span>
+
+                        <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                            <span class="n">fn_name</span><span class="p">,</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                                <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                    <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                    <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">DECISION</span><span class="p">,</span> <span class="p">[</span><span class="n">compare_node</span><span class="p">],</span> <span class="kc">True</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+
+
+                <span class="c1"># these comparison functions are practicaly the same except for the operation that gets added</span>
+                <span class="k">case</span> <span class="s2">&quot;IEqual&quot;</span> <span class="o">|</span> <span class="s2">&quot;FOrdEqual&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">EQUAL_TO</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;INotEqual&quot;</span> <span class="o">|</span> <span class="s2">&quot;FOrdNotEqual&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">NOT_EQUAL_TO</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;SLessThan&quot;</span> <span class="o">|</span> <span class="s2">&quot;FOrdLessThan&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">LESS_THAN</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;SLessThanEqual&quot;</span> <span class="o">|</span> <span class="s2">&quot;FOrdLessThanEqual&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">LESS_OR_EQ</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;SGreaterThan&quot;</span> <span class="o">|</span> <span class="s2">&quot;FOrdGreaterThan&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">GREATER_THAN</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;SGreaterThanEqual&quot;</span> <span class="o">|</span> <span class="s2">&quot;FOrdGreaterThanEqual&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">GREATER_OR_EQ</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">case</span> <span class="s2">&quot;ShiftLeftLogical&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># thing to shift</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># how much to shift by</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">SHIFT_LEFT</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># TODO: this might need to handle &quot;OpShiftRightArithmetic&quot;</span>
+                <span class="k">case</span> <span class="s2">&quot;OpShiftRightLogical&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">verilog</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+                    <span class="n">verilog</span><span class="o">.</span><span class="n">add_body_node_to_function</span><span class="p">(</span>
+                        <span class="n">fn_name</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span>
+                            <span class="n">d</span><span class="o">.</span><span class="n">NodeContext</span><span class="p">(</span>
+                                <span class="n">pos</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode_args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">SHIFT_RIGHT</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+
+
+                <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                    <span class="c1"># TODO: make this less ugly</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="s2">&quot;Function&quot;</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="s2">&quot;Label&quot;</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="s2">&quot;Return&quot;</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">opcode</span> <span class="o">==</span> <span class="s2">&quot;FunctionEnd&quot;</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNKNOWN_SPIRV_OPCODE</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">opcode</span><span class="si">}</span><span class="s2">) (</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNKNOWN_SPIRV_OPCODE</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNKNOWN_SPIRV_OPCODE</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">opcode</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNKNOWN_SPIRV_OPCODE</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> 
+
+
+
+
+
+
+    <span class="c1"># print()</span>
+    <span class="c1"># print(verilog.content)</span>
+
+    <span class="c1"># print()</span>
+    <span class="c1"># for k, v in verilog.content.items():</span>
+    <span class="c1">#     print(f&quot;types: {v.types}&quot;)</span>
+    <span class="c1">#     print(f&quot;inputs: {v.inputs}&quot;)</span>
+    <span class="c1">#     print(f&quot;outputs: {v.outputs}\n&quot;)</span>
+    <span class="c1">#     # print(f&quot;body_nodes: {v.body_nodes}&quot;)</span>
+    <span class="c1">#     for a, b in v.body_nodes.items():</span>
+    <span class="c1">#         print(f&quot;key: {a}&quot;)</span>
+    <span class="c1">#         for node in b:</span>
+    <span class="c1">#             print(f&quot;\t{node}&quot;)</span>
+    <span class="c1">#         print()</span>
+
+
+    <span class="c1"># print()</span>
+    <span class="n">verilog</span><span class="o">.</span><span class="n">generate_dot_graph</span><span class="p">()</span>
+    <span class="c1"># _generate_verilog_text(verilog)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">verilog</span><span class="o">.</span><span class="n">declared_symbols</span><span class="p">)</span>
+    <span class="n">verilog</span><span class="o">.</span><span class="n">clean_graph</span><span class="p">()</span>
+    <span class="n">verilog</span><span class="o">.</span><span class="n">generate_dot_graph</span><span class="p">(</span><span class="s2">&quot;clean_nodes&quot;</span><span class="p">)</span>
+    <span class="n">_generate_verilog_text</span><span class="p">(</span><span class="n">verilog</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h2 id="titan.generate._generate_verilog_text" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">titan</span><span class="o">.</span><span class="n">generate</span><span class="o">.</span><span class="n">_generate_verilog_text</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+  
+      <p>Converts the nodes into actual Verilog code.</p>
+<p>Also generates a Yosys script to generate a graph of the module
+<code>read_verilog -sv {fn}.sv; proc; opt; memory; opt; show;</code></p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>v</code></td>
+          <td>
+                <code><span title="machine.Verilog_ASM">Verilog_ASM</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Verilog object containing body nodes.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+          <details class="quote">
+            <summary>Source code in <code>titan/generate.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1199</span>
+<span class="normal">1200</span>
+<span class="normal">1201</span>
+<span class="normal">1202</span>
+<span class="normal">1203</span>
+<span class="normal">1204</span>
+<span class="normal">1205</span>
+<span class="normal">1206</span>
+<span class="normal">1207</span>
+<span class="normal">1208</span>
+<span class="normal">1209</span>
+<span class="normal">1210</span>
+<span class="normal">1211</span>
+<span class="normal">1212</span>
+<span class="normal">1213</span>
+<span class="normal">1214</span>
+<span class="normal">1215</span>
+<span class="normal">1216</span>
+<span class="normal">1217</span>
+<span class="normal">1218</span>
+<span class="normal">1219</span>
+<span class="normal">1220</span>
+<span class="normal">1221</span>
+<span class="normal">1222</span>
+<span class="normal">1223</span>
+<span class="normal">1224</span>
+<span class="normal">1225</span>
+<span class="normal">1226</span>
+<span class="normal">1227</span>
+<span class="normal">1228</span>
+<span class="normal">1229</span>
+<span class="normal">1230</span>
+<span class="normal">1231</span>
+<span class="normal">1232</span>
+<span class="normal">1233</span>
+<span class="normal">1234</span>
+<span class="normal">1235</span>
+<span class="normal">1236</span>
+<span class="normal">1237</span>
+<span class="normal">1238</span>
+<span class="normal">1239</span>
+<span class="normal">1240</span>
+<span class="normal">1241</span>
+<span class="normal">1242</span>
+<span class="normal">1243</span>
+<span class="normal">1244</span>
+<span class="normal">1245</span>
+<span class="normal">1246</span>
+<span class="normal">1247</span>
+<span class="normal">1248</span>
+<span class="normal">1249</span>
+<span class="normal">1250</span>
+<span class="normal">1251</span>
+<span class="normal">1252</span>
+<span class="normal">1253</span>
+<span class="normal">1254</span>
+<span class="normal">1255</span>
+<span class="normal">1256</span>
+<span class="normal">1257</span>
+<span class="normal">1258</span>
+<span class="normal">1259</span>
+<span class="normal">1260</span>
+<span class="normal">1261</span>
+<span class="normal">1262</span>
+<span class="normal">1263</span>
+<span class="normal">1264</span>
+<span class="normal">1265</span>
+<span class="normal">1266</span>
+<span class="normal">1267</span>
+<span class="normal">1268</span>
+<span class="normal">1269</span>
+<span class="normal">1270</span>
+<span class="normal">1271</span>
+<span class="normal">1272</span>
+<span class="normal">1273</span>
+<span class="normal">1274</span>
+<span class="normal">1275</span>
+<span class="normal">1276</span>
+<span class="normal">1277</span>
+<span class="normal">1278</span>
+<span class="normal">1279</span>
+<span class="normal">1280</span>
+<span class="normal">1281</span>
+<span class="normal">1282</span>
+<span class="normal">1283</span>
+<span class="normal">1284</span>
+<span class="normal">1285</span>
+<span class="normal">1286</span>
+<span class="normal">1287</span>
+<span class="normal">1288</span>
+<span class="normal">1289</span>
+<span class="normal">1290</span>
+<span class="normal">1291</span>
+<span class="normal">1292</span>
+<span class="normal">1293</span>
+<span class="normal">1294</span>
+<span class="normal">1295</span>
+<span class="normal">1296</span>
+<span class="normal">1297</span>
+<span class="normal">1298</span>
+<span class="normal">1299</span>
+<span class="normal">1300</span>
+<span class="normal">1301</span>
+<span class="normal">1302</span>
+<span class="normal">1303</span>
+<span class="normal">1304</span>
+<span class="normal">1305</span>
+<span class="normal">1306</span>
+<span class="normal">1307</span>
+<span class="normal">1308</span>
+<span class="normal">1309</span>
+<span class="normal">1310</span>
+<span class="normal">1311</span>
+<span class="normal">1312</span>
+<span class="normal">1313</span>
+<span class="normal">1314</span>
+<span class="normal">1315</span>
+<span class="normal">1316</span>
+<span class="normal">1317</span>
+<span class="normal">1318</span>
+<span class="normal">1319</span>
+<span class="normal">1320</span>
+<span class="normal">1321</span>
+<span class="normal">1322</span>
+<span class="normal">1323</span>
+<span class="normal">1324</span>
+<span class="normal">1325</span>
+<span class="normal">1326</span>
+<span class="normal">1327</span>
+<span class="normal">1328</span>
+<span class="normal">1329</span>
+<span class="normal">1330</span>
+<span class="normal">1331</span>
+<span class="normal">1332</span>
+<span class="normal">1333</span>
+<span class="normal">1334</span>
+<span class="normal">1335</span>
+<span class="normal">1336</span>
+<span class="normal">1337</span>
+<span class="normal">1338</span>
+<span class="normal">1339</span>
+<span class="normal">1340</span>
+<span class="normal">1341</span>
+<span class="normal">1342</span>
+<span class="normal">1343</span>
+<span class="normal">1344</span>
+<span class="normal">1345</span>
+<span class="normal">1346</span>
+<span class="normal">1347</span>
+<span class="normal">1348</span>
+<span class="normal">1349</span>
+<span class="normal">1350</span>
+<span class="normal">1351</span>
+<span class="normal">1352</span>
+<span class="normal">1353</span>
+<span class="normal">1354</span>
+<span class="normal">1355</span>
+<span class="normal">1356</span>
+<span class="normal">1357</span>
+<span class="normal">1358</span>
+<span class="normal">1359</span>
+<span class="normal">1360</span>
+<span class="normal">1361</span>
+<span class="normal">1362</span>
+<span class="normal">1363</span>
+<span class="normal">1364</span>
+<span class="normal">1365</span>
+<span class="normal">1366</span>
+<span class="normal">1367</span>
+<span class="normal">1368</span>
+<span class="normal">1369</span>
+<span class="normal">1370</span>
+<span class="normal">1371</span>
+<span class="normal">1372</span>
+<span class="normal">1373</span>
+<span class="normal">1374</span>
+<span class="normal">1375</span>
+<span class="normal">1376</span>
+<span class="normal">1377</span>
+<span class="normal">1378</span>
+<span class="normal">1379</span>
+<span class="normal">1380</span>
+<span class="normal">1381</span>
+<span class="normal">1382</span>
+<span class="normal">1383</span>
+<span class="normal">1384</span>
+<span class="normal">1385</span>
+<span class="normal">1386</span>
+<span class="normal">1387</span>
+<span class="normal">1388</span>
+<span class="normal">1389</span>
+<span class="normal">1390</span>
+<span class="normal">1391</span>
+<span class="normal">1392</span>
+<span class="normal">1393</span>
+<span class="normal">1394</span>
+<span class="normal">1395</span>
+<span class="normal">1396</span>
+<span class="normal">1397</span>
+<span class="normal">1398</span>
+<span class="normal">1399</span>
+<span class="normal">1400</span>
+<span class="normal">1401</span>
+<span class="normal">1402</span>
+<span class="normal">1403</span>
+<span class="normal">1404</span>
+<span class="normal">1405</span>
+<span class="normal">1406</span>
+<span class="normal">1407</span>
+<span class="normal">1408</span>
+<span class="normal">1409</span>
+<span class="normal">1410</span>
+<span class="normal">1411</span>
+<span class="normal">1412</span>
+<span class="normal">1413</span>
+<span class="normal">1414</span>
+<span class="normal">1415</span>
+<span class="normal">1416</span>
+<span class="normal">1417</span>
+<span class="normal">1418</span>
+<span class="normal">1419</span>
+<span class="normal">1420</span>
+<span class="normal">1421</span>
+<span class="normal">1422</span>
+<span class="normal">1423</span>
+<span class="normal">1424</span>
+<span class="normal">1425</span>
+<span class="normal">1426</span>
+<span class="normal">1427</span>
+<span class="normal">1428</span>
+<span class="normal">1429</span>
+<span class="normal">1430</span>
+<span class="normal">1431</span>
+<span class="normal">1432</span>
+<span class="normal">1433</span>
+<span class="normal">1434</span>
+<span class="normal">1435</span>
+<span class="normal">1436</span>
+<span class="normal">1437</span>
+<span class="normal">1438</span>
+<span class="normal">1439</span>
+<span class="normal">1440</span>
+<span class="normal">1441</span>
+<span class="normal">1442</span>
+<span class="normal">1443</span>
+<span class="normal">1444</span>
+<span class="normal">1445</span>
+<span class="normal">1446</span>
+<span class="normal">1447</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">_generate_verilog_text</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">Verilog_ASM</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Converts the nodes into actual Verilog code.</span>
+
+<span class="sd">        Also generates a Yosys script to generate a graph of the module</span>
+<span class="sd">        ``read_verilog -sv {fn}.sv; proc; opt; memory; opt; show;``</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            v: Verilog object containing body nodes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">Node</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">operation</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation_Type</span><span class="o">.</span><span class="n">GENERIC_CONSTANT_DECLARATION</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;content: </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;declared symbols: </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">declared_symbols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;marked symbols for deletion: </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">marked_symbols_for_deletion</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Verilog_Text</span><span class="p">()</span>
+
+    <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">MODULE_AND_PORTS</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;// generated by titan, dont modify anything otherwise it might break =)&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="c1"># for i in range(len(v.content.keys())):</span>
+        <span class="c1"># fn = list(v.content.keys())[i]</span>
+
+        <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">MODULE_AND_PORTS</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;module </span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2"> (&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">MODULE_AND_PORTS</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">input wire clock,&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">ALWAYS_BLOCK</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">always_ff @ (posedge clock) begin&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">fn_data</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span>
+
+        <span class="c1"># print(f&quot;types: {fn_data.types}\n\ninputs: {fn_data.inputs}\toutputs: {fn_data.outputs}\n\nbody nodes: {fn_data.body_nodes}&quot;)</span>
+
+        <span class="n">sorted_nodes</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">_sort_body_nodes_by_tick</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+        <span class="c1"># for tick in sorted_nodes.keys():</span>
+        <span class="k">for</span> <span class="n">tick</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_nodes</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tick </span><span class="si">{</span><span class="n">tick</span><span class="si">}</span><span class="s2"> has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_nodes</span><span class="p">[</span><span class="n">tick</span><span class="p">])</span><span class="si">}</span><span class="s2"> nodes&quot;</span><span class="p">)</span>
+
+            <span class="n">io_length_tracker</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># for node in sorted_nodes[tick]:</span>
+            <span class="c1"># print(f&quot;--=-=-=-=-= LENGTH: {len(sorted_nodes[tick])}&quot;)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_nodes</span><span class="p">[</span><span class="n">tick</span><span class="p">])):</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">sorted_nodes</span><span class="p">[</span><span class="n">tick</span><span class="p">][</span><span class="n">x</span><span class="p">]</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">operation</span> <span class="ow">is</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">GLOBAL_VAR_DECLARATION</span><span class="p">:</span>
+                    <span class="c1"># this should only ever get hit on tick 0 but just in case</span>
+                    <span class="k">if</span> <span class="n">tick</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;variable declaration outside of tick 0 (</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNEXPECTED</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;variable declaration outside of tick 0&quot;</span><span class="p">,</span> <span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNEXPECTED</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                    <span class="n">type_ctx</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get_type_context_from_function</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">type_id</span><span class="p">)</span>
+                    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">type_ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                    <span class="c1"># ender = &quot;\n);&quot; if io_length_tracker == len(sorted_nodes[tick]) - 1 else &quot;,&quot;</span>
+                    <span class="n">ender</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">);&quot;</span> <span class="k">if</span> <span class="n">io_length_tracker</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fn_data</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">fn_data</span><span class="o">.</span><span class="n">outputs</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;,&quot;</span>
+
+                    <span class="k">match</span> <span class="n">node</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="k">case</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">FUNCTION_IN_VAR_PARAM</span><span class="p">:</span>
+                            <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                                <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">MODULE_AND_PORTS</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">input logic [</span><span class="si">{</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">:0] </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}{</span><span class="n">ender</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+
+                        <span class="k">case</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">FUNCTION_OUT_VAR_PARAM</span><span class="p">:</span>
+                            <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                                <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">MODULE_AND_PORTS</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">output wire [</span><span class="si">{</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">:0] </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}{</span><span class="n">ender</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+
+                    <span class="n">io_length_tracker</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">operation</span> <span class="ow">is</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">STORE</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">match</span> <span class="n">node</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="k">case</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">FUNCTION_OUT_VAR_PARAM</span><span class="p">:</span>
+                            <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                                <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">ASSIGNMENTS</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">assign </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">input_left</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">;&quot;</span>
+                            <span class="p">)</span>
+                        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNEXPECTED</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> node: </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNEXPECTED</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNEXPECTED</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="se">\n</span><span class="s2">node: </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">TitanErrors</span><span class="o">.</span><span class="n">UNEXPECTED</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">operation</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation_Type</span><span class="o">.</span><span class="n">ARITHMETIC</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">declared_symbols</span><span class="p">:</span>
+
+                        <span class="c1"># update this with a proper function</span>
+                        <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">get_type_context_from_function</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">type_id</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                        <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                            <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">INTERNAL</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">logic [</span><span class="si">{</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">:0] </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">;&quot;</span>
+                        <span class="p">)</span>
+
+                    <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2"> &lt;= &quot;</span>
+                    <span class="n">op_symbol</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+                    <span class="k">match</span> <span class="n">node</span><span class="o">.</span><span class="n">operation</span><span class="p">:</span>
+                        <span class="k">case</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">ADD</span><span class="p">:</span>
+                            <span class="n">op_symbol</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span>
+                        <span class="k">case</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">SUB</span><span class="p">:</span>
+                            <span class="n">op_symbol</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+                        <span class="k">case</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">MULT</span><span class="p">:</span>
+                            <span class="n">op_symbol</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+                        <span class="k">case</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">DIV</span><span class="p">:</span>
+                            <span class="n">op_symbol</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+
+
+                    <span class="c1"># line += f&quot;{node.input_left.spirv_id[1:]} {op_symbol} {node.input_right.spirv_id[1:]};&quot;</span>
+
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_left</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">op_symbol</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_right</span><span class="p">)</span><span class="si">}</span><span class="s2">;&quot;</span>
+
+                    <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">ALWAYS_BLOCK</span><span class="p">,</span>
+                        <span class="n">line</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">operation</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation_Type</span><span class="o">.</span><span class="n">COMPARISON</span><span class="p">:</span>
+                    <span class="n">defer_node_creation</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;checking 1 tick ahead...(</span><span class="si">{</span><span class="n">tick</span><span class="si">}</span><span class="s2"> + 1 = </span><span class="si">{</span><span class="n">tick</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">future_node</span> <span class="ow">in</span> <span class="n">sorted_nodes</span><span class="p">[</span><span class="n">tick</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">defer_node_creation</span><span class="p">:</span>
+                            <span class="k">break</span>
+
+                        <span class="k">if</span> <span class="n">future_node</span><span class="o">.</span><span class="n">operation</span> <span class="o">==</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">DECISION</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">future_node</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spirv_id</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">:</span>
+                                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;found a reference&quot;</span><span class="p">)</span>
+                                <span class="n">defer_node_creation</span> <span class="o">=</span> <span class="kc">True</span>
+
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;no reference found&quot;</span><span class="p">)</span>
+
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stopped checking 1 tick ahead...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">defer_node_creation</span><span class="p">:</span>
+                        <span class="c1"># TODO: add node stuff here - need to make the logic thingy and then add a line somehow idk</span>
+
+                        <span class="c1"># 1. make logic value</span>
+                        <span class="c1"># 2. assign logic value with comparison operation</span>
+
+                        <span class="c1"># logging.error(f&quot;{v.get_type_context_from_function(fn, node.type_id)}&quot;)</span>
+                        <span class="c1"># width = int(v.get_type_context_from_function(fn, node.type_id).data[0])</span>
+
+                        <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                           <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">INTERNAL</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">logic </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">;&quot;</span>
+                        <span class="p">)</span>
+
+                        <span class="c1"># TODO: need to get logical operators not bitwise... </span>
+                        <span class="n">compare_op</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">operation</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_left</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">compare_op</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_right</span><span class="p">)</span><span class="si">}</span><span class="s2">;&quot;</span>
+
+                        <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                            <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">ALWAYS_BLOCK</span><span class="p">,</span>
+                            <span class="n">line</span>
+                        <span class="p">)</span>
+
+
+
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">operation</span> <span class="ow">is</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="o">.</span><span class="n">DECISION</span><span class="p">:</span>
+                    <span class="c1"># paired_decision_node = sorted_nodes[tick+1][x+1]</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;in decision: </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">comparison_node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                    <span class="c1"># comparison node holds the comparison operator, and the comparison itself</span>
+                    <span class="c1"># the paried decision node holds the expected results</span>
+
+                    <span class="c1"># so i.e. c = a &gt;= 10 ? 5 : 0 would require the comparison node to construct a &gt;= 10</span>
+                    <span class="c1"># and the paried decision node for the ? 5 : 0 section</span>
+
+                    <span class="c1"># we dont want to create a logic value for the comparison node because that can just be abstracted away</span>
+                    <span class="c1"># so instead we will create the logic value for the decision node</span>
+
+                    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">get_type_context_from_function</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">type_id</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                    <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">INTERNAL</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">logic [</span><span class="si">{</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">:0] </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="n">compare_op</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="p">(</span><span class="n">comparison_node</span><span class="o">.</span><span class="n">operation</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+                    <span class="c1"># TODO: __get_correct_id(node) was returning the string representation of the node instead, why?</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">comparison_node</span><span class="o">.</span><span class="n">input_left</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">compare_op</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">comparison_node</span><span class="o">.</span><span class="n">input_right</span><span class="p">)</span><span class="si">}</span><span class="s2"> ? </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_left</span><span class="p">)</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_right</span><span class="p">)</span><span class="si">}</span><span class="s2">;&quot;</span>
+
+                    <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">ALWAYS_BLOCK</span><span class="p">,</span>
+                        <span class="n">line</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">operation</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">Operation_Type</span><span class="o">.</span><span class="n">BITWISE</span><span class="p">:</span>
+
+                    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">get_type_context_from_function</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">type_id</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                    <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">INTERNAL</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">logic [</span><span class="si">{</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">:0] </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">spirv_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_left</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">Operation</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">operation</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">__get_correct_id</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_right</span><span class="p">)</span><span class="si">}</span><span class="s2">;&quot;</span>
+
+                    <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">ALWAYS_BLOCK</span><span class="p">,</span>
+                        <span class="n">line</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># writer.append_code(</span>
+        <span class="c1">#     writer.Sections.MODULE_AND_PORTS,</span>
+        <span class="c1">#     &quot;)&quot;</span>
+        <span class="c1"># )</span>
+
+        <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">ALWAYS_BLOCK</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">end&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">writer</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">Sections</span><span class="o">.</span><span class="n">ASSIGNMENTS</span><span class="p">,</span>
+            <span class="s2">&quot;endmodule&quot;</span>
+        <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">print_contents</span><span class="p">()</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">output_to_file</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;yosys_script_</span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;read_verilog -sv </span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2">.sv; proc; opt; memory; opt; show;&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.cd18aaf1.min.js"></script>
+      
+    
+  </body>
+</html>
