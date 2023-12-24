@@ -6,11 +6,17 @@ from enum import Enum
 from pathlib import Path
 
 class Options(Enum):
+    """ Enum containing all valid options."""
     OUTPUT_PREPROCESSED = "oPP"
     OUTPUT_SPIRV_ASM = "oSA"
     DEFINE_TOP_MODULE = "t"
 
 def parse_options(machine_object, args):
+    """ Method responsible for parsing the CLI options and assigning them to the appropriate places.
+    
+        TODO:
+            This method should get replaced with Python's own ``argparse`` library.
+    """
     got_top_module = False
     dont_repeat = False
 

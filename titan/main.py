@@ -11,7 +11,10 @@ import ast_crawl
 # py -3.10-64 main.py
 
 def main():
-
+    """ Entry point for the program.
+    
+        Calls to handle CLI options, parsing, generating and writing.
+    """
     # debug
     logging.basicConfig(
         level=logging.DEBUG,

@@ -2,7 +2,7 @@ import logging
 from enum import Enum
 
 class TitanErrors(Enum):
-    """a collection of enums and associated error messages"""
+    """ A collection of symbolic names for errors, and associated error messages."""
 
     PARSE_BAD_OPTION = "unknown option"
     PARSE_OPTION_FAILURE = "unable to parse option" 
@@ -23,7 +23,7 @@ class TitanErrors(Enum):
     BAD_TYPES = "bad/unsupported type(s) for operation"
 
 class LoggedException(Exception):
-    """ An exception that also logs the msg to the given logger. """
+    """ An exception that also logs the message to the given logger. """
     def __init__(self, logger: logging.Logger, msg: str):
         logger.error(msg)
         super().__init__(msg)

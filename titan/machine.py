@@ -10,8 +10,21 @@ from enum import Enum, auto
 from typing import NamedTuple, TypedDict, Union, List
 
 class Machine:
+    """ Class that attempts to wrap the functionality/required components of the compiler."""
 
     def __init__(self):
+        """ Init function for Machine.
+        
+            Attributes:
+                options: List of options that the user provided via the CLI.
+                output_options: List of options that relate to the output of the compiler.
+                processed_text: TODO
+                files: List of files to process.
+                parsed_modules: TODO
+                functions: TODO
+                name_of_top_module: TODO
+                SPIRV_asm_obj: SPIR-V ASM generator object. (unused)
+        """
         self.options = []   # parsed options (anything but output stuff)
         self.output_options = []    # parsed outputting options
         self.processed_text = []    # preprocessed python
@@ -22,7 +35,17 @@ class Machine:
         self.SPIRV_asm_obj: SPIRV_ASM = None
 
 class Function:
+    """ Object to represent a function."""
     def __init__(self, name, params, body, returns, return_type):
+        """ Init function for the class.
+        
+            Args:
+                name: Name of the function.
+                params: Parameters of the function.
+                body: Body content.
+                returns: Returned values/varaibles.
+                return_type: Types of returned values/varaibles.
+        """
         self.name = name
         self.params = params
         self.body = body
@@ -35,6 +58,11 @@ class Function:
 #######################################################################
 
 class SPIRV_ASM:
+    """ SPIR-V assembly generator class. 
+    
+        Warning:
+            No longer used.
+    """
 
     class Sections(Enum):
         CAPABILITY_AND_EXTENSION = auto()
@@ -175,6 +203,7 @@ class SPIRV_ASM:
 
 ###############################################################
 
+# NOTE: unused
 class _VerilogTypeContext(NamedTuple):
     type: type.DataType = None
     data: list = []
@@ -190,6 +219,14 @@ class _id_and_node_dict_hint(TypedDict):
     node: List[d.Node]
 
 class _VerilogFunctionData(NamedTuple):
+    """ Tuple encapsulating information required for a function.
+    
+        Attributes:
+            types: All types contained within the function.
+            inputs: A list of all inputs.
+            outputs: A list of all outputs.
+            body_nodes: A dictionary containing all body nodes, with the SPIR-V ID as its key and a list of associated nodes as its value.
+    """
     # name: str = "",
     # types: List[_VerilogTypeContext] = []
     types: _spirv_id_with_type_context_dict_hint = {}
@@ -199,8 +236,17 @@ class _VerilogFunctionData(NamedTuple):
     body_nodes: _id_and_node_dict_hint = {}
 
 class Verilog_ASM():
+    """ Verilog code generator object.
+    
+        Contains helper functions to manipuate and generate Verilog source code.
+
+        Note:
+            Verilog and SystemVerilog are used interchangeably throughout this project.
+    """
 
     class Sections(Enum):
+        """ Enum describing the sections commonly found within Verilog source code.
+        """
         MODULE_NAME = auto()
         PARAMETER_LIST = auto()
         PORTS_LIST = auto()
@@ -209,7 +255,13 @@ class Verilog_ASM():
 
 
     def __init__(self):
-
+        """ Init function for Verilog_ASM.
+        
+            Attributes:
+                content (TypedDict): Dictionary with name of function as key, and value as ``_VerilogFunctionData``.
+                declared_symbols (List): List of declared symbols.
+                marked_symbols_for_deletion (List): Unused.
+        """
         class function_name_and_data_dict_hint(TypedDict):
             name: str
             data: _VerilogFunctionData
@@ -231,10 +283,24 @@ class Verilog_ASM():
         self.content[fn_name] = new_vfd
 
 
-    def create_function(self, function_name):
+    def create_function(self, function_name: str):
+        """ Method to create a new, empty function tuple.
+        
+            Args:
+                function_name: Name of the function.
+        """
         self.content[function_name] = _VerilogFunctionData()
 
     def add_body_node_to_function(self, fn_name: str, node: d.Node):
+        """ Add a body node to an existing function.
+        
+            Checks if the node exists by using the associated SPIR-V ID, creating it if not.
+            Then appends the node to that SPIR-V ID.
+
+            Args:
+                fn_name: Function to add to.
+                node: Node to add.
+        """
         # self.content[name].body_nodes[node.spirv_id] = node
         # self.content[name].body_nodes[node.spirv_id].append(node)
 
@@ -245,42 +311,136 @@ class Verilog_ASM():
         self.content[fn_name].body_nodes[node.spirv_id].append(node)
 
     def add_type_context_to_function(self, fn_name: str, type_id: str, type_context: _VerilogTypeContext):
+        """ Add a type context to a function.
+        
+            Args:
+                fn_name: Function to add to.
+                type_id: ID to associate with the type.
+                type_context: Information about the type.
+        """
         # self.content[function_name].types.append(type_context)
         self.content[fn_name].types[type_id] = type_context
 
-    def get_type_context_from_function(self, fn_name:str, type_id: str):
+    def get_type_context_from_function(self, fn_name:str, type_id: str) -> _VerilogTypeContext:
+        """ Get a type context from a function using a type ID.
+
+            Args:
+                fn_name: Function to add to.
+                type_id: ID of type to query.
+
+            Returns:
+                Context of the type.
+        """
         return self.content[fn_name].types[type_id]
 
-    def type_exists_in_func(self, fn_name: str, type_id: str):
+    def type_exists_in_func(self, fn_name: str, type_id: str) -> bool:
+        """ Check if a type exists for a given function.
+        
+            Args:
+                fn_name: Function to check in.
+                type_id: Type ID to check for.
+            
+            Returns:
+                True if ID exists in function, else False.
+        """
         # return True if type_id in 
         return True if type_id in self.content[fn_name].types else False
 
     def add_output_to_function(self, fn_name:str, symbol:str):
+        """ Add an output to a function.
+        
+            Args:
+                fn_name: Function to add to.
+                symbol: Symbol to add.
+        """
         self.content[fn_name].outputs.append(symbol)
 
     def add_input_to_function(self, fn_name:str, symbol:str):
+        """ Add an input to a function.
+        
+            Args:
+                fn_name: Function to add to.
+                symbol: Symbol to add.
+        """
         self.content[fn_name].inputs.append(symbol)
 
-    def get_datatype_from_id(self, fn_name:str, id:str):
+    def get_datatype_from_id(self, fn_name:str, id:str) -> type.DataType:
+        """ Return primative type from ID.
+        
+            Args:
+                fn_name: Function to check in.
+                id: ID to query.
+
+            Returns:
+                Primative datatype of ID, if exists.
+        """
         return self.content[fn_name].types[id].type
 
-    def get_primative_type_id_from_id(self, fn_name:str, id:str):
+    def get_primative_type_id_from_id(self, fn_name:str, id:str) -> str:
+        """ Returns the associated primative type ID given an ID of a symbol.
+        
+            Can handle pointers too.
+
+            Args:
+                fn_name: Function to fetch from.
+                id: ID to fetch from.
+
+            Returns:
+                Returns primative type ID.
+        """
         x = self.content[fn_name].types[id]
         if x.is_pointer:
             return x.alias
         else:
             return id
 
-    def does_node_exist(self, fn_name:str, node_id:str):
+    def does_node_exist(self, fn_name:str, node_id:str) -> bool:
+        """ Checks if a node exists in a given function.
+        
+            Args:
+                fn_name: Function to check in.
+                node_id: Node ID to check for.
+
+            Returns:
+                True if node exists, else False.
+        """
         return True if node_id in self.content[fn_name].body_nodes else False
 
-    def does_node_exist_in_dict(self, node_dict, node_id):
+    def does_node_exist_in_dict(self, node_dict, node_id) -> bool:
+        """ Checks if a node exists in the node dictionary.
+        
+            Args:
+                node_dict: Dictionary containing Nodes.
+                node_id: ID of the node to check for.
+
+            Returns:
+                True if node exists in the node dictionary.
+        """
         return True if node_id in node_dict else False
 
-    def get_node(self, fn_name:str, node_id: str):
+    def get_node(self, fn_name:str, node_id: str) -> d.Node:
+        """ Gets the latest node given a node ID in a given function.
+        
+            Args:
+                fn_name: Function to check in.
+                node_id: Node ID to check for.
+
+            Returns:
+                Latest node for the given node ID.
+        """
         return self.content[fn_name].body_nodes[node_id][-1]
     
     def modify_node(self, fn_name:str, target_node_id:str, pos:int,  value_node: d.Node, operation: Operation = Operation.NOP):
+        """ Modify the parents of a node within a function.
+
+            Args:
+                fn_name: Function to modify node in.
+                target_node_id: Node to modify.
+                pos: Which parent of the node to modify. (0 = left, 1 = right)
+                value_node: New parent node.
+                operation: Operation that the node is performing.
+        """
+        
         # self.content[name].body_nodes[target_node_id].update_input(pos, value_node)
         x = self.get_node(fn_name, target_node_id)
         # print(x)
@@ -305,7 +465,15 @@ class Verilog_ASM():
         self.content[fn_name].body_nodes[target_node_id].append(d.Node(new_ctx))
 
 
-    def _sort_body_nodes_by_tick(self, fn_name: str):
+    def _sort_body_nodes_by_tick(self, fn_name: str) -> dict:
+        """ Sorts the nodes in ascending order (0 -> max).
+        
+            Args:
+                fn_name: Name of function to sort nodes for.
+
+            Returns:
+                New dictionary containing sorted nodes, with the tick as the key.
+        """
         tick_dict = {}
 
         # TODO: can we just use list comprehension on this?
@@ -320,11 +488,30 @@ class Verilog_ASM():
         return tick_dict
 
     @staticmethod
-    def _parent_exists(node: d.Node):
+    def _parent_exists(node: d.Node) -> bool:
+        """ Check whether the node has any parents.
+        
+            Args:
+                node: Node to check parents of.
+
+            Returns:
+                True if any parents exist, else False.
+        """
         return True if node.input_left is not None or node.input_right is not None else False
 
     @staticmethod
     def _encode_parents(node: d.Node):
+        """ Numerically encode the position of the parents.
+        
+            Note:
+                - 0: No parents exist.
+                - 1: Left parent exists.
+                - 2: Right parent exists.
+                - 3: Both parents exist.
+
+            Args:
+                node: Node to encode the parents.
+        """
         count = 0
 
         if node.input_left is not None:
@@ -340,7 +527,12 @@ class Verilog_ASM():
     
 
     def generate_dot_graph(self, file_name_suffix: str = "", clean_nodes = None):
-
+        """ Generates Graphviz dot graphs of the dataflow of a function. Requires the ``graphviz`` package.
+        
+            Args:
+                file_name_suffix: String to append to file name.
+                clean_nodes: List of clean nodes. (Optimised list)
+        """
         for key in self.content.keys():
             dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}{file_name_suffix}.dot", directory="dots") 
             dot.attr(bgcolor="gray10")
@@ -406,6 +598,24 @@ class Verilog_ASM():
 
 
     def __find_best_parents(self, subject_node: d.Node):
+        """ Attempt to find the best parents.
+        
+            TODO:
+                What's actually defined as being the best parent? AFAIK it was any non-temporary 
+                node but will need to double check.
+            
+            FIXME:
+                Avoid mixing different returns. This method can either return a single Node or 
+                a tuple of Nodes.
+
+            Args:
+                subject_node: Node to determine best parents for.
+
+            Returns:
+                best_node: Best parent (single).
+                best_nodes: Best parents (tuple).
+
+        """
 
         # if the node is a constant declaration, return itself
         if subject_node.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
@@ -476,7 +686,18 @@ class Verilog_ASM():
                 return (self.__find_best_parents(subject_node.input_left), self.__find_best_parents(subject_node.input_right))
 
 
-    def _eval_parents_for_non_temp_id(self, current_node: d.Node):
+    def _eval_parents_for_non_temp_id(self, current_node: d.Node) -> list:
+        """ Method to evaluate the parents of a node for non-temporary IDs.
+        
+            Calls ``titan.machine.__find_best_parents`` internally, kinda acts like a wrapper function
+            to handle the scuffed returns.
+
+            Args:
+                current_node: Node to determine best parents for.
+            
+            Returns:
+                The ID(s) of the best parent(s). Can either be a one or two-element list.
+        """
         # a temp id is defined as a LOAD instruction which references an existing symbol
         # in spirv, this looks something like:
         #   %1 = OpLoad %type_int %a
@@ -512,6 +733,10 @@ class Verilog_ASM():
         return node_names
 
     def clean_graph(self):
+        """ Method to remove temporary nodes generated by SPIR-V. 
+        
+            Does not return anything, overwrites the existing node list.
+        """
         # for function in self.content.keys():
         #     for symbol in self.content[function].body_nodes.keys():
         #         for node in self.content[function].body_nodes[symbol]:
@@ -666,14 +891,21 @@ class Verilog_ASM():
 
         
 class Verilog_Text():
+    """ Object that provides text writing capabilities for Verilog code."""
 
     class Sections(Enum):
+        """ Sections of Verilog file."""
         MODULE_AND_PORTS = auto()
         INTERNAL = auto()
         ALWAYS_BLOCK = auto()
         ASSIGNMENTS = auto()
 
     def __init__(self):
+        """ Init function for Verilog_Text.
+        
+            Attributes:
+                generated_verilog: Dictionary using ``titan.machine.Verilog_Text.Sections`` as keys, a list of code as value.
+        """
         self.generated_verilog = {
             self.Sections.MODULE_AND_PORTS.name: [],
             self.Sections.INTERNAL.name: [],
@@ -682,9 +914,19 @@ class Verilog_Text():
         }
 
     def append_code(self, section: Sections, code:str):
+        """ Append code to a given section.
+        
+            Args:
+                section: Section to append to.
+                code: String to append.
+        """
         self.generated_verilog[section.name].append(code)
 
     def print_contents(self):
+        """ Debug function to print all generated Verilog code.
+
+            Dumps every entry in ``generated_verilog``.
+        """
         logging.debug(f"---- printing generated verilog ---")
         for section, code_list in self.generated_verilog.items():
             logging.debug(f"{section}")
@@ -695,7 +937,11 @@ class Verilog_Text():
         logging.debug(f"---- end generated verilog ---")
 
     def output_to_file(self, name):
-
+        """ Writes the contents of ``generated_verilog`` to a file.
+        
+            Args:
+                name: Name to give to file. Automatically appended with ".sv".
+        """
         logging.info(f"Writing SystemVerilog to file ({name}.sv)")
         with open(f"{name}.sv", "w") as f:
             for k, v in self.generated_verilog.items():

@@ -7,6 +7,11 @@ import common.operators as o
 pp.ParserElement.enable_packrat()
 
 class TitanPythonGrammar(NamedTuple):
+    """ Grammar for parsing Python.
+    
+        Warning:
+            This has been deprecated in favour for Python's AST module. This grammar should not be used at all.
+    """
 
     # keywords
     keyword_def = pp.Keyword("def")
@@ -94,6 +99,10 @@ class TitanPythonGrammar(NamedTuple):
 
 
 class TitanSPIRVGrammar(NamedTuple):
+    """ Grammar for parsing SPIR-V assembly.
+
+        Requires ``pyparsing`` to function.
+    """
 
     pp.ParserElement.set_default_whitespace_chars(" \t")
     nl = pp.Literal("\n")

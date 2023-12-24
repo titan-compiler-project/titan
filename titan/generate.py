@@ -781,6 +781,18 @@ def _get_spirv_function_locations(parsed_spirv):
 
 # generates nodes and then generates text
 def generate_verilog(parsed_spirv: pp.ParseResults):
+    """ Generate SystemVerilog from parsed SPIR-V assembly.
+    
+        Loops through the parsed SPIR-V assembly, generating the corresponding SystemVerilog code.
+
+        Args:
+            parsed_spirv: Parsed SPIR-V assembly, in ``pyparsing.ParseResults`` format.
+
+        Attributes:
+            verilog: Verilog helper class.
+            fn_name: Top-level function name.
+            fn_locations: Line numbers of SPIR-V functions.
+    """
     verilog = m.Verilog_ASM()               
 
     fn_name = ""
@@ -1185,6 +1197,14 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
 
 
 def _generate_verilog_text(v: m.Verilog_ASM):
+    """ Converts the nodes into actual Verilog code.
+
+        Also generates a Yosys script to generate a graph of the module
+        ``read_verilog -sv {fn}.sv; proc; opt; memory; opt; show;``
+    
+        Args:
+            v: Verilog object containing body nodes.
+    """
 
     def __get_correct_id(node: d.Node):
         if node.operation in s.Operation_Type.GENERIC_CONSTANT_DECLARATION:

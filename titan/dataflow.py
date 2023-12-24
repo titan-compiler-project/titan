@@ -5,6 +5,18 @@ from common.symbols import Operation
 
 
 class NodeContext(NamedTuple):
+    """ Tuple which holds context about a node.
+    
+        Attributes:
+            line_no (int): Line of the SPIR-V assembly this node referring to.
+            id (str): Associated SPIR-V ID.
+            type_id (str): Associated type ID.
+            input_left (titan.dataflow.Node): Left parent node.
+            input_right (titan.dataflow.Node): Right parent node.
+            operation (titan.common.symbols.Operation): Operation being performed by the node.
+            data: (list): Additional information stored by the node.
+            is_comparison (bool): Set if this node doing a comparison.
+    """
     line_no: int = 0
     id: str = ""
     type_id: str = ""
@@ -19,9 +31,17 @@ class NodeContext(NamedTuple):
 
 
 class Node:
+    """ Node class. Generated when transpiling SPIR-V into SystemVerilog. 
     
+        Attempts to replicate the dataflow structure of SPIR-V, so that generating SystemVerilog would be easier.
+    """
+
     @staticmethod
     def _calculate_tick(left_node, right_node, comparison_node = None):
+        """ Calculate the correct tick for the node.
+        
+            Ticks can be set to zero if the node has no parents, or to the highest tick of the parents + 1.
+        """
         # print("-[_calculate_tick] hit")
         
         if comparison_node is None:
@@ -45,6 +65,7 @@ class Node:
 
     @staticmethod
     def _set_tick_during_init(context: NodeContext):
+        """ Calculate the tick for the node during initialisation."""
         # left_node_is_none = context.input_left == None
         # right_node_is_none = context.input_right == None
 
@@ -61,6 +82,11 @@ class Node:
 
 
     def __init__(self, context: NodeContext):
+        """ Init function for a node.
+        
+            Args:
+                context: Node context to create the node with.
+        """
         self.spirv_line_no = context.line_no
         self.spirv_id = context.id
         self.type_id = context.type_id
@@ -72,7 +98,12 @@ class Node:
         self.tick = self._set_tick_during_init(context)
 
 
-    def _update_tick(self):
+    def _update_tick(self) -> int:
+        """ Helper function to update the tick when one of the parent nodes are changed.
+        
+            Returns:
+                Recalculated tick value.
+        """
         left_node_is_none = self.input_left == None
         right_node_is_none = self.input_right == None
 
@@ -94,7 +125,15 @@ class Node:
         #     return max(self.input_left.tick, self.input_right.tick) + 1
 
 
-    def update_input(self, pos: int, new_node: Node):        
+    def update_input(self, pos: int, new_node: Node):
+        """ Update a parent node.
+        
+            Automatically recalculates the tick for the current node.
+
+            Args:
+                pos: 0 = left node, 1 = right node
+                new_node (titan.dataflow.Node): New node to update the input with.
+        """        
         if pos == 0: # left node
             self.input_left = new_node
         elif pos == 1: # right node

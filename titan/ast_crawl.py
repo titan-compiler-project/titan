@@ -8,10 +8,14 @@ import machine
 import common.errors as errors
 
 class _SPIRVHelperGenerator():
-    """huge wrapper around helper functions relating to SPIR-V generation"""
+    """Helper class that provides functions related to SPIR-V generation."""
 
     class Sections(enum.Enum):
-        """enum containing sections which make up the final SPIR-V file"""
+        """ Enum containing sections that are present in the final SPIR-V assembly file.
+        
+            Dividing the SPIR-V file into sections helps with ensuring that the code is
+            placed in the right spot, and can be easily altered if needed.
+        """
         CAPABILITY_AND_EXTENSION = enum.auto()
         ENTRY_AND_EXEC_MODES = enum.auto()
         DEBUG_STATEMENTS = enum.auto()
@@ -21,9 +25,14 @@ class _SPIRVHelperGenerator():
         FUNCTIONS = enum.auto()
 
     class TypeContext(typing.NamedTuple):
-        """class/tuple that is used to give types some context about their use
+        """ Tuple that provides context about a given type. Used to align Python types with SPIR-V.
         
-        this is to account for how SPIR-V handles types, and how there can be various composites
+            Attributes:
+                primative_type (titan.common.type.DataType): Base/primative (python) type.
+                storage_type (titan.common.type.StorageType): Storage type in SPIR-V.
+                is_constant (bool): Type describes a constant.
+                is_pointer (bool): Type describes a pointer.
+                is_function_typedef (bool): Type describes a function definition. 
         """
         primative_type: titan_type.DataType
         storage_type: titan_type.StorageType = titan_type.StorageType.NONE
@@ -32,20 +41,56 @@ class _SPIRVHelperGenerator():
         is_function_typedef: bool = False
         
     class ConstContext(typing.NamedTuple):
-        """class/tuple that gives some context about constants
+        """ Tuple that provides context about a given constant.
         
-        contains a primative type and the value of the constant
+            Attributes:
+                primative_type (titan.common.type.DataType): Base/primative (python) type.
+                value: Value of the constant. Can be int, float, bool or None.
         """
         primative_type: titan_type.DataType
         value: typing.Union[int, float, bool, None]
 
     class SymbolInfo(typing.NamedTuple):
-        """class/tuple that gives context for a type and SPIR-V storage location"""
+        """ Tuple that associates a primative type with a storage location.
+
+            Attributes:
+                type (titan.common.type.DataType): Base/primative (python) type.
+                location (titan.common.type.StorageType): Storage type in SPIR-V.
+        """
         type: titan_type.DataType
         location: titan_type.StorageType
 
 
     def __init__(self, disable_debug=True):
+        """ Init function for _SPIRVHelperGenerator.
+
+            Creates various attributes and allows for helper function access.
+        
+            Args:
+                disable_debug (bool): Disable debug output.
+
+            Attributes:
+                entry_point (string): TODO
+                _disable_debug (bool): Disables debug. Set to value of parameter.
+                _latest_ifexp_selector_id (None): Last known ID for an if-expression selector.
+                _latest_compare_id (None): Last known ID for a compare expression.
+                _latest_function_name (None): TODO
+                _decorator_dict: Stores information regarding decorators are used on which functions.
+                input_port_list (TypedDict): List of input port names and their primative types.
+                output_port_lsit (TypedDict): List of output port names and their primative types.
+                _internal_output_port_list_counter (None): TODO
+                output_type_list: TODO
+                symbol_info: TODO
+                location_id: TODO
+                intermediate_id (int): Keep track of latest intermediate ID (used by unrolled expressions).
+                return_id (int): TODO
+                intermediate_ids: List of used intermediate IDs. Stores ID as string and primative type.
+                declared_constants: List of declared constants. Stores ConstContext and string ID of constant.
+                declared_types: List of declared types. Stores primative type and string ID.
+                body: TODO
+                generated_spirv (dict): Dictionary indexed with Sections enum, and stores generated lines in a list.
+        """
+
         self.entry_point = ""
         self._disable_debug = disable_debug
         self._latest_ifexp_selector_id = None
@@ -109,7 +154,7 @@ class _SPIRVHelperGenerator():
         }
 
     def dump(self):
-        """spew a whole bunch of debug info"""
+        """Output debug info if debug flag has been set. Uses the logging library."""
         if not self._disable_debug:
 
             logging.debug(f"[debug info _SPIRVHelperGenerator]")
@@ -144,23 +189,50 @@ class _SPIRVHelperGenerator():
 
      
     def add_line(self, section: Sections, line:str):
-        """add a line of generated SPIR-V to a certain section"""
+        # """add a line of generated SPIR-V to a certain section"""
+        """ Add a generated line of SPIR-V to a given section.
+        
+            Args:
+                section (titan.ast_crawl._SPIRVHelperGenerator.Sections): The section to append the line to.
+                line (str): The line to add.
+        """
         self.generated_spirv[section.name].append(line)
 
     def add_output_type(self, type):
-        """add an output type (SPIR-V typing)"""
+        """ Add an output type.
+        
+            Args:
+                type: The type to add.
+
+            Warning:
+                This function may be removed in the future. It's not clear _what_ specifically it is adding.
+                Could possibly cause issues with the rest of the program.
+        """
         self.output_type_list.append(type)
 
     def add_output_symbol(self, symbol:str):
+        """ Add an output symbol to the output_port_list.
+
+            Also increments an internal counter.
+
+            Args:
+                symbol (str): The symbol to be added. 
+        """
+
+        # HACK: what is the point of this line
         self.output_port_list[symbol] = self.output_type_list[self._internal_output_port_list_counter]
         self._internal_output_port_list_counter += 1
 
-    def symbol_exists(self, symbol: str):
-        """check if a symbol exists
+    def symbol_exists(self, symbol: str) -> bool:
+        """ Check if a symbol exists.
         
-        - symbol: str: symbol name without SPIR-V %
+            Args:
+                symbol (str): Given symbol name, with the SPIR-V "%" prefix.
+
+            Returns:
+                symbol_exists: True if symbol exists, else False.
         """
-        # return True if symbol in self.symbols_and_types else False
+
         return True if symbol in self.symbol_info else False
 
     # no overloading
@@ -168,17 +240,59 @@ class _SPIRVHelperGenerator():
         # self.symbol_info[symbol_id] = info
 
     def add_symbol(self, symbol_id: str, type, location: titan_type.StorageType):
-        """add a symbol to a dict using the type (DataType) and location (StorageType)"""
+        """ Add a symbol.
+
+            The value ``type`` arg will be automatically converted into a valid ``titan.common.type.DataType`` value.
+        
+            Args:
+                symbol_id: ID given to the symbol.
+                type: Python type of the symbol.
+                location: Given storage location for the symbol. Required for SPIR-V.
+
+            TODO:
+                Need to determine whether the symbol ID contains the "%" prefix or not.
+        """
         self.symbol_info[symbol_id] = self.SymbolInfo(titan_type.DataType(type), location)
 
     def get_symbol_info(self, symbol_id: str) -> SymbolInfo:
+        """ Get information regarding a given symbol via ID.
+
+            Args:
+                symbol_id: ID of the symbol to check.
+
+            Returns:
+                Symbol information tuple.
+        """
         return self.symbol_info[symbol_id]
     
     # basically works the same as add_symbol
     def update_symbol_info(self, symbol_id:str, info: SymbolInfo):
+        """ Update the information currently stored of a given symbol.
+
+            Warning:
+                Simply overwrites an existing entry. The symbol _must_ have be declared before using this,
+                otherwise you may run into a KeyError exception.
+
+            Args:
+                symbol_id: ID of the symbol to update.
+                info: Tuple to update the information with.
+        """
         self.symbol_info[symbol_id] = info
         
-    def add_symbol_if_nonexistant(self, symbol: str, type, location: titan_type.StorageType):
+    def add_symbol_if_nonexistant(self, symbol: str, type, location: titan_type.StorageType) -> bool:
+        """ Add a symbol, only if it does not already exist.
+
+            Method first checks if symbol exists or not. If not, it'll generate the corresponding SPIR-V
+            lines depending on its type and location, and increment the ``location_id`` counter.
+
+            Args:
+                symbol: Name of the symbol to add.
+                type: Python type of the symbol.
+                location: Given storage location for the symbol. Required for SPIR-V.
+
+            Returns:
+                symbol_added: True if symbol has been added, else False.
+        """
 
         if symbol not in self.symbol_info:
             self.symbol_info[symbol] = self.SymbolInfo(titan_type.DataType(type), location)
@@ -188,6 +302,7 @@ class _SPIRVHelperGenerator():
                 f"OpName %{symbol} \"{symbol}\""
             )
 
+            # TODO: more elegant solution?
             # if i/o
             if location is (titan_type.StorageType.IN or titan_type.StorageType.OUT):
                 # add location (glsl specific i think)
@@ -254,8 +369,20 @@ class _SPIRVHelperGenerator():
         else:
             return False
         
-    def get_symbol_type(self, symbol):
+    def get_symbol_type(self, symbol:str) -> titan_type.DataType:
+        """ Get symbol type, using symbol ID.
+
+            Args:
+                symbol: Symbol ID
+            
+            Returns:
+                Primative type of symbol.
+        """
+
+        # symbol_info[symbol] -> info (SymbolInfo).type
         return self.symbol_info[symbol].type
+
+
 
     # def get_symbol_as_type_context(self, symbol):
     #     """DO NOT USE returns primative type only"""
@@ -264,34 +391,105 @@ class _SPIRVHelperGenerator():
     #     return self.symbols_and_types[symbol]
 
     
-    def intermediate_id_exists(self, intermediate_id: str):
+    def intermediate_id_exists(self, intermediate_id: str) -> bool:
+        """ Check if an intermediate ID already exists.
+        
+            Args:
+                intermediate_id: Intermediate ID to check.
+            
+            Returns:
+                True if intermediate ID already exists, else False.
+        """
         return True if intermediate_id in self.intermediate_ids else False
     
     def add_intermediate_id(self, intermediate_id: str, type: titan_type.DataType):
+        """ Add an intermediate ID.
+
+            Args:
+                intermediate_id: Intermediate ID to add.
+                type: Type to associate with the intermediate ID.
+        """
         self.intermediate_ids[intermediate_id] = type
 
-    def get_type_of_intermediate_id(self, intermediate_id: str):
-        """
-        returns the type of an intermediate ID, *not the type ID*
+    def get_type_of_intermediate_id(self, intermediate_id: str) -> titan_type.DataType:
+        """ Returns the type of an intermediate ID, _not_ the type ID.
+
+            Args:
+                intermediate_id: Intermediate ID to return the type of.
+
+            Returns:
+                Primative intermediate ID type.
         """
         return self.intermediate_ids[intermediate_id]
 
     # type helpers
-    def type_exists(self, type: TypeContext):
+    def type_exists(self, type: TypeContext) -> bool:
+        """ Check if a type already exists, using a ``TypeContext``.
+
+            Args:
+                type: Type to check if it exists.
+
+            Returns:
+                True if type exists, else False.
+        """
         return True if type in self.declared_types else False
     
     def add_type(self, type: TypeContext, id: str):
+        """ Add a type, using ``TypeContext``. Used to generate SPIR-V types.
+        
+            Args:
+                type: Type, as ``TypeContext`` to add.
+                id: ID to associate with the type.
+        """
         self.declared_types[type] = id
 
-    def get_type_id(self, type: TypeContext):
+    def get_type_id(self, type: TypeContext) -> str:
+        """ Get the ID of a given type.
+
+            Args:
+                type: Type to get ID for.
+            
+            Returns:
+                ID of the type.
+        """
+        # FIXME: the type hint declared for this attribute does not use TypeContext as the key.
+        #        declared_type_hint suggests to use common.type.DataType as the key!
         return self.declared_types[type]
     
-    def get_primative_type_id(self, type: titan_type.DataType):
+    def get_primative_type_id(self, type: titan_type.DataType) -> str:
+        """ Get the ID of a primative type.
+
+            Args:
+                type: Primative type to get ID for.
+
+            Return:
+                ID of the type.
+        """
+
+        # TODO: convoluted? may be a better way to do this
+        # can this just be replaced with indexing with the primative type instead of going through TypeContext?
         return self.declared_types[
             self.TypeContext(titan_type.DataType(type))
         ]
 
-    def add_type_if_nonexistant(self, type: TypeContext, id: str):
+    def add_type_if_nonexistant(self, type: TypeContext, id: str) -> str:
+        """ Add a type, only if it does not already exist.
+
+            If the type does not already exist, the function will generate the corresponding SPIR-V for it.
+
+            Note: Currently supported types:
+                - OpTypeVoid
+                - OpTypeInteger (32-bit signed)
+                - OpTypeBool
+                - OpTypeFloat (32-bit float)
+
+            Args:
+                type: The type to add.
+                ID: The ID to associate with the type.
+
+            Returns:
+                type_id: The ID of the type.
+        """
         if not self.type_exists(type):
             
             # TODO: remove
@@ -348,14 +546,38 @@ class _SPIRVHelperGenerator():
             return self.get_type_id(type)
 
     # const helpers
-    def const_exists(self, const: ConstContext):
+    def const_exists(self, const: ConstContext) -> bool:
+        """ Check if a constant exists.
+
+            Args:
+                const: Constant to check.
+
+            Returns:
+                True if constant exists, else False.
+        """
         return True if const in self.declared_constants else False
 
     def add_const(self, c_ctx: ConstContext, spirv_id: str):
+        """ Add a constant.
+
+            Args:
+                c_ctx: Constant to add.
+                spirv_id: The ID to associate with the constant.
+        """
         self.declared_constants[c_ctx] = spirv_id
 
-    def add_const_if_nonexistant(self, const: ConstContext, negative_val:bool = False):
-        """adds a constant (and defines type) if it does not exist, otherwise it returns the constant"""
+    def add_const_if_nonexistant(self, const: ConstContext, negative_val:bool = False) -> str:
+        """ Add a constant, only if it does not exist already.
+        
+            Checks if the constant exists, and if not, the method will generate the corresponding SPIR-V.
+
+            Args:
+                const: Constant to add.
+                negative_val: Flag the value as a negative constant. Needed to generate the SPIR-V assembly correctly.
+
+            Returns:
+                constant_id: Returns the ID of the constant.
+        """
 
         if const not in self.declared_constants:
             txt_val = str(const.value)
@@ -385,28 +607,68 @@ class _SPIRVHelperGenerator():
             return self.declared_constants[const]
 
     # TODO: add one that uses the ConstContext thing directly?
-    def get_const_id(self, value, type):
+    def get_const_id(self, value, type) -> str:
+        """ Get the ID of a constant.
+        
+            Args:
+                value: A constant value.
+                type: The type of the constant value.
+
+            Returns:
+                ID of the constant.
+        """
         temp_c_ctx = self.ConstContext(type, value)
         return self.declared_constants[temp_c_ctx]
     
-    def get_const_id_with_ctx(self, context: ConstContext):
+    def get_const_id_with_ctx(self, context: ConstContext) -> str:
+        """ Get the ID of a constant, using ``ConstContext``.
+
+            Args:
+                context: Context of the constant.
+
+            Returns:
+                ID of the constant.
+        """
         return self.declared_constants[context]
 
 class GenerateSPIRVFromAST(ast.NodeVisitor):
+    """ Class responsible for generating the SPIR-V assembly, using Python's AST module."""
 
     def __init__(self, file):
+        """ Init function for GenerateSPIRVFromAST.
+
+            Args:
+                file: Python source file to transpile.
+
+            Attributes:
+                _target_file: Stores the ``file`` parameter. (Should probably be removed.)
+                _tree: Stores the AST generated by the AST library whilst parsing the source file.
+                spirv_helper: An instance of ``_SPIRVHelperGenerator``.
+        """
         self._target_file = file
         self._tree = ast.parse(open(file, "r").read())
 
         self.spirv_helper = _SPIRVHelperGenerator(disable_debug=False)
 
     def crawl(self):
+        """ Method reponsible for starting the compilation.
+
+            Begins visiting each node and calls corresponding functions to generate SPIR-V assembly.
+        """
         # wrapper function for visiting the top of the tree
         self.visit(self._tree)
         self.spirv_helper.dump()
 
     # TODO: probably inefficient
-    def create_file_as_string(self):
+    def create_file_as_string(self) -> str:
+        """ Transforms the generated SPIR-V assembly from lists into a very long string.
+
+            TODO:
+                Rework this function. Must be a better way to do this.
+
+            Returns:
+                String containing all of the generated SPIR-V assembly code.
+        """
         fake_file = ""
 
         # key=section, value=list of lines
@@ -417,6 +679,11 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
         return fake_file
     
     def output_to_file(self, filename:str):
+        """ Write generated SPIR-V assembly into a real file.
+
+            Args:
+                filename: Name of the file to write to. ``.spvasm`` will be automatically appended.
+        """
         ff = self.create_file_as_string()
 
         with open(f"{filename}.spvasm", "w") as f:
@@ -424,15 +691,39 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
                 f.write(line)
     
     def _get_python_type_from_string(self, type: str):
-        """returns python type from <class 'x'> string"""
+        """ Returns the Python type by extracting the string from the type, and evaluating it.
+        
+            Warning:
+                This is probably bad, and should be replaced when possible.
+
+            Args:
+                type: Python type as a string, i.e. "<class 'int'>"
+
+            Returns:
+                Type as an object.
+        """
+        # returns python type from <class 'x'> string
         return eval(type.split("'")[0])
 
     # TODO: can these be turned into enums instead?
-    def _return_string_from_type(self, type):
-        """returns a string depending on the type() of a variable
+    def _return_string_from_type(self, type) -> str:
+        """ Returns a string depending on the type() of a variable. 
 
-        works on int, float and bool, otherwise raises an exception
+            Works on int, float and bool. 
+
+            Warning:
+                Should be replaced when possible.
+
+            Args:
+                type: Returned value of ``type()``.
+
+            Returns:
+                Type as a string.
+
+            Raises:
+                Exception: Unknown type.
         """
+
         if (type is int):
             return "int"
         elif (type is float):
@@ -444,6 +735,17 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
             raise Exception(f"unexpected type {type}")
         
     def _return_type_from_string(self, type_as_string: str):
+        """ Returns the type object when given a string.
+        
+            Args:
+                type_as_string: Type, given as a string.
+
+            Returns:
+                Type, as an object.
+
+            Raises:
+                Exception: Unknown string.
+        """
         """returns a type class depending on the recieved string
 
         works on int, float and bool, otherwise raises an exception
@@ -465,6 +767,24 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
     # see: https://docs.python.org/3/library/ast.html
 
     def visit_Module(self, node):
+        """ Function called when visiting a module.
+
+            Method first sets the entry point to the name of the function inside the module. If there are multiple,
+            the name can either be specified via a command line option, or if present, a function named "step" will
+            be the entry point. If there is only one function, then it will be used instead, regardless of the name.
+
+            Some initial boilerplate SPIR-V code is added at this stage.
+
+            After that the method will visit all of the functions in the body, generating the equivalent SPIR-V assembly.
+            The ports (I/O or parameters/returns) are handled after the function visits.
+
+            Args:
+                node: The current node.
+
+            Attributes:
+                _module_contains_step_function (bool): A check if the module contains a function specifically called "step".
+            
+        """
         _module_contains_step_function = False
 
         logging.debug(f"found {len(node.body)} functions")
@@ -521,6 +841,14 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
     
     def visit_FunctionDef(self, node):
+        """ Function called when visiting a function definition.
+
+            Method evaluates function signature, generates appropriate SPIR-V types and visits the body nodes.
+
+            Args:
+                node: The current node.
+        
+        """
         logging.debug(f"function {node.name} returns type {node.returns.id} -- {node._fields}")
         self.spirv_helper._latest_function_name = node.name
 
@@ -652,6 +980,14 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
 
     def visit_Call(self, node):
+        """ Function called when performing a function call.
+
+            Warning:
+                Work in progress. Will be used to implement decorators, to enable features such as delayed inputs.
+
+            Args:
+                node: The current node.
+        """
         logging.debug(f"TODO: function calls/decorators properly")
         logging.debug(ast.dump(node))
 
@@ -705,6 +1041,13 @@ class GenerateSPIRVFromAST(ast.NodeVisitor):
 
 
     def visit_Assign(self, node):
+        """ Function called when performing an assignment.
+        
+            Attempts to evaluate the assignment, by calling ``_eval_line()``.
+
+            Args:
+                node: The current node.
+        """
         if len(node.targets) > 1:
             logging.exception(f"multiple assignments not supported", exc_info=False)
             raise Exception("multiple assignments not supported")
