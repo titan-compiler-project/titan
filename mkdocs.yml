@@ -1,20 +1,38 @@
 site_name: Titan Compiler Project
+repo_url: https://github.com/titan-compiler-project/titan
+repo_name: titan-compiler-project/titan
 
 theme:
   name: "material"
   palette:
     - scheme: default
       toggle:
-        icon: material/toggle-switch
+        icon: material/weather-night
         name: Switch to dark mode
     - scheme: slate
       toggle:
-        icon: material/toggle-switch-off-outline
+        icon: material/weather-sunny
         name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
 
 plugins:
 - mkdocstrings
 - search
+- git-revision-date-localized:
+    enable_creation_date: false
+    fallback_to_build_date: true
+    type: timeago
+- mkdoxy:
+    projects:
+      TitanComms:
+        src-dirs: titan/comms
+        full-doc: True
+        # template-dir: templates-custom
+        # Example of custom template: https://mkdoxy-demo.kubaandrysek.cz/esp/annotated/
+        doxy-cfg:
+          FILE_PATTERNS: "*.cpp *.h*"
+          RECURSIVE: True
 
 markdown_extensions:
   - admonition
@@ -65,5 +83,8 @@ nav:
       - "machine.py" : "reference-docs/compiler/machine.md"
       - "main.py" : "reference-docs/compiler/main.md"
       - "parse.py" : "reference-docs/compiler/parse.md"
+    - "Comms Library":
+      - "TitanComms.cpp" : "reference-docs/library/TitanComms.cpp.md"
+    - "FPGA Shield": "reference-docs/pcb.md"
   - About: "about.md"
   - License: "license.md"
