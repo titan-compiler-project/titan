@@ -1,0 +1,292 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="TitanComms_8cpp" kind="file" language="C++">
+    <compoundname>TitanComms.cpp</compoundname>
+    <includes local="yes">Arduino.h</includes>
+    <includes refid="TitanComms_8h" local="yes">TitanComms.h</includes>
+    <includes refid="TitanCommsDebug_8h" local="yes">TitanCommsDebug.h</includes>
+    <includes local="yes">SPI.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>titan/comms/TitanComms/TitanComms.cpp</label>
+        <link refid="TitanComms_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TitanComms.h</label>
+        <link refid="TitanComms_8h_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>TitanCommsDebug.h</label>
+        <link refid="TitanCommsDebug_8h_source"/>
+      </node>
+      <node id="2">
+        <label>Arduino.h</label>
+      </node>
+      <node id="4">
+        <label>SPI.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="TitanComms_8cpp_1ad72dbcf6d0153db1b8d8a58001feed83" prot="public" static="no">
+        <name>DEBUG</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.cpp" line="6" column="9" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="6" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/><sp/><sp/><sp/>TitanComms.cpp<sp/>-<sp/>Library/wrapper<sp/>intended<sp/>to<sp/>help<sp/>with<sp/>communicating<sp/>with</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Titan-created<sp/>function<sp/>blocks<sp/>via<sp/>the<sp/>Titan<sp/>Compiler<sp/>(or<sp/></highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>any<sp/>SPI-connected<sp/>device<sp/>that<sp/>implements<sp/>its<sp/>protocol).</highlight></codeline>
+<codeline lineno="5"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Arduino.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;TitanComms.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;TitanCommsDebug.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;SPI.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(ARDUINO_TEENSY32)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>TitanComms::TitanComms(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cs_pin,<sp/>SPISettings<sp/>spi_settings){</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cs_pin<sp/>=<sp/>cs_pin;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_spi_settings<sp/>=<sp/>spi_settings;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>_spi<sp/>=<sp/>SPI;<sp/>//<sp/>unneeded?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>defined(ARDUINO_ARCH_RP2040)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>TitanComms::TitanComms(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>MISO,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>MOSI,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>CS,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>SCLK,<sp/>SPISettings<sp/>spi_settings){</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cs_pin<sp/>=<sp/>CS;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_miso<sp/>=<sp/>MISO;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_mosi<sp/>=<sp/>MOSI;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_sclk<sp/>=<sp/>SCLK;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_spi_settings<sp/>=<sp/>spi_settings;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_spi<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>arduino::MbedSPI(MISO,<sp/>MOSI,<sp/>SCLK);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::_chip_select(){</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>digitalWrite(_cs_pin,<sp/>LOW);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::_chip_deselect(){</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>digitalWrite(_cs_pin,<sp/>HIGH);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::begin(){</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>pinMode(_cs_pin,<sp/>OUTPUT);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>digitalWrite(_cs_pin,<sp/>HIGH);<sp/></highlight><highlight class="comment">//<sp/>cs<sp/>is<sp/>active<sp/>low,<sp/>so<sp/>setting<sp/>to<sp/>high<sp/>means<sp/>its<sp/>disabled</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;begin();</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::_extract_byte_from_int(u_int24<sp/>data,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>byte_index,<sp/>u_int8_t*<sp/>storage_byte){</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>byte_index<sp/>should<sp/>be<sp/>either<sp/>0,<sp/>1<sp/>or<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>byte_index:<sp/><sp/><sp/><sp/><sp/>2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>24b<sp/>number:<sp/>xxxx<sp/>xxxx<sp/>|<sp/>xxxx<sp/>xxxx<sp/>|<sp/>xxxx<sp/>xxxx</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>byte<sp/>mask:<sp/><sp/>1000<sp/>0000<sp/><sp/><sp/>0000<sp/>0000<sp/><sp/><sp/>0000<sp/>0000<sp/>--<sp/>0x800000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0000<sp/>0000<sp/><sp/><sp/>1000<sp/>0000<sp/><sp/><sp/>0000<sp/>0000<sp/>--<sp/>0x008000</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0000<sp/>0000<sp/><sp/><sp/>0000<sp/>0000<sp/><sp/><sp/>1000<sp/>0000<sp/>--<sp/>0x000080</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int32_t<sp/>byte_mask<sp/>=<sp/>0x800000<sp/>&gt;&gt;<sp/>(8<sp/>*<sp/>byte_index);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int8_t<sp/>new_byte;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>upper_limit<sp/>=<sp/>7<sp/>+<sp/>(8<sp/>*<sp/>byte_index);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lower_limit<sp/>=<sp/>0<sp/>+<sp/>(8<sp/>*<sp/>byte_index);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>normal_pos<sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>i<sp/>is<sp/>relative<sp/>to<sp/>the<sp/>incoming<sp/>value,<sp/>it<sp/>needs<sp/>to<sp/>be<sp/>translated<sp/>to<sp/>the<sp/>new<sp/>byte</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>lower_limit;<sp/>i<sp/>&lt;<sp/>upper_limit<sp/>+<sp/>1;<sp/>i++){</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(bitRead(data.data,<sp/>i))<sp/>{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bitSet(new_byte,<sp/>normal_pos);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>bitClear(new_byte,<sp/>normal_pos);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>normal_pos++;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>*storage_byte<sp/>=<sp/>new_byte;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::write(u_int24<sp/>address,<sp/>u_int32_t<sp/>value){</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">byte</highlight><highlight class="normal"><sp/>addr_high,<sp/>addr_mid,<sp/>addr_low<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>_extract_byte_from_int(address,<sp/>0,<sp/>&amp;addr_low);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>_extract_byte_from_int(address,<sp/>1,<sp/>&amp;addr_mid);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>_extract_byte_from_int(address,<sp/>2,<sp/>&amp;addr_high);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>merged_instr_addr_high<sp/>=<sp/>(WRITE<sp/>&lt;&lt;<sp/>8)<sp/>+<sp/>addr_high;<sp/></highlight><highlight class="comment">//<sp/>instruction<sp/>+<sp/>address<sp/>high<sp/>byte<sp/>(16b)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>addr_mid_and_low<sp/>=<sp/>(addr_mid<sp/>&lt;&lt;<sp/>8)<sp/>+<sp/>addr_low;<sp/></highlight><highlight class="comment">//<sp/>address<sp/>mid<sp/>byte<sp/>+<sp/>address<sp/>low<sp/>byte<sp/>(16b)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>upper_data<sp/>=<sp/>(value<sp/>&gt;&gt;<sp/>16);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>lower_data<sp/>=<sp/>value;<sp/></highlight><highlight class="comment">//<sp/>auto<sp/>truncated?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;beginTransaction(_spi_settings);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_select();</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(merged_instr_addr_high);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(addr_mid_and_low);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(upper_data);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(lower_data);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_deselect();</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;endTransaction();</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>DEBUG_PRINT_STR(&quot;---L<sp/>&quot;);<sp/>DEBUG_PRINT_HEX(addr_low);<sp/>DEBUG_PRINTLN();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>DEBUG_PRINT_STR(&quot;---M<sp/>&quot;);<sp/>DEBUG_PRINT_HEX(addr_mid);<sp/>DEBUG_PRINTLN();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>DEBUG_PRINT_STR(&quot;---H<sp/>&quot;);<sp/>DEBUG_PRINT_HEX(addr_high);<sp/><sp/>DEBUG_PRINTLN();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="keywordtype">byte</highlight><highlight class="normal"><sp/>TitanComms::_nop_and_read8(){</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">byte</highlight><highlight class="normal"><sp/>temp<sp/>=<sp/>_spi-&gt;transfer(TRANSFER);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>temp;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal">u_int16_t<sp/>TitanComms::_nop_and_read16(){</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>pack<sp/>byte<sp/>instruction<sp/>into<sp/>a<sp/>2<sp/>byte<sp/>one</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>i.e.<sp/>INSTRUCTION<sp/>=<sp/>0x01</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>formatted<sp/>=<sp/>0x0101<sp/>etc</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>temp<sp/>=<sp/>_spi-&gt;transfer16(((TRANSFER<sp/>&lt;&lt;<sp/>8)<sp/>+<sp/>TRANSFER));</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>temp;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::_repeat()<sp/>{</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;beginTransaction(_spi_settings);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_select();</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer(REPEAT);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_deselect();</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;endTransaction();</highlight></codeline>
+<codeline lineno="120"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal">u_int32_t<sp/>TitanComms::read(u_int24<sp/>address){</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>send:<sp/>instruction<sp/>+<sp/>address<sp/>--&gt;<sp/>8<sp/>bits<sp/>+<sp/>24<sp/>bits</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>recieve:<sp/>value<sp/>+<sp/>checksum<sp/>--&gt;<sp/>32<sp/>bits<sp/>+<sp/>8<sp/>bits</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int8_t<sp/>addr_high;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>_extract_byte_from_int(address,<sp/>2,<sp/>&amp;addr_high);<sp/></highlight><highlight class="comment">//<sp/>should<sp/>get<sp/>the<sp/>highest<sp/>byte<sp/>from<sp/>address</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>merged_instr_addr_high<sp/>=<sp/>(READ<sp/>&lt;&lt;<sp/>8)<sp/>+<sp/>addr_high;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>addr_mid_and_low<sp/>=<sp/>address.data;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>value_high,<sp/>value_low;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int8_t<sp/>recieved_checksum,<sp/>calculated_checksum;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;beginTransaction(_spi_settings);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_select();</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(merged_instr_addr_high);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(addr_mid_and_low);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/>value_high<sp/>=<sp/>_nop_and_read16();</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>value_low<sp/>=<sp/>_nop_and_read16();</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>TODO:<sp/>checksum,<sp/>and<sp/>repeating<sp/>if<sp/>necessary</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>recieved_checksum<sp/>=<sp/>_nop_and_read8();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_deselect();</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;endTransaction();</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int32_t<sp/>final_val<sp/>=<sp/>(value_high<sp/>&lt;&lt;<sp/>16)<sp/>+<sp/>value_low;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>final_val;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal">u_int32_t<sp/>TitanComms::stream(u_int32_t<sp/>value){</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>ans1,<sp/>ans2;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;beginTransaction(_spi_settings);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_select();</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer((u_int8_t)STREAM);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>ans1<sp/>=<sp/>_spi-&gt;transfer16(value<sp/>&gt;&gt;<sp/>16);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>ans2<sp/>=<sp/>_spi-&gt;transfer16((u_int16_t)value);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_deselect();</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;endTransaction();</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>DEBUG_PRINT_STR(&quot;[stream<sp/>(rx)]:<sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>DEBUG_PRINT_HEX(ans1);<sp/>DEBUG_PRINT_STR(&quot;<sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>DEBUG_PRINT_HEX(ans2);<sp/>DEBUG_PRINT_STR(&quot;<sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>DEBUG_PRINT_HEX(ans3);<sp/>DEBUG_PRINTLN();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(u_int32_t)<sp/>((ans1<sp/>&lt;&lt;<sp/>16)<sp/>+<sp/>ans2);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>TitanComms::bind_address(u_int24<sp/>address){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>u_int16_t<sp/>instr_addr_hi<sp/>=<sp/>(BIND_ADDRESS)<sp/>&lt;&lt;<sp/>8<sp/>+<sp/>(address.data<sp/>&gt;&gt;<sp/>16);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>DEBUG_PRINT_HEX(instr_addr_hi);<sp/>DEBUG_PRINT_STR(&quot;<sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>DEBUG_PRINT_HEX((uint16_t)address.data);<sp/>DEBUG_PRINTLN();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>_spi-&gt;beginTransaction(_spi_settings);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>_chip_select();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(instr_addr_hi);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>_spi-&gt;transfer16((uint16_t)address.data);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>_chip_deselect();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>_spi-&gt;endTransaction();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//<sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::set_stream_read_address(u_int32_t<sp/>address){</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>instr_addr_hi<sp/>=<sp/>(BIND_READ_ADDRESS<sp/>&lt;&lt;<sp/>8)<sp/>+<sp/>((address<sp/>&lt;&lt;<sp/>8)<sp/>&gt;&gt;<sp/>24);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>addr_mid_lo<sp/>=<sp/>address;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;beginTransaction(_spi_settings);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_select();</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(instr_addr_hi);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(addr_mid_lo);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_deselect();</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;endTransaction();</highlight></codeline>
+<codeline lineno="200"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::set_stream_write_address(u_int32_t<sp/>address){</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>instr_addr_hi<sp/>=<sp/>(BIND_WRITE_ADDRESS<sp/>&lt;&lt;<sp/>8)<sp/>+<sp/>((address<sp/>&lt;&lt;<sp/>8)<sp/>&gt;&gt;<sp/>24);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>addr_mid_lo<sp/>=<sp/>address;</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>DEBUG_PRINT_STR(</highlight><highlight class="stringliteral">&quot;[set_stream_write_address]<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>DEBUG_PRINT_HEX(instr_addr_hi);<sp/>DEBUG_PRINT_STR(</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);<sp/>DEBUG_PRINT_HEX(addr_mid_lo);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>DEBUG_PRINTLN();</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;beginTransaction(_spi_settings);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_select();</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(instr_addr_hi);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(addr_mid_lo);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_deselect();</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;endTransaction();</highlight></codeline>
+<codeline lineno="216"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>TitanComms::set_core_interrupt(u_int24<sp/>address){</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int8_t<sp/>addr_hi;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/>_extract_byte_from_int(address,<sp/>2,<sp/>&amp;addr_hi);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>merged_instr_addr_hi<sp/>=<sp/>(BIND_INTERRUPT<sp/>&lt;&lt;<sp/>8)<sp/>+<sp/>addr_hi;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>u_int16_t<sp/>addr_mid_lo<sp/>=<sp/>address.data;</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;beginTransaction(_spi_settings);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_select();</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(merged_instr_addr_hi);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;transfer16(addr_mid_lo);</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/>_chip_deselect();</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/>_spi-&gt;endTransaction();</highlight></codeline>
+<codeline lineno="231"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/TitanComms/TitanComms.cpp"/>
+  </compounddef>
+</doxygen>

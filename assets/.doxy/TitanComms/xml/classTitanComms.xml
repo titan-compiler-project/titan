@@ -1,0 +1,451 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="classTitanComms" kind="class" language="C++" prot="public">
+    <compoundname>TitanComms</compoundname>
+    <innerclass refid="structTitanComms_1_1u__int24" prot="public">TitanComms::u_int24</innerclass>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12" prot="public" static="no" strong="no">
+        <type></type>
+        <name>instruction</name>
+        <qualifiedname>TitanComms::instruction</qualifiedname>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a6a60c2fa34554069d72f2f53374c9887" prot="public">
+          <name>NOP</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a5609ea2fa2fb21f34699429d315d81eb" prot="public">
+          <name>WRITE</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12ae98b00d96f88535e4c8f94c956697920" prot="public">
+          <name>READ</name>
+          <initializer>= 0x02</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12abf73267656c9d58380a1fea3aeacf52a" prot="public">
+          <name>STREAM</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12acb04f6107a769cdd0c1f52d9e23ea429" prot="public">
+          <name>BIND_INTERRUPT</name>
+          <initializer>= 0x04</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a8d2ce5f16d60580613a3913cdfd22257" prot="public">
+          <name>BIND_READ_ADDRESS</name>
+          <initializer>= 0x05</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a8e777360adef7e7e22d27b23c0dcc6dc" prot="public">
+          <name>BIND_WRITE_ADDRESS</name>
+          <initializer>= 0x06</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a43642cf6175b89ef28d075fca7dcb422" prot="public">
+          <name>TRANSFER</name>
+          <initializer>= 0x07</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a0a1fef49265e9b21b7b845e3eae03122" prot="public">
+          <name>REPEAT</name>
+          <initializer>= 0x08</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classTitanComms_1a7b8e92fad206ab2984392cef81873e12aba5150e33606b716107073cbbe8695d8" prot="public">
+          <name>GET_METADATA</name>
+          <initializer>= 0xFF</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="22" column="9" bodyfile="titan/comms/TitanComms/TitanComms.h" bodystart="22" bodyend="33"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classTitanComms_1a14bd4d60abf1cbed85d7db856b576955" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int TitanComms::_cs_pin</definition>
+        <argsstring></argsstring>
+        <name>_cs_pin</name>
+        <qualifiedname>TitanComms::_cs_pin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="49" column="13" bodyfile="titan/comms/TitanComms/TitanComms.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classTitanComms_1a50dad81da622b845720990919a8dbdb6" prot="private" static="no" mutable="no">
+        <type>SPISettings</type>
+        <definition>SPISettings TitanComms::_spi_settings</definition>
+        <argsstring></argsstring>
+        <name>_spi_settings</name>
+        <qualifiedname>TitanComms::_spi_settings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="50" column="21" bodyfile="titan/comms/TitanComms/TitanComms.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classTitanComms_1af4621aae6e6943c1842d8dd94158a0de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TitanComms::TitanComms</definition>
+        <argsstring>(int cs_pin, SPISettings spi_settings)</argsstring>
+        <name>TitanComms</name>
+        <qualifiedname>TitanComms::TitanComms</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>cs_pin</declname>
+        </param>
+        <param>
+          <type>SPISettings</type>
+          <declname>spi_settings</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="15" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a10cc0ed240ba4c2e62a2acb59ac126a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::begin</definition>
+        <argsstring>()</argsstring>
+        <name>begin</name>
+        <qualifiedname>TitanComms::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="38" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="40" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a0c7dee7279317e11fcdc7a454124346d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>u_int32_t</type>
+        <definition>u_int32_t TitanComms::read</definition>
+        <argsstring>(u_int24 address)</argsstring>
+        <name>read</name>
+        <qualifiedname>TitanComms::read</qualifiedname>
+        <param>
+          <type><ref refid="structTitanComms_1_1u__int24" kindref="compound">u_int24</ref></type>
+          <declname>address</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="39" column="19" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="123" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a42207a40842d720a834c4551a7a4572c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::write</definition>
+        <argsstring>(u_int24 address, u_int32_t value)</argsstring>
+        <name>write</name>
+        <qualifiedname>TitanComms::write</qualifiedname>
+        <param>
+          <type><ref refid="structTitanComms_1_1u__int24" kindref="compound">u_int24</ref></type>
+          <declname>address</declname>
+        </param>
+        <param>
+          <type>u_int32_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="40" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="74" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a19ccfbfe6d2f1340b26fdf5e58025a6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>u_int32_t</type>
+        <definition>u_int32_t TitanComms::stream</definition>
+        <argsstring>(u_int32_t value)</argsstring>
+        <name>stream</name>
+        <qualifiedname>TitanComms::stream</qualifiedname>
+        <param>
+          <type>u_int32_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="41" column="19" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="157" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a3f474762a9ebca7b46a8964514758e00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::set_stream_write_address</definition>
+        <argsstring>(u_int32_t address)</argsstring>
+        <name>set_stream_write_address</name>
+        <qualifiedname>TitanComms::set_stream_write_address</qualifiedname>
+        <param>
+          <type>u_int32_t</type>
+          <declname>address</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="42" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="202" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1afb57a5ecc908e49f9a0df0a99acb8605" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::set_stream_read_address</definition>
+        <argsstring>(u_int32_t address)</argsstring>
+        <name>set_stream_read_address</name>
+        <qualifiedname>TitanComms::set_stream_read_address</qualifiedname>
+        <param>
+          <type>u_int32_t</type>
+          <declname>address</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="43" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="190" bodyend="200"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1ab7bf6978e6c00a0ac74bdf2a92b950aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::bind_address</definition>
+        <argsstring>(u_int24 address)</argsstring>
+        <name>bind_address</name>
+        <qualifiedname>TitanComms::bind_address</qualifiedname>
+        <param>
+          <type><ref refid="structTitanComms_1_1u__int24" kindref="compound">u_int24</ref></type>
+          <declname>address</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="46" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a35c5f63d957b19064c1d5a90ca7dc293" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::set_core_interrupt</definition>
+        <argsstring>(u_int24 address)</argsstring>
+        <name>set_core_interrupt</name>
+        <qualifiedname>TitanComms::set_core_interrupt</qualifiedname>
+        <param>
+          <type><ref refid="structTitanComms_1_1u__int24" kindref="compound">u_int24</ref></type>
+          <declname>address</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="47" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="218" bodyend="231"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classTitanComms_1a815a3d5ab4cbcfbed8712dfe612ce101" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>u_int8_t</type>
+        <definition>byte TitanComms::_nop_and_read8</definition>
+        <argsstring>()</argsstring>
+        <name>_nop_and_read8</name>
+        <qualifiedname>TitanComms::_nop_and_read8</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="51" column="18" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="101" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a9c5376e38cb6216d77b8c687a14cc588" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>u_int16_t</type>
+        <definition>u_int16_t TitanComms::_nop_and_read16</definition>
+        <argsstring>()</argsstring>
+        <name>_nop_and_read16</name>
+        <qualifiedname>TitanComms::_nop_and_read16</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="52" column="19" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="106" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a4510700c1f33a1ef332c0cddf06e40da" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::_repeat</definition>
+        <argsstring>()</argsstring>
+        <name>_repeat</name>
+        <qualifiedname>TitanComms::_repeat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="53" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="114" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a5f684c3b961a86a374857a1d43f2e4bd" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::_extract_byte_from_int</definition>
+        <argsstring>(u_int24 data, int byte_index, u_int8_t *storage_byte)</argsstring>
+        <name>_extract_byte_from_int</name>
+        <qualifiedname>TitanComms::_extract_byte_from_int</qualifiedname>
+        <param>
+          <type><ref refid="structTitanComms_1_1u__int24" kindref="compound">u_int24</ref></type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>byte_index</declname>
+        </param>
+        <param>
+          <type>u_int8_t *</type>
+          <declname>storage_byte</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="54" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="46" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1ab5e57f760292cb470d5d3ecdda3efff8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::_chip_select</definition>
+        <argsstring>()</argsstring>
+        <name>_chip_select</name>
+        <qualifiedname>TitanComms::_chip_select</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="55" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="32" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a50c0b10d649cd7880cdcc61770b13b0e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TitanComms::_chip_deselect</definition>
+        <argsstring>()</argsstring>
+        <name>_chip_deselect</name>
+        <qualifiedname>TitanComms::_chip_deselect</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="56" column="14" bodyfile="titan/comms/TitanComms/TitanComms.cpp" bodystart="36" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classTitanComms_1a1cc35a54ceb085cfc58f84408b4dd5ac" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>u_int8_t</type>
+        <definition>u_int8_t TitanComms::_xor_checksum</definition>
+        <argsstring>(u_int32_t input)</argsstring>
+        <name>_xor_checksum</name>
+        <qualifiedname>TitanComms::_xor_checksum</qualifiedname>
+        <param>
+          <type>u_int32_t</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="57" column="18"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan/comms/TitanComms/TitanComms.h" line="12" column="1" bodyfile="titan/comms/TitanComms/TitanComms.h" bodystart="12" bodyend="71"/>
+    <listofallmembers>
+      <member refid="classTitanComms_1a50c0b10d649cd7880cdcc61770b13b0e" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_chip_deselect</name></member>
+      <member refid="classTitanComms_1ab5e57f760292cb470d5d3ecdda3efff8" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_chip_select</name></member>
+      <member refid="classTitanComms_1a14bd4d60abf1cbed85d7db856b576955" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_cs_pin</name></member>
+      <member refid="classTitanComms_1a5f684c3b961a86a374857a1d43f2e4bd" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_extract_byte_from_int</name></member>
+      <member refid="classTitanComms_1a9c5376e38cb6216d77b8c687a14cc588" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_nop_and_read16</name></member>
+      <member refid="classTitanComms_1a815a3d5ab4cbcfbed8712dfe612ce101" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_nop_and_read8</name></member>
+      <member refid="classTitanComms_1a4510700c1f33a1ef332c0cddf06e40da" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_repeat</name></member>
+      <member refid="classTitanComms_1a50dad81da622b845720990919a8dbdb6" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_spi_settings</name></member>
+      <member refid="classTitanComms_1a1cc35a54ceb085cfc58f84408b4dd5ac" prot="private" virt="non-virtual"><scope>TitanComms</scope><name>_xor_checksum</name></member>
+      <member refid="classTitanComms_1a10cc0ed240ba4c2e62a2acb59ac126a0" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>begin</name></member>
+      <member refid="classTitanComms_1ab7bf6978e6c00a0ac74bdf2a92b950aa" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>bind_address</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12acb04f6107a769cdd0c1f52d9e23ea429" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>BIND_INTERRUPT</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a8d2ce5f16d60580613a3913cdfd22257" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>BIND_READ_ADDRESS</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a8e777360adef7e7e22d27b23c0dcc6dc" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>BIND_WRITE_ADDRESS</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12aba5150e33606b716107073cbbe8695d8" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>GET_METADATA</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>instruction</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a6a60c2fa34554069d72f2f53374c9887" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>NOP</name></member>
+      <member refid="classTitanComms_1a0c7dee7279317e11fcdc7a454124346d" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>read</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12ae98b00d96f88535e4c8f94c956697920" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>READ</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a0a1fef49265e9b21b7b845e3eae03122" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>REPEAT</name></member>
+      <member refid="classTitanComms_1a35c5f63d957b19064c1d5a90ca7dc293" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>set_core_interrupt</name></member>
+      <member refid="classTitanComms_1afb57a5ecc908e49f9a0df0a99acb8605" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>set_stream_read_address</name></member>
+      <member refid="classTitanComms_1a3f474762a9ebca7b46a8964514758e00" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>set_stream_write_address</name></member>
+      <member refid="classTitanComms_1a19ccfbfe6d2f1340b26fdf5e58025a6a" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>stream</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12abf73267656c9d58380a1fea3aeacf52a" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>STREAM</name></member>
+      <member refid="classTitanComms_1af4621aae6e6943c1842d8dd94158a0de" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>TitanComms</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a43642cf6175b89ef28d075fca7dcb422" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>TRANSFER</name></member>
+      <member refid="classTitanComms_1a42207a40842d720a834c4551a7a4572c" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>write</name></member>
+      <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a5609ea2fa2fb21f34699429d315d81eb" prot="public" virt="non-virtual"><scope>TitanComms</scope><name>WRITE</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

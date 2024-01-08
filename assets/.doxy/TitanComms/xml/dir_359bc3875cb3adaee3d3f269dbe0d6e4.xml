@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="dir_359bc3875cb3adaee3d3f269dbe0d6e4" kind="dir">
+    <compoundname>titan/comms/verilog/tests</compoundname>
+    <innerdir refid="dir_816ed350c72cf5de8127e0b7e8b74e54">titan/comms/verilog/tests/sim_build</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan/comms/verilog/tests/"/>
+  </compounddef>
+</doxygen>

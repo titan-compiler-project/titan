@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="dir_15e9a61cbc095141a3f886f43eb6818f" kind="dir">
+    <compoundname>titan/comms</compoundname>
+    <innerdir refid="dir_5bea15bd51704c26ebfcf0ce33d5c553">titan/comms/TitanComms</innerdir>
+    <innerdir refid="dir_549b42112f6dc36cf8af5f13bada3f17">titan/comms/verilog</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan/comms/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="Vtop____Trace____0____Slow_8cpp" kind="file" language="C++">
+    <compoundname>Vtop__Trace__0__Slow.cpp</compoundname>
+    <includes local="yes">verilated_vcd_c.h</includes>
+    <includes refid="Vtop____Syms_8h" local="yes">Vtop__Syms.h</includes>
+    <includedby refid="Vtop____ALL_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop__ALL.cpp</includedby>
+    <incdepgraph>
+      <node id="5">
+        <label>Vtop.h</label>
+        <link refid="Vtop_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Vtop__Syms.h</label>
+        <link refid="Vtop____Syms_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp</label>
+        <link refid="Vtop____Trace____0____Slow_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Vtop___024root.h</label>
+        <link refid="Vtop______024root_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Vtop___024unit.h</label>
+        <link refid="Vtop______024unit_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>svdpi.h</label>
+      </node>
+      <node id="4">
+        <label>verilated.h</label>
+      </node>
+      <node id="8">
+        <label>verilated_timing.h</label>
+      </node>
+      <node id="2">
+        <label>verilated_vcd_c.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="Vtop____Trace____0____Slow_8cpp_1a21c62866a6566f3d9ba956ee670318c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>VL_ATTR_COLD void</type>
+        <definition>VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0</definition>
+        <argsstring>(Vtop___024root *vlSelf, VerilatedVcd *tracep)</argsstring>
+        <name>Vtop___024root__trace_init_sub__TOP__0</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd *</type>
+          <declname>tracep</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" line="7" column="19" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" bodystart="7" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop____Trace____0____Slow_8cpp_1adf9e0500bdee7601aa11f4f1801413c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>VL_ATTR_COLD void</type>
+        <definition>VL_ATTR_COLD void Vtop___024root__trace_init_top</definition>
+        <argsstring>(Vtop___024root *vlSelf, VerilatedVcd *tracep)</argsstring>
+        <name>Vtop___024root__trace_init_top</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd *</type>
+          <declname>tracep</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" line="39" column="19" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" bodystart="39" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop____Trace____0____Slow_8cpp_1a5a971e2c4ff32b3e93a17ed14e23aa8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>VL_ATTR_COLD void</type>
+        <definition>VL_ATTR_COLD void Vtop___024root__trace_full_top_0</definition>
+        <argsstring>(void *voidSelf, VerilatedVcd::Buffer *bufp)</argsstring>
+        <name>Vtop___024root__trace_full_top_0</name>
+        <param>
+          <type>void *</type>
+          <declname>voidSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd::Buffer *</type>
+          <declname>bufp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" line="63" column="19" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" bodystart="63" bodyend="70" declfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" declline="47" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop____Trace____0____Slow_8cpp_1a46ca7e9178c2452bec58d292f5eb3cd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Vtop___024root__trace_chg_top_0</definition>
+        <argsstring>(void *voidSelf, VerilatedVcd::Buffer *bufp)</argsstring>
+        <name>Vtop___024root__trace_chg_top_0</name>
+        <param>
+          <type>void *</type>
+          <declname>voidSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd::Buffer *</type>
+          <declname>bufp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" line="48" column="6" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0.cpp" bodystart="9" bodyend="17" declfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" declline="48" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop____Trace____0____Slow_8cpp_1ae4c4ba8438ab5a3bf376ccbd77496fcd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Vtop___024root__trace_cleanup</definition>
+        <argsstring>(void *voidSelf, VerilatedVcd *)</argsstring>
+        <name>Vtop___024root__trace_cleanup</name>
+        <param>
+          <type>void *</type>
+          <declname>voidSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" line="49" column="6" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0.cpp" bodystart="46" bodyend="58" declfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" declline="49" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop____Trace____0____Slow_8cpp_1a3f83c6882c3fe94d3c8ef38c70e60110" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>VL_ATTR_COLD void</type>
+        <definition>VL_ATTR_COLD void Vtop___024root__trace_register</definition>
+        <argsstring>(Vtop___024root *vlSelf, VerilatedVcd *tracep)</argsstring>
+        <name>Vtop___024root__trace_register</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd *</type>
+          <declname>tracep</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" line="51" column="19" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" bodystart="51" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop____Trace____0____Slow_8cpp_1a0f62122aac5748bf39ada5724945f8c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>VL_ATTR_COLD void</type>
+        <definition>VL_ATTR_COLD void Vtop___024root__trace_full_sub_0</definition>
+        <argsstring>(Vtop___024root *vlSelf, VerilatedVcd::Buffer *bufp)</argsstring>
+        <name>Vtop___024root__trace_full_sub_0</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd::Buffer *</type>
+          <declname>bufp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" line="72" column="19" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" bodystart="72" bodyend="100" declfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" declline="61" declcolumn="19"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Verilated<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DESCRIPTION:<sp/>Verilator<sp/>output:<sp/>Tracing<sp/>implementation<sp/>internals</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;verilated_vcd_c.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop__Syms.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_init_sub__TOP__0(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf,<sp/>VerilatedVcd*<sp/>tracep)<sp/>{</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>&amp;&amp;<sp/>vlSelf)<sp/>{}<sp/><sp/></highlight><highlight class="comment">//<sp/>Prevent<sp/>unused</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>__restrict<sp/>vlSymsp<sp/>VL_ATTR_UNUSED<sp/>=<sp/>vlSelf-&gt;vlSymsp;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+<sp/><sp/><sp/><sp/>Vtop___024root__trace_init_sub__TOP__0\n&quot;</highlight><highlight class="normal">);<sp/>);</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Init</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>vlSymsp-&gt;<ref refid="classVtop____Syms_1ae9e593ad5e18642270abefa435042500" kindref="member">__Vm_baseCode</ref>;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Body</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+1,</highlight><highlight class="stringliteral">&quot;in1&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+2,</highlight><highlight class="stringliteral">&quot;in2&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+3,</highlight><highlight class="stringliteral">&quot;in3&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+4,</highlight><highlight class="stringliteral">&quot;in4&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+5,</highlight><highlight class="stringliteral">&quot;sel_i&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>1,0);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+6,</highlight><highlight class="stringliteral">&quot;mux_o&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;pushNamePrefix(</highlight><highlight class="stringliteral">&quot;dut_param_mux<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+7,</highlight><highlight class="stringliteral">&quot;in1&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+8,</highlight><highlight class="stringliteral">&quot;in2&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+9,</highlight><highlight class="stringliteral">&quot;in3&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+10,</highlight><highlight class="stringliteral">&quot;in4&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+11,</highlight><highlight class="stringliteral">&quot;sel_i&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>1,0);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+12,</highlight><highlight class="stringliteral">&quot;mux_o&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;pushNamePrefix(</highlight><highlight class="stringliteral">&quot;uut_pmux<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+19,</highlight><highlight class="stringliteral">&quot;INPUT_WIDTH&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+20,</highlight><highlight class="stringliteral">&quot;SELECTOR_WIDTH&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+21,</highlight><highlight class="stringliteral">&quot;SIGNAL_COUNT&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+13,</highlight><highlight class="stringliteral">&quot;selector&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>1,0);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>4;<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+14+i*1,</highlight><highlight class="stringliteral">&quot;inputs&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,(i+0),<sp/>31,0);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;declBus(c+18,</highlight><highlight class="stringliteral">&quot;out&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,-1,<sp/>31,0);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;popNamePrefix(2);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_init_top(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf,<sp/>VerilatedVcd*<sp/>tracep)<sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>&amp;&amp;<sp/>vlSelf)<sp/>{}<sp/><sp/></highlight><highlight class="comment">//<sp/>Prevent<sp/>unused</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>__restrict<sp/>vlSymsp<sp/>VL_ATTR_UNUSED<sp/>=<sp/>vlSelf-&gt;vlSymsp;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+<sp/><sp/><sp/><sp/>Vtop___024root__trace_init_top\n&quot;</highlight><highlight class="normal">);<sp/>);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Body</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>Vtop___024root__trace_init_sub__TOP__0(vlSelf,<sp/>tracep);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_full_top_0(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>voidSelf,<sp/>VerilatedVcd::Buffer*<sp/>bufp);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_chg_top_0(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>voidSelf,<sp/>VerilatedVcd::Buffer*<sp/>bufp);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_cleanup(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>voidSelf,<sp/>VerilatedVcd*<sp/></highlight><highlight class="comment">/*unused*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_register(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf,<sp/>VerilatedVcd*<sp/>tracep)<sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>&amp;&amp;<sp/>vlSelf)<sp/>{}<sp/><sp/></highlight><highlight class="comment">//<sp/>Prevent<sp/>unused</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>__restrict<sp/>vlSymsp<sp/>VL_ATTR_UNUSED<sp/>=<sp/>vlSelf-&gt;vlSymsp;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+<sp/><sp/><sp/><sp/>Vtop___024root__trace_register\n&quot;</highlight><highlight class="normal">);<sp/>);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Body</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;addFullCb(&amp;Vtop___024root__trace_full_top_0,<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;addChgCb(&amp;Vtop___024root__trace_chg_top_0,<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;addCleanupCb(&amp;Vtop___024root__trace_cleanup,<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_full_sub_0(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf,<sp/>VerilatedVcd::Buffer*<sp/>bufp);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_full_top_0(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>voidSelf,<sp/>VerilatedVcd::Buffer*<sp/>bufp)<sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+<sp/><sp/><sp/><sp/>Vtop___024root__trace_full_top_0\n&quot;</highlight><highlight class="normal">);<sp/>);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Init</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>__restrict<sp/>vlSelf<sp/>VL_ATTR_UNUSED<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(voidSelf);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>__restrict<sp/>vlSymsp<sp/>VL_ATTR_UNUSED<sp/>=<sp/>vlSelf-&gt;vlSymsp;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Body</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>Vtop___024root__trace_full_sub_0((&amp;vlSymsp-&gt;TOP),<sp/>bufp);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_full_sub_0(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf,<sp/>VerilatedVcd::Buffer*<sp/>bufp)<sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>&amp;&amp;<sp/>vlSelf)<sp/>{}<sp/><sp/></highlight><highlight class="comment">//<sp/>Prevent<sp/>unused</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>__restrict<sp/>vlSymsp<sp/>VL_ATTR_UNUSED<sp/>=<sp/>vlSelf-&gt;vlSymsp;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+<sp/><sp/><sp/><sp/>Vtop___024root__trace_full_sub_0\n&quot;</highlight><highlight class="normal">);<sp/>);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Init</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>uint32_t*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>oldp<sp/>VL_ATTR_UNUSED<sp/>=<sp/>bufp-&gt;oldp(vlSymsp-&gt;<ref refid="classVtop____Syms_1ae9e593ad5e18642270abefa435042500" kindref="member">__Vm_baseCode</ref>);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Body</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+1,(vlSelf-&gt;in1),32);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+2,(vlSelf-&gt;in2),32);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+3,(vlSelf-&gt;in3),32);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+4,(vlSelf-&gt;in4),32);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullCData(oldp+5,(vlSelf-&gt;sel_i),2);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+6,(vlSelf-&gt;mux_o),32);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+7,(vlSelf-&gt;dut_param_mux__DOT__in1),32);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+8,(vlSelf-&gt;dut_param_mux__DOT__in2),32);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+9,(vlSelf-&gt;dut_param_mux__DOT__in3),32);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+10,(vlSelf-&gt;dut_param_mux__DOT__in4),32);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullCData(oldp+11,(vlSelf-&gt;dut_param_mux__DOT__sel_i),2);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+12,(vlSelf-&gt;dut_param_mux__DOT__mux_o),32);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullCData(oldp+13,(vlSelf-&gt;dut_param_mux__DOT__uut_pmux__DOT__selector),2);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+14,(vlSelf-&gt;dut_param_mux__DOT__uut_pmux__DOT__inputs[0]),32);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+15,(vlSelf-&gt;dut_param_mux__DOT__uut_pmux__DOT__inputs[1]),32);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+16,(vlSelf-&gt;dut_param_mux__DOT__uut_pmux__DOT__inputs[2]),32);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+17,(vlSelf-&gt;dut_param_mux__DOT__uut_pmux__DOT__inputs[3]),32);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+18,(vlSelf-&gt;dut_param_mux__DOT__uut_pmux__DOT__out),32);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+19,(0x20U),32);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+20,(2U),32);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>bufp-&gt;fullIData(oldp+21,(4U),32);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp"/>
+  </compounddef>
+</doxygen>

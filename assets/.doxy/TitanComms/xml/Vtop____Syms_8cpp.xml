@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="Vtop____Syms_8cpp" kind="file" language="C++">
+    <compoundname>Vtop__Syms.cpp</compoundname>
+    <includes refid="Vtop____Syms_8h" local="yes">Vtop__Syms.h</includes>
+    <includes refid="Vtop_8h" local="yes">Vtop.h</includes>
+    <includes refid="Vtop______024root_8h" local="yes">Vtop___024root.h</includes>
+    <includes refid="Vtop______024unit_8h" local="yes">Vtop___024unit.h</includes>
+    <includedby refid="Vtop____ALL_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop__ALL.cpp</includedby>
+    <incdepgraph>
+      <node id="5">
+        <label>Vtop.h</label>
+        <link refid="Vtop_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop__Syms.cpp</label>
+        <link refid="Vtop____Syms_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Vtop__Syms.h</label>
+        <link refid="Vtop____Syms_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Vtop___024root.h</label>
+        <link refid="Vtop______024root_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Vtop___024unit.h</label>
+        <link refid="Vtop______024unit_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>svdpi.h</label>
+      </node>
+      <node id="3">
+        <label>verilated.h</label>
+      </node>
+      <node id="8">
+        <label>verilated_timing.h</label>
+      </node>
+      <node id="4">
+        <label>verilated_vcd_c.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Verilated<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DESCRIPTION:<sp/>Verilator<sp/>output:<sp/>Symbol<sp/>table<sp/>implementation<sp/>internals</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop__Syms.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop___024root.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop___024unit.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//<sp/>FUNCTIONS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal">Vtop__Syms::~Vtop__Syms()</highlight></codeline>
+<codeline lineno="11"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Tear<sp/>down<sp/>scope<sp/>hierarchy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vhier.remove(0,<sp/>&amp;__Vscope_dut_param_mux);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vhier.remove(&amp;__Vscope_dut_param_mux,<sp/>&amp;__Vscope_dut_param_mux__uut_pmux);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>VM_TRACE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(__Vm_dumping)<sp/>_traceDumpClose();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="comment">//<sp/>VM_TRACE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop__Syms::_traceDump()<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VerilatedLockGuard<sp/>lock(__Vm_dumperMutex);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vm_dumperp-&gt;dump(VL_TIME_Q());</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop__Syms::_traceDumpOpen()<sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VerilatedLockGuard<sp/>lock(__Vm_dumperMutex);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(VL_UNLIKELY(!__Vm_dumperp))<sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vm_dumperp<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>VerilatedVcdC();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vm_modelp-&gt;trace(__Vm_dumperp,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>dumpfile<sp/>=<sp/>_vm_contextp__-&gt;dumpfileCheck();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vm_dumperp-&gt;open(dumpfile.c_str());</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vm_dumping<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop__Syms::_traceDumpClose()<sp/>{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VerilatedLockGuard<sp/>lock(__Vm_dumperMutex);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vm_dumping<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DO_CLEAR(</highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/>__Vm_dumperp,<sp/>__Vm_dumperp<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">Vtop__Syms::Vtop__Syms(VerilatedContext*<sp/>contextp,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>namep,<sp/>Vtop*<sp/>modelp)</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/>VerilatedSyms{contextp}</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Setup<sp/>internal<sp/>state<sp/>of<sp/>the<sp/>Syms<sp/>class</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>__Vm_modelp{modelp}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Setup<sp/>module<sp/>instances</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>TOP{this,<sp/>namep}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Configure<sp/>time<sp/>unit<sp/>/<sp/>time<sp/>precision</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>_vm_contextp__-&gt;timeunit(-9);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>_vm_contextp__-&gt;timeprecision(-12);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Setup<sp/>each<sp/>module&apos;s<sp/>pointers<sp/>to<sp/>their<sp/>submodules</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Setup<sp/>each<sp/>module&apos;s<sp/>pointer<sp/>back<sp/>to<sp/>symbol<sp/>table<sp/>(for<sp/>public<sp/>functions)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>TOP.__Vconfigure(</highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Setup<sp/>scopes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vscope_TOP.configure(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>name(),<sp/></highlight><highlight class="stringliteral">&quot;TOP&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;TOP&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>VerilatedScope::SCOPE_OTHER);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux.configure(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>name(),<sp/></highlight><highlight class="stringliteral">&quot;dut_param_mux&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;dut_param_mux&quot;</highlight><highlight class="normal">,<sp/>-9,<sp/>VerilatedScope::SCOPE_MODULE);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux__uut_pmux.configure(</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>name(),<sp/></highlight><highlight class="stringliteral">&quot;dut_param_mux.uut_pmux&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;uut_pmux&quot;</highlight><highlight class="normal">,<sp/>-9,<sp/>VerilatedScope::SCOPE_MODULE);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Set<sp/>up<sp/>scope<sp/>hierarchy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vhier.add(0,<sp/>&amp;__Vscope_dut_param_mux);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>__Vhier.add(&amp;__Vscope_dut_param_mux,<sp/>&amp;__Vscope_dut_param_mux__uut_pmux);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Setup<sp/>export<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>__Vfinal<sp/>=<sp/>0;<sp/>__Vfinal<sp/>&lt;<sp/>2;<sp/>++__Vfinal)<sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_TOP.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;in1&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.in1),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_IN|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_TOP.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;in2&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.in2),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_IN|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_TOP.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;in3&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.in3),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_IN|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_TOP.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;in4&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.in4),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_IN|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_TOP.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;mux_o&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.mux_o),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_OUT|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_TOP.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;sel_i&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.sel_i),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT8,VLVD_IN|VLVF_PUB_RW,1<sp/>,1,0);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;in1&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__in1),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;in2&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__in2),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;in3&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__in3),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;in4&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__in4),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;mux_o&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__mux_o),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;sel_i&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__sel_i),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT8,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,1,0);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux__uut_pmux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;INPUT_WIDTH&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const_cast&lt;</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keyword">const<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(&amp;(TOP.dut_param_mux__DOT__uut_pmux__DOT__INPUT_WIDTH))),<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux__uut_pmux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;SELECTOR_WIDTH&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const_cast&lt;</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keyword">const<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(&amp;(TOP.dut_param_mux__DOT__uut_pmux__DOT__SELECTOR_WIDTH))),<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux__uut_pmux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;SIGNAL_COUNT&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const_cast&lt;</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keyword">const<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(&amp;(TOP.dut_param_mux__DOT__uut_pmux__DOT__SIGNAL_COUNT))),<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux__uut_pmux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;inputs&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__uut_pmux__DOT__inputs),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,2<sp/>,31,0<sp/>,0,3);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux__uut_pmux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;out&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__uut_pmux__DOT__out),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT32,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,31,0);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>__Vscope_dut_param_mux__uut_pmux.varInsert(__Vfinal,</highlight><highlight class="stringliteral">&quot;selector&quot;</highlight><highlight class="normal">,<sp/>&amp;(TOP.dut_param_mux__DOT__uut_pmux__DOT__selector),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>VLVT_UINT8,VLVD_NODIR|VLVF_PUB_RW,1<sp/>,1,0);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/verilog/tests/sim_build/Vtop__Syms.cpp"/>
+  </compounddef>
+</doxygen>

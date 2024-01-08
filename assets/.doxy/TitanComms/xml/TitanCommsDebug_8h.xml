@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="TitanCommsDebug_8h" kind="file" language="C++">
+    <compoundname>TitanCommsDebug.h</compoundname>
+    <includedby refid="TitanComms_8cpp" local="yes">titan/comms/TitanComms/TitanComms.cpp</includedby>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="TitanCommsDebug_8h_1af6551f0b4c3964c3128f808e7bf987c7" prot="public" static="no">
+        <name>DEBUG_PRINT</name>
+        <param><defname>x</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanCommsDebug.h" line="19" column="14" bodyfile="titan/comms/TitanComms/TitanCommsDebug.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="TitanCommsDebug_8h_1aeed73e46c48b69567242c3065861ce5e" prot="public" static="no">
+        <name>DEBUG_PRINT_STR</name>
+        <param><defname>x</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanCommsDebug.h" line="20" column="13" bodyfile="titan/comms/TitanComms/TitanCommsDebug.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="TitanCommsDebug_8h_1a19e5168be3b06597c69033f1077b770c" prot="public" static="no">
+        <name>DEBUG_PRINTLN</name>
+        <param></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanCommsDebug.h" line="21" column="13" bodyfile="titan/comms/TitanComms/TitanCommsDebug.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="TitanCommsDebug_8h_1a86970af65289e7b09aa653658673022c" prot="public" static="no">
+        <name>DEBUG_PRINTLN_STR</name>
+        <param><defname>x</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanCommsDebug.h" line="22" column="13" bodyfile="titan/comms/TitanComms/TitanCommsDebug.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="TitanCommsDebug_8h_1a5b3908be5ec2679054120779fa49fb84" prot="public" static="no">
+        <name>DEBUG_PRINT_HEX</name>
+        <param><defname>x</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanCommsDebug.h" line="23" column="13" bodyfile="titan/comms/TitanComms/TitanCommsDebug.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="TitanCommsDebug_8h_1a4ba90737a174cfa716f877b95156a41a" prot="public" static="no">
+        <name>DEBUG_PRINT_INT</name>
+        <param><defname>x</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanCommsDebug.h" line="24" column="13" bodyfile="titan/comms/TitanComms/TitanCommsDebug.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="TitanCommsDebug_8h_1a0b4b9b8583f8b361db4076f2c1a4bc0f" prot="public" static="no">
+        <name>DEBUG_PRINT_BIN</name>
+        <param><defname>x</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanCommsDebug.h" line="25" column="13" bodyfile="titan/comms/TitanComms/TitanCommsDebug.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="TitanCommsDebug_8h_1a5d62f1969242035c7ce23f5c24725530" prot="public" static="no">
+        <name>DEBUG_PRINT_SIZEOF</name>
+        <param><defname>x</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanCommsDebug.h" line="26" column="13" bodyfile="titan/comms/TitanComms/TitanCommsDebug.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifdef<sp/>DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_VALUE(x)<sp/>\</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Serial.print(x);<sp/>\</highlight></codeline>
+<codeline lineno="4"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Serial.print(&quot;<sp/>as<sp/>hex:<sp/>&quot;</highlight><highlight class="normal">);<sp/>\</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Serial.print(x,<sp/>HEX);<sp/>\</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Serial.print(&quot;<sp/>,<sp/>as<sp/>bin:<sp/>&quot;);<sp/>\</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Serial.print(x,<sp/>BIN);<sp/>\</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Serial.println();</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_STR(x)<sp/>Serial.print(x);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINTLN()<sp/>Serial.println();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINTLN_STR(x)<sp/>Serial.println(x);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_HEX(x)<sp/>Serial.print(x,<sp/>HEX);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_INT(x)<sp/>Serial.print(x);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_BIN(x)<sp/>Serial.print(x,<sp/>BIN);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_SIZEOF(x)<sp/>Serial.print(sizeof(x));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT(x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_STR(x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINTLN()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINTLN_STR(x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_HEX(x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_INT(x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_BIN(x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>DEBUG_PRINT_SIZEOF(x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/TitanComms/TitanCommsDebug.h"/>
+  </compounddef>
+</doxygen>

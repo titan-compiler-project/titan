@@ -1,0 +1,502 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="Vtop_8h" kind="file" language="C++">
+    <compoundname>Vtop.h</compoundname>
+    <includes local="yes">verilated.h</includes>
+    <includes local="yes">svdpi.h</includes>
+    <includedby refid="Vtop_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop.cpp</includedby>
+    <includedby refid="Vtop____Dpi_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop__Dpi.cpp</includedby>
+    <includedby refid="Vtop____Syms_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop__Syms.cpp</includedby>
+    <includedby refid="Vtop____Syms_8h" local="yes">titan/comms/verilog/tests/sim_build/Vtop__Syms.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop.h</label>
+        <link refid="Vtop_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>svdpi.h</label>
+      </node>
+      <node id="2">
+        <label>verilated.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop.h</label>
+        <link refid="Vtop_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>titan/comms/verilog/tests/sim_build/Vtop__Syms.h</label>
+        <link refid="Vtop____Syms_8h_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classVL__NOT__FINAL" prot="public">VL_NOT_FINAL</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="Vtop_8h_1a85c45a2272f4b3603a885b500c254a96" prot="public" static="no">
+        <name>VERILATED_VTOP_H_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="9" column="9" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="Vtop_8h_1a75d02fdd32e22f33749cee867d6c08d5" prot="private" static="no" mutable="no">
+        <type><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref> *const</type>
+        <definition>Vtop__Syms* const vlSymsp</definition>
+        <argsstring></argsstring>
+        <name>vlSymsp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="2" column="22" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="2" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop_8h_1ab87d8e0fd105220adfdcb44d3f1381e3" prot="public" static="no" mutable="no">
+        <type>VL_IN8 &amp;</type>
+        <definition>VL_IN8&amp; sel_i</definition>
+        <argsstring></argsstring>
+        <name>sel_i</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="9" column="5" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop_8h_1ab7698cd379305dc481d43e7e02bfb376" prot="public" static="no" mutable="no">
+        <type>VL_IN &amp;</type>
+        <definition>VL_IN&amp; in1</definition>
+        <argsstring></argsstring>
+        <name>in1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="10" column="5" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop_8h_1aa6db460557f28aa97000e5ea930e2570" prot="public" static="no" mutable="no">
+        <type>VL_IN &amp;</type>
+        <definition>VL_IN&amp; in2</definition>
+        <argsstring></argsstring>
+        <name>in2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="11" column="5" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop_8h_1ad2f00104da70919ee66d98a8e5b441eb" prot="public" static="no" mutable="no">
+        <type>VL_IN &amp;</type>
+        <definition>VL_IN&amp; in3</definition>
+        <argsstring></argsstring>
+        <name>in3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="12" column="5" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop_8h_1a7efcbea94a1094a2269a1e760419f2e1" prot="public" static="no" mutable="no">
+        <type>VL_IN &amp;</type>
+        <definition>VL_IN&amp; in4</definition>
+        <argsstring></argsstring>
+        <name>in4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="13" column="5" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop_8h_1a355b5b6aafed74e4861dff1459358567" prot="public" static="no" mutable="no">
+        <type>VL_OUT &amp;</type>
+        <definition>VL_OUT&amp; mux_o</definition>
+        <argsstring></argsstring>
+        <name>mux_o</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="14" column="5" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop_8h_1a3de4cbaebec6ac35249e5630e3ddd388" prot="public" static="no" mutable="no">
+        <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *const</type>
+        <definition>Vtop___024root* const rootp</definition>
+        <argsstring></argsstring>
+        <name>rootp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="22" column="26" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="Vtop_8h_1a93d9e2379f0ca10d7342647f4ded2e0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classVL__NOT__FINAL" kindref="compound">VL_NOT_FINAL</ref> VerilatedModel</type>
+        <definition>VL_NOT_FINAL VerilatedModel VL_ATTR_ALIGNED</definition>
+        <argsstring>(VL_CACHE_LINE_BYTES)</argsstring>
+        <name>VL_ATTR_ALIGNED</name>
+        <param>
+          <type>VL_CACHE_LINE_BYTES</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="19" column="11" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="19" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a149dbd753b75d0ade0291e53c3c9e0f4" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::Vtop</definition>
+        <argsstring>(VerilatedContext *contextp, const char *name=&quot;TOP&quot;)</argsstring>
+        <name>Vtop</name>
+        <param>
+          <type>VerilatedContext *</type>
+          <declname>contextp</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+          <defval>&quot;TOP&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Construct the model; called by application code If contextp is null, then the model will use the default global context If name is &quot;&quot;, then makes a wrapper with a single model invisible with respect to DPI scope names. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="29" column="14" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="29" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a4c27e047cb25ec06acdc1507ae582aa4" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::Vtop</definition>
+        <argsstring>(const char *name=&quot;TOP&quot;)</argsstring>
+        <name>Vtop</name>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+          <defval>&quot;TOP&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="30" column="14" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="30" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a38e86dac819ff8ac42c7aca083a6abeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual VL_ATTR_ALIGNED::~Vtop</definition>
+        <argsstring>()</argsstring>
+        <name>~Vtop</name>
+        <briefdescription>
+<para>Destroy the model; called (often implicitly) by application code. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="32" column="13" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="32" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1af71f8828d217fa8f5330047a6455ed21" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::VL_UNCOPYABLE</definition>
+        <argsstring>(Vtop)</argsstring>
+        <name>VL_UNCOPYABLE</name>
+        <param>
+          <type>Vtop</type>
+        </param>
+        <briefdescription>
+<para>Copying not allowed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="34" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="34" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a675ed06c959be000dccdf115b463e4d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void VL_ATTR_ALIGNED::eval</definition>
+        <argsstring>()</argsstring>
+        <name>eval</name>
+        <briefdescription>
+<para>Evaluate the model. Application must call when inputs change. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="39" column="10" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.h" bodystart="39" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a7949ec32ab91f21585a2dbbe37df5b21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void VL_ATTR_ALIGNED::eval_step</definition>
+        <argsstring>()</argsstring>
+        <name>eval_step</name>
+        <briefdescription>
+<para>Evaluate when calling multiple units/models per time step. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="41" column="10" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="41" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a034462b9a649e39d996ce190a2b9571c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void VL_ATTR_ALIGNED::eval_end_step</definition>
+        <argsstring>()</argsstring>
+        <name>eval_end_step</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Evaluate at end of a timestep for tracing, when using eval_step(). Application must call after all eval() and before time changes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="44" column="10" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="44" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1af9a39e594db0c77afb2a10410ae9586a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void VL_ATTR_ALIGNED::final</definition>
+        <argsstring>()</argsstring>
+        <name>final</name>
+        <briefdescription>
+<para>Simulation complete, run final blocks. Application must call on completion. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="46" column="10" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="46" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1ac2482ba89b3dce3a340db35fe486dbbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool VL_ATTR_ALIGNED::eventsPending</definition>
+        <argsstring>()</argsstring>
+        <name>eventsPending</name>
+        <briefdescription>
+<para>Are there scheduled events to handle? </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="48" column="10" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="48" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1aa20160a8105a4a5e23f1edc423ff9c5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>uint64_t</type>
+        <definition>uint64_t VL_ATTR_ALIGNED::nextTimeSlot</definition>
+        <argsstring>()</argsstring>
+        <name>nextTimeSlot</name>
+        <briefdescription>
+<para>Returns time at next time slot. Aborts if !eventsPending() </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="50" column="14" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="50" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a9003078d56517fbd2d1187f5f19ed78d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void VL_ATTR_ALIGNED::trace</definition>
+        <argsstring>(VerilatedVcdC *tfp, int levels, int options=0)</argsstring>
+        <name>trace</name>
+        <param>
+          <type>VerilatedVcdC *</type>
+          <declname>tfp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>levels</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>options</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Trace signals in the model; called by application code. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="52" column="10" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="52" declcolumn="10"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1ae007bb9cd9890eb19e96891444d822a7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * VL_ATTR_ALIGNED::name</definition>
+        <argsstring>() const</argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>Retrieve name of this model instance (as passed to constructor). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="54" column="16" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="54" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a0f388acb54cbac50f48675785d128e1f" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * VL_ATTR_ALIGNED::hierName</definition>
+        <argsstring>() const override final</argsstring>
+        <name>hierName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="57" column="16" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="57" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a4d9a5a8c5e5e365f124cb4b6b2421709" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * VL_ATTR_ALIGNED::modelName</definition>
+        <argsstring>() const override final</argsstring>
+        <name>modelName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="58" column="16" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="58" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a7ba7ef1a704b4bc742b48290c5b88f8e" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
+        <type>unsigned</type>
+        <definition>unsigned VL_ATTR_ALIGNED::threads</definition>
+        <argsstring>() const override final</argsstring>
+        <name>threads</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="59" column="14" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="59" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8h_1a1ab14b401951b0fbd1c6c84ebb020a50" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
+        <type>std::unique_ptr&lt; VerilatedTraceConfig &gt;</type>
+        <definition>std::unique_ptr&lt; VerilatedTraceConfig &gt; VL_ATTR_ALIGNED::traceConfig</definition>
+        <argsstring>() const override final</argsstring>
+        <name>traceConfig</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.h" line="60" column="21" declfile="titan/comms/verilog/tests/sim_build/Vtop.h" declline="60" declcolumn="21"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Verilated<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DESCRIPTION:<sp/>Verilator<sp/>output:<sp/>Primary<sp/>model<sp/>header</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>header<sp/>should<sp/>be<sp/>included<sp/>by<sp/>all<sp/>source<sp/>files<sp/>instantiating<sp/>the<sp/>design.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>class<sp/>here<sp/>is<sp/>then<sp/>constructed<sp/>to<sp/>instantiate<sp/>the<sp/>design.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/>See<sp/>the<sp/>Verilator<sp/>manual<sp/>for<sp/>examples.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>VERILATED_VTOP_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>VERILATED_VTOP_H_<sp/><sp/></highlight><highlight class="comment">//<sp/>guard</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;verilated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;svdpi.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">VerilatedVcdC;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>class<sp/>is<sp/>the<sp/>main<sp/>interface<sp/>to<sp/>the<sp/>Verilated<sp/>model</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="classVL__NOT__FINAL" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Vtop<sp/><ref refid="classVL__NOT__FINAL" kindref="compound">VL_NOT_FINAL</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>VerilatedModel<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Symbol<sp/>table<sp/>holding<sp/>complete<sp/>model<sp/>state<sp/>(owned<sp/>by<sp/>this<sp/>class)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>vlSymsp;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>PORTS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>application<sp/>code<sp/>writes<sp/>and<sp/>reads<sp/>these<sp/>signals<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>propagate<sp/>new<sp/>values<sp/>into/out<sp/>from<sp/>the<sp/>Verilated<sp/>model.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN8(&amp;sel_i,1,0);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN(&amp;in1,31,0);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN(&amp;in2,31,0);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN(&amp;in3,31,0);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN(&amp;in4,31,0);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_OUT(&amp;mux_o,31,0);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>CELLS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Public<sp/>to<sp/>allow<sp/>access<sp/>to<sp/>/*<sp/>verilator<sp/>public<sp/>*/<sp/>items.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Otherwise<sp/>the<sp/>application<sp/>code<sp/>can<sp/>consider<sp/>these<sp/>internals.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Root<sp/>instance<sp/>pointer<sp/>to<sp/>allow<sp/>access<sp/>to<sp/>model<sp/>internals,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>including<sp/>inlined<sp/>/*<sp/>verilator<sp/>public_flat_*<sp/>*/<sp/>items.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rootp;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>CONSTRUCTORS</highlight></codeline>
+<codeline lineno="49" refid="classVL__NOT__FINAL_1a5b575b2f1bc01cff5da058ae5dcc80c5" refkind="member"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classVL__NOT__FINAL_1a5b575b2f1bc01cff5da058ae5dcc80c5" kindref="member">Vtop</ref>(VerilatedContext*<sp/>contextp,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>name<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;TOP&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/>Vtop(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>name<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;TOP&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="52" refid="classVL__NOT__FINAL_1a27661fa334d42735e3da8b3166759c73" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="classVL__NOT__FINAL_1a27661fa334d42735e3da8b3166759c73" kindref="member">~Vtop</ref>();</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_UNCOPYABLE(Vtop);<sp/><sp/></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>API<sp/>METHODS</highlight></codeline>
+<codeline lineno="59" refid="classVL__NOT__FINAL_1a710afbfa4354a5ad17828f0c26628644" refkind="member"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classVL__NOT__FINAL_1a710afbfa4354a5ad17828f0c26628644" kindref="member">eval</ref>()<sp/>{<sp/>eval_step();<sp/>eval_end_step();<sp/>}</highlight></codeline>
+<codeline lineno="61" refid="classVL__NOT__FINAL_1a157cea2583808135c9ffc9b7934e96bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classVL__NOT__FINAL_1a157cea2583808135c9ffc9b7934e96bb" kindref="member">eval_step</ref>();</highlight></codeline>
+<codeline lineno="64" refid="classVL__NOT__FINAL_1a23a954cd42b0ac3d911459a91db71b94" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classVL__NOT__FINAL_1a23a954cd42b0ac3d911459a91db71b94" kindref="member">eval_end_step</ref>();</highlight></codeline>
+<codeline lineno="66" refid="classVL__NOT__FINAL_1ab1e83aa2b8ae7a0549acce23391d2194" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">();</highlight></codeline>
+<codeline lineno="68" refid="classVL__NOT__FINAL_1aa9e6a3e058ce233bd36360c95c2c3b75" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classVL__NOT__FINAL_1aa9e6a3e058ce233bd36360c95c2c3b75" kindref="member">eventsPending</ref>();</highlight></codeline>
+<codeline lineno="70" refid="classVL__NOT__FINAL_1a91a1a77360117f14543f9b5cdbfe2771" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="classVL__NOT__FINAL_1a91a1a77360117f14543f9b5cdbfe2771" kindref="member">nextTimeSlot</ref>();</highlight></codeline>
+<codeline lineno="72" refid="classVL__NOT__FINAL_1a8ee5dc820670ef211a29d622851eac2b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classVL__NOT__FINAL_1a8ee5dc820670ef211a29d622851eac2b" kindref="member">trace</ref>(VerilatedVcdC*<sp/>tfp,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>levels,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>options<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="74" refid="classVL__NOT__FINAL_1ab1d3305b0868ad77d472a6940e9cae32" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="classVL__NOT__FINAL_1ab1d3305b0868ad77d472a6940e9cae32" kindref="member">name</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Abstract<sp/>methods<sp/>from<sp/>VerilatedModel</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>hierName()<sp/>const<sp/>override<sp/>final;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>modelName()<sp/>const<sp/>override<sp/>final;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/>threads()<sp/>const<sp/>override<sp/>final;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;VerilatedTraceConfig&gt;<sp/>traceConfig()<sp/>const<sp/>override<sp/>final;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">}<sp/>VL_ATTR_ALIGNED(VL_CACHE_LINE_BYTES);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="comment">//<sp/>guard</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/verilog/tests/sim_build/Vtop.h"/>
+  </compounddef>
+</doxygen>

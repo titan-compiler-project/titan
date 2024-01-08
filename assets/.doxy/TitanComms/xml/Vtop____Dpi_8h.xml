@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="Vtop____Dpi_8h" kind="file" language="C++">
+    <compoundname>Vtop__Dpi.h</compoundname>
+    <includes local="yes">svdpi.h</includes>
+    <includedby refid="Vtop____Dpi_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop__Dpi.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop__Dpi.h</label>
+        <link refid="Vtop____Dpi_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>svdpi.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="Vtop____Dpi_8h_1a8dc5a768484508f3a9ea6d01a459cf62" prot="public" static="no">
+        <name>VERILATED_VTOP__DPI_H_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop__Dpi.h" line="9" column="9" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Dpi.h" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Verilated<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DESCRIPTION:<sp/>Verilator<sp/>output:<sp/>Prototypes<sp/>for<sp/>DPI<sp/>import<sp/>and<sp/>export<sp/>functions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Verilator<sp/>includes<sp/>this<sp/>file<sp/>in<sp/>all<sp/>generated<sp/>.cpp<sp/>files<sp/>that<sp/>use<sp/>DPI<sp/>functions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Manually<sp/>include<sp/>this<sp/>file<sp/>where<sp/>DPI<sp/>.c<sp/>import<sp/>functions<sp/>are<sp/>declared<sp/>to<sp/>ensure</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>C<sp/>functions<sp/>match<sp/>the<sp/>expectations<sp/>of<sp/>the<sp/>DPI<sp/>imports.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>VERILATED_VTOP__DPI_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>VERILATED_VTOP__DPI_H_<sp/><sp/></highlight><highlight class="comment">//<sp/>guard</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;svdpi.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="comment">//<sp/>guard</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/verilog/tests/sim_build/Vtop__Dpi.h"/>
+  </compounddef>
+</doxygen>

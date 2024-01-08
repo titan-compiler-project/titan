@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="structTitanComms_1_1u__int24" kind="struct" language="C++" prot="public">
+    <compoundname>TitanComms::u_int24</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structTitanComms_1_1u__int24_1a13aa50bbf2a0bbf162f3c4270caa9391" prot="public" static="no" mutable="no">
+        <type>u_int32_t</type>
+        <definition>u_int32_t TitanComms::u_int24::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <qualifiedname>TitanComms::u_int24::data</qualifiedname>
+        <bitfield> 24</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/TitanComms/TitanComms.h" line="36" column="23" bodyfile="titan/comms/TitanComms/TitanComms.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan/comms/TitanComms/TitanComms.h" line="35" column="9" bodyfile="titan/comms/TitanComms/TitanComms.h" bodystart="35" bodyend="37"/>
+    <listofallmembers>
+      <member refid="structTitanComms_1_1u__int24_1a13aa50bbf2a0bbf162f3c4270caa9391" prot="public" virt="non-virtual"><scope>TitanComms::u_int24</scope><name>data</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

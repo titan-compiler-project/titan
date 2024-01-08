@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="Vtop____Dpi_8cpp" kind="file" language="C++">
+    <compoundname>Vtop__Dpi.cpp</compoundname>
+    <includes refid="Vtop____Dpi_8h" local="yes">Vtop__Dpi.h</includes>
+    <includes refid="Vtop_8h" local="yes">Vtop.h</includes>
+    <includedby refid="Vtop____ALL_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop__ALL.cpp</includedby>
+    <incdepgraph>
+      <node id="4">
+        <label>Vtop.h</label>
+        <link refid="Vtop_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop__Dpi.cpp</label>
+        <link refid="Vtop____Dpi_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Vtop__Dpi.h</label>
+        <link refid="Vtop____Dpi_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>svdpi.h</label>
+      </node>
+      <node id="5">
+        <label>verilated.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Verilated<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DESCRIPTION:<sp/>Verilator<sp/>output:<sp/>Implementation<sp/>of<sp/>DPI<sp/>export<sp/>functions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Verilator<sp/>compiles<sp/>this<sp/>file<sp/>in<sp/>when<sp/>DPI<sp/>functions<sp/>are<sp/>used.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/>If<sp/>you<sp/>have<sp/>multiple<sp/>Verilated<sp/>designs<sp/>with<sp/>the<sp/>same<sp/>DPI<sp/>exported</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/>function<sp/>names,<sp/>you<sp/>will<sp/>get<sp/>multiple<sp/>definition<sp/>link<sp/>errors<sp/>from<sp/>here.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>an<sp/>unfortunate<sp/>result<sp/>of<sp/>the<sp/>DPI<sp/>specification.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>To<sp/>solve<sp/>this,<sp/>either</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>1.<sp/>Call<sp/>Vtop::{export_function}<sp/>instead,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>do<sp/>not<sp/>even<sp/>bother<sp/>to<sp/>compile<sp/>this<sp/>file</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">//<sp/>or<sp/>2.<sp/>Compile<sp/>all<sp/>__Dpi.cpp<sp/>files<sp/>in<sp/>the<sp/>same<sp/>compiler<sp/>run,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>#ifdefs<sp/>already<sp/>inserted<sp/>here<sp/>will<sp/>sort<sp/>everything<sp/>out.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop__Dpi.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/verilog/tests/sim_build/Vtop__Dpi.cpp"/>
+  </compounddef>
+</doxygen>

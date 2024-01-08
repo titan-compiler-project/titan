@@ -1,0 +1,645 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="Vtop______024root_8h" kind="file" language="C++">
+    <compoundname>Vtop___024root.h</compoundname>
+    <includes local="yes">verilated.h</includes>
+    <includes local="yes">verilated_timing.h</includes>
+    <includedby refid="Vtop____Syms_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop__Syms.cpp</includedby>
+    <includedby refid="Vtop____Syms_8h" local="yes">titan/comms/verilog/tests/sim_build/Vtop__Syms.h</includedby>
+    <includedby refid="Vtop______024root____DepSet__h84412442____0_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_h84412442__0.cpp</includedby>
+    <includedby refid="Vtop______024root____DepSet__h84412442____0____Slow_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_h84412442__0__Slow.cpp</includedby>
+    <includedby refid="Vtop______024root____DepSet__heccd7ead____0_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_heccd7ead__0.cpp</includedby>
+    <includedby refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_heccd7ead__0__Slow.cpp</includedby>
+    <includedby refid="Vtop______024root____Slow_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop___024root__Slow.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop___024root.h</label>
+        <link refid="Vtop______024root_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>verilated.h</label>
+      </node>
+      <node id="3">
+        <label>verilated_timing.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>titan/comms/verilog/tests/sim_build/Vtop__Syms.h</label>
+        <link refid="Vtop____Syms_8h_source"/>
+      </node>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop___024root.h</label>
+        <link refid="Vtop______024root_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classVtop______024root" prot="public">Vtop___024root</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="Vtop______024root_8h_1a1f1505c3eab503e12cabc30dd9f9e385" prot="public" static="no">
+        <name>VERILATED_VTOP___024ROOT_H_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="6" column="9" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="6" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="Vtop______024root_8h_1a42ec3d959402eb175f811984a02b20e4" prot="public" static="no" mutable="no">
+        <type>CData</type>
+        <definition>CData dut_param_mux__DOT__sel_i</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__sel_i</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="4" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="4" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a0c18a12ee3dc4a6adc82e32dc72f1743" prot="public" static="no" mutable="no">
+        <type>CData</type>
+        <definition>CData dut_param_mux__DOT__uut_pmux__DOT__selector</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__uut_pmux__DOT__selector</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="5" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="5" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a81799916d595317709746054c464247c" prot="public" static="no" mutable="no">
+        <type>CData</type>
+        <definition>CData __VactContinue</definition>
+        <argsstring></argsstring>
+        <name>__VactContinue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="6" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="6" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1ac3a6d20a57638b4554a1b6ad92b88d53" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData dut_param_mux__DOT__in1</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__in1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="12" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a2b97e78d141be754c474308e133f7710" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData dut_param_mux__DOT__in2</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__in2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="13" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a951ebbd9e4146ae90c58f435c3754671" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData dut_param_mux__DOT__in3</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__in3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="14" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a37df93cb99ccf93a63e380d4dac0110e" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData dut_param_mux__DOT__in4</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__in4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="15" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1ad0b4d5c44b393d1f88504e3bb592d9e8" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData dut_param_mux__DOT__mux_o</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__mux_o</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="16" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1aff70413802e0ebae81490e27bdb33d44" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData dut_param_mux__DOT__uut_pmux__DOT__out</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__uut_pmux__DOT__out</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="17" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1aca467322aec16be395c18e8e555cfb81" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData __VstlIterCount</definition>
+        <argsstring></argsstring>
+        <name>__VstlIterCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="18" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1ac37c18e513a70f16389f8b3c0dc131bd" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData __VicoIterCount</definition>
+        <argsstring></argsstring>
+        <name>__VicoIterCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="19" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1abd032326b89956ee7ea9829c65b07387" prot="public" static="no" mutable="no">
+        <type>IData</type>
+        <definition>IData __VactIterCount</definition>
+        <argsstring></argsstring>
+        <name>__VactIterCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="20" column="11" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1ac3264ceeb926f00ae9e7d94b5e5bf679" prot="public" static="no" mutable="no">
+        <type>VlUnpacked&lt; IData, 4 &gt;</type>
+        <definition>VlUnpacked&lt;IData, 4&gt; dut_param_mux__DOT____Vcellinp__uut_pmux__inputs</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT____Vcellinp__uut_pmux__inputs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="21" column="16" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1af4dd5b3b05e46c53300be048f6b2aac0" prot="public" static="no" mutable="no">
+        <type>VlUnpacked&lt; IData, 4 &gt;</type>
+        <definition>VlUnpacked&lt;IData, 4&gt; dut_param_mux__DOT__uut_pmux__DOT__inputs</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__uut_pmux__DOT__inputs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="22" column="16" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1aade34b4c993a7467f52988216e1e3c77" prot="public" static="no" mutable="no">
+        <type>VlDelayScheduler</type>
+        <definition>VlDelayScheduler __VdlySched</definition>
+        <argsstring></argsstring>
+        <name>__VdlySched</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="23" column="22" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1aa0d99b8ccb35d15dbab85e899f4d2700" prot="public" static="no" mutable="no">
+        <type>VlTriggerVec&lt; 1 &gt;</type>
+        <definition>VlTriggerVec&lt;1&gt; __VstlTriggered</definition>
+        <argsstring></argsstring>
+        <name>__VstlTriggered</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="24" column="18" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1aa75a79fc1286e0deea7e2805bb0cffa1" prot="public" static="no" mutable="no">
+        <type>VlTriggerVec&lt; 1 &gt;</type>
+        <definition>VlTriggerVec&lt;1&gt; __VicoTriggered</definition>
+        <argsstring></argsstring>
+        <name>__VicoTriggered</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="25" column="18" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a322bcc180b94277fa5a1df297b1dd598" prot="public" static="no" mutable="no">
+        <type>VlTriggerVec&lt; 1 &gt;</type>
+        <definition>VlTriggerVec&lt;1&gt; __VactTriggered</definition>
+        <argsstring></argsstring>
+        <name>__VactTriggered</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="26" column="18" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a4e00d6d197f955fa085ced688d5b6b7d" prot="public" static="no" mutable="no">
+        <type>VlTriggerVec&lt; 1 &gt;</type>
+        <definition>VlTriggerVec&lt;1&gt; __VnbaTriggered</definition>
+        <argsstring></argsstring>
+        <name>__VnbaTriggered</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="27" column="18" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a75d02fdd32e22f33749cee867d6c08d5" prot="public" static="no" mutable="no">
+        <type><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref> *const</type>
+        <definition>Vtop__Syms* const vlSymsp</definition>
+        <argsstring></argsstring>
+        <name>vlSymsp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="30" column="22" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a4e0873fb550bc6fd76cd7f8526eb1e03" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr IData</type>
+        <definition>constexpr IData dut_param_mux__DOT__uut_pmux__DOT__INPUT_WIDTH</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__uut_pmux__DOT__INPUT_WIDTH</name>
+        <initializer>= 0x00000020U</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="33" column="28" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a34e11f0e689cc1c90979c59bc274211f" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr IData</type>
+        <definition>constexpr IData dut_param_mux__DOT__uut_pmux__DOT__SELECTOR_WIDTH</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__uut_pmux__DOT__SELECTOR_WIDTH</name>
+        <initializer>= 2U</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="34" column="28" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="Vtop______024root_8h_1a33c405af423f7f2c1548614d16a10aa6" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr IData</type>
+        <definition>constexpr IData dut_param_mux__DOT__uut_pmux__DOT__SIGNAL_COUNT</definition>
+        <argsstring></argsstring>
+        <name>dut_param_mux__DOT__uut_pmux__DOT__SIGNAL_COUNT</name>
+        <initializer>= 4U</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="35" column="28" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="Vtop______024root_8h_1a658b6ca15bfd92e7c6100bd80ec5c0a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> VerilatedModule</type>
+        <definition>Vtop___024root VerilatedModule VL_ATTR_ALIGNED</definition>
+        <argsstring>(VL_CACHE_LINE_BYTES)</argsstring>
+        <name>VL_ATTR_ALIGNED</name>
+        <param>
+          <type>VL_CACHE_LINE_BYTES</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="13" column="21" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="13" declcolumn="21"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1a05006a711fbb8a65ab1c40afc85785af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::VL_IN8</definition>
+        <argsstring>(sel_i, 1, 0)</argsstring>
+        <name>VL_IN8</name>
+        <param>
+          <type>sel_i</type>
+        </param>
+        <param>
+          <type>1</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="3" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="3" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1aeeced38eeb43c86b05b15762af4d669c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::VL_IN</definition>
+        <argsstring>(in1, 31, 0)</argsstring>
+        <name>VL_IN</name>
+        <param>
+          <type>in1</type>
+        </param>
+        <param>
+          <type>31</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="7" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="7" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1ac7fa29610e8731801e59eedee807cf71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::VL_IN</definition>
+        <argsstring>(in2, 31, 0)</argsstring>
+        <name>VL_IN</name>
+        <param>
+          <type>in2</type>
+        </param>
+        <param>
+          <type>31</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="8" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="8" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1a9bfaa9623b80ca94842fabb173c5e229" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::VL_IN</definition>
+        <argsstring>(in3, 31, 0)</argsstring>
+        <name>VL_IN</name>
+        <param>
+          <type>in3</type>
+        </param>
+        <param>
+          <type>31</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="9" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="9" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1a17a89cf886a608ae428a7ded80a7b105" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::VL_IN</definition>
+        <argsstring>(in4, 31, 0)</argsstring>
+        <name>VL_IN</name>
+        <param>
+          <type>in4</type>
+        </param>
+        <param>
+          <type>31</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="10" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="10" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1a7c3686020f4190627f843ed58f75393d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::VL_OUT</definition>
+        <argsstring>(mux_o, 31, 0)</argsstring>
+        <name>VL_OUT</name>
+        <param>
+          <type>mux_o</type>
+        </param>
+        <param>
+          <type>31</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="11" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="11" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1a8de38b2ea45176a5d9b5272d39f96a1d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::Vtop___024root</definition>
+        <argsstring>(Vtop__Syms *symsp, const char *v__name)</argsstring>
+        <name>Vtop___024root</name>
+        <param>
+          <type><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref> *</type>
+          <declname>symsp</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>v__name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="38" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="38" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1afe8b66d9cb9b406da60e4f46cf8a6ce7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::~Vtop___024root</definition>
+        <argsstring>()</argsstring>
+        <name>~Vtop___024root</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="39" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="39" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1a510866a5cb5a685d4cb407ba7aa205be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>VL_ATTR_ALIGNED::VL_UNCOPYABLE</definition>
+        <argsstring>(Vtop___024root)</argsstring>
+        <name>VL_UNCOPYABLE</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="40" column="5" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="40" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop______024root_8h_1ad086ebdddf11126ec12102b05fd45a69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void VL_ATTR_ALIGNED::__Vconfigure</definition>
+        <argsstring>(bool first)</argsstring>
+        <name>__Vconfigure</name>
+        <param>
+          <type>bool</type>
+          <declname>first</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h" line="43" column="10" declfile="titan/comms/verilog/tests/sim_build/Vtop___024root.h" declline="43" declcolumn="10"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Verilated<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DESCRIPTION:<sp/>Verilator<sp/>output:<sp/>Design<sp/>internal<sp/>header</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>See<sp/>Vtop.h<sp/>for<sp/>the<sp/>primary<sp/>calling<sp/>header</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>VERILATED_VTOP___024ROOT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>VERILATED_VTOP___024ROOT_H_<sp/><sp/></highlight><highlight class="comment">//<sp/>guard</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;verilated.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;verilated_timing.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="classVtop______024root" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref><sp/>final<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>VerilatedModule<sp/>{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>DESIGN<sp/>SPECIFIC<sp/>STATE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN8(sel_i,1,0);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>CData</highlight><highlight class="comment">/*1:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__sel_i;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>CData</highlight><highlight class="comment">/*1:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__uut_pmux__DOT__selector;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>CData</highlight><highlight class="comment">/*0:0*/</highlight><highlight class="normal"><sp/>__VactContinue;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN(in1,31,0);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN(in2,31,0);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN(in3,31,0);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_IN(in4,31,0);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_OUT(mux_o,31,0);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__in1;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__in2;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__in3;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__in4;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__mux_o;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__uut_pmux__DOT__out;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>__VstlIterCount;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>__VicoIterCount;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>__VactIterCount;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>VlUnpacked&lt;IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal">,<sp/>4&gt;<sp/>dut_param_mux__DOT____Vcellinp__uut_pmux__inputs;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>VlUnpacked&lt;IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal">,<sp/>4&gt;<sp/>dut_param_mux__DOT__uut_pmux__DOT__inputs;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>VlDelayScheduler<sp/>__VdlySched;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>VlTriggerVec&lt;1&gt;<sp/>__VstlTriggered;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>VlTriggerVec&lt;1&gt;<sp/>__VicoTriggered;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>VlTriggerVec&lt;1&gt;<sp/>__VactTriggered;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>VlTriggerVec&lt;1&gt;<sp/>__VnbaTriggered;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>INTERNAL<sp/>VARIABLES</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>vlSymsp;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>PARAMETERS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__uut_pmux__DOT__INPUT_WIDTH<sp/>=<sp/>0x00000020U;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__uut_pmux__DOT__SELECTOR_WIDTH<sp/>=<sp/>2U;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>IData</highlight><highlight class="comment">/*31:0*/</highlight><highlight class="normal"><sp/>dut_param_mux__DOT__uut_pmux__DOT__SIGNAL_COUNT<sp/>=<sp/>4U;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>CONSTRUCTORS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>(<ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/>symsp,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>v__name);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop______024root" kindref="compound">~Vtop___024root</ref>();</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_UNCOPYABLE(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>INTERNAL<sp/>METHODS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>__Vconfigure(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>first);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}<sp/>VL_ATTR_ALIGNED(VL_CACHE_LINE_BYTES);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="comment">//<sp/>guard</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/verilog/tests/sim_build/Vtop___024root.h"/>
+  </compounddef>
+</doxygen>

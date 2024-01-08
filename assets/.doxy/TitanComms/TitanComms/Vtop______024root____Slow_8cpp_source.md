@@ -1,0 +1,46 @@
+
+
+# File Vtop\_\_\_024root\_\_Slow.cpp
+
+[**File List**](files.md) **>** [**comms**](dir_15e9a61cbc095141a3f886f43eb6818f.md) **>** [**verilog**](dir_549b42112f6dc36cf8af5f13bada3f17.md) **>** [**tests**](dir_359bc3875cb3adaee3d3f269dbe0d6e4.md) **>** [**sim\_build**](dir_816ed350c72cf5de8127e0b7e8b74e54.md) **>** [**Vtop\_\_\_024root\_\_Slow.cpp**](Vtop______024root____Slow_8cpp.md)
+
+[Go to the documentation of this file](Vtop______024root____Slow_8cpp.md)
+
+```C++
+
+// Verilated -*- C++ -*-
+// DESCRIPTION: Verilator output: Design implementation internals
+// See Vtop.h for the primary calling header
+
+#include "verilated.h"
+#include "verilated_dpi.h"
+
+#include "Vtop__Syms.h"
+#include "Vtop___024root.h"
+
+// Parameter definitions for Vtop___024root
+constexpr IData/*31:0*/ Vtop___024root::dut_param_mux__DOT__uut_pmux__DOT__INPUT_WIDTH;
+constexpr IData/*31:0*/ Vtop___024root::dut_param_mux__DOT__uut_pmux__DOT__SELECTOR_WIDTH;
+constexpr IData/*31:0*/ Vtop___024root::dut_param_mux__DOT__uut_pmux__DOT__SIGNAL_COUNT;
+
+
+void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf);
+
+Vtop___024root::Vtop___024root(Vtop__Syms* symsp, const char* v__name)
+    : VerilatedModule{v__name}
+    , __VdlySched{*symsp->_vm_contextp__}
+    , vlSymsp{symsp}
+ {
+    // Reset structure values
+    Vtop___024root___ctor_var_reset(this);
+}
+
+void Vtop___024root::__Vconfigure(bool first) {
+    if (false && first) {}  // Prevent unused
+}
+
+Vtop___024root::~Vtop___024root() {
+}
+
+```
+

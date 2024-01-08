@@ -1,0 +1,384 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.4" xml:lang="en-US">
+  <compounddef id="Vtop_8cpp" kind="file" language="C++">
+    <compoundname>Vtop.cpp</compoundname>
+    <includes refid="Vtop_8h" local="yes">Vtop.h</includes>
+    <includes refid="Vtop____Syms_8h" local="yes">Vtop__Syms.h</includes>
+    <includes local="yes">verilated_vcd_c.h</includes>
+    <includes local="yes">verilated_dpi.h</includes>
+    <includedby refid="Vtop____ALL_8cpp" local="yes">titan/comms/verilog/tests/sim_build/Vtop__ALL.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>titan/comms/verilog/tests/sim_build/Vtop.cpp</label>
+        <link refid="Vtop_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Vtop.h</label>
+        <link refid="Vtop_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Vtop__Syms.h</label>
+        <link refid="Vtop____Syms_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Vtop___024root.h</label>
+        <link refid="Vtop______024root_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Vtop___024unit.h</label>
+        <link refid="Vtop______024unit_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>svdpi.h</label>
+      </node>
+      <node id="3">
+        <label>verilated.h</label>
+      </node>
+      <node id="10">
+        <label>verilated_dpi.h</label>
+      </node>
+      <node id="8">
+        <label>verilated_timing.h</label>
+      </node>
+      <node id="6">
+        <label>verilated_vcd_c.h</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="Vtop_8cpp_1a8bc012b8eefe7323e2fadc13e74bb14a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Vtop___024root___eval_static</definition>
+        <argsstring>(Vtop___024root *vlSelf)</argsstring>
+        <name>Vtop___024root___eval_static</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp" line="45" column="6" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_heccd7ead__0__Slow.cpp" bodystart="10" bodyend="14" declfile="titan/comms/verilog/tests/sim_build/Vtop.cpp" declline="45" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8cpp_1a65c0abf5a6e3043164c4e8a904b4bc35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Vtop___024root___eval_initial</definition>
+        <argsstring>(Vtop___024root *vlSelf)</argsstring>
+        <name>Vtop___024root___eval_initial</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp" line="46" column="6" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_heccd7ead__0.cpp" bodystart="12" bodyend="18" declfile="titan/comms/verilog/tests/sim_build/Vtop.cpp" declline="46" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8cpp_1aaba5bd747a6e48dfe2395c055b3e9c27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Vtop___024root___eval_settle</definition>
+        <argsstring>(Vtop___024root *vlSelf)</argsstring>
+        <name>Vtop___024root___eval_settle</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp" line="47" column="6" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_heccd7ead__0__Slow.cpp" bodystart="28" bodyend="53" declfile="titan/comms/verilog/tests/sim_build/Vtop.cpp" declline="47" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8cpp_1a8d33b227a94867ce857d7af0ac8d8722" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Vtop___024root___eval</definition>
+        <argsstring>(Vtop___024root *vlSelf)</argsstring>
+        <name>Vtop___024root___eval</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp" line="48" column="6" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_heccd7ead__0.cpp" bodystart="94" bodyend="160" declfile="titan/comms/verilog/tests/sim_build/Vtop.cpp" declline="48" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8cpp_1a7d7e1c36883409e84c142cf9d1843ac5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Vtop___024root___eval_final</definition>
+        <argsstring>(Vtop___024root *vlSelf)</argsstring>
+        <name>Vtop___024root___eval_final</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp" line="98" column="6" bodyfile="titan/comms/verilog/tests/sim_build/Vtop___024root__DepSet_heccd7ead__0__Slow.cpp" bodystart="16" bodyend="20" declfile="titan/comms/verilog/tests/sim_build/Vtop.cpp" declline="98" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8cpp_1ab6974385e7b04f6090b3f82a20a3d409" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Vtop___024root__trace_init_top</definition>
+        <argsstring>(Vtop___024root *vlSelf, VerilatedVcd *tracep)</argsstring>
+        <name>Vtop___024root__trace_init_top</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd *</type>
+          <declname>tracep</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp" line="117" column="6" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" bodystart="39" bodyend="45" declfile="titan/comms/verilog/tests/sim_build/Vtop.cpp" declline="117" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8cpp_1a2643b3cbcc155e6195ee3827dffff137" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>VL_ATTR_COLD void</type>
+        <definition>static VL_ATTR_COLD void trace_init</definition>
+        <argsstring>(void *voidSelf, VerilatedVcd *tracep, uint32_t code)</argsstring>
+        <name>trace_init</name>
+        <param>
+          <type>void *</type>
+          <declname>voidSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd *</type>
+          <declname>tracep</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>code</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp" line="119" column="26" bodyfile="titan/comms/verilog/tests/sim_build/Vtop.cpp" bodystart="119" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="Vtop_8cpp_1a3f83c6882c3fe94d3c8ef38c70e60110" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>VL_ATTR_COLD void</type>
+        <definition>VL_ATTR_COLD void Vtop___024root__trace_register</definition>
+        <argsstring>(Vtop___024root *vlSelf, VerilatedVcd *tracep)</argsstring>
+        <name>Vtop___024root__trace_register</name>
+        <param>
+          <type><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref> *</type>
+          <declname>vlSelf</declname>
+        </param>
+        <param>
+          <type>VerilatedVcd *</type>
+          <declname>tracep</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp" line="135" column="19" bodyfile="titan/comms/verilog/tests/sim_build/Vtop__Trace__0__Slow.cpp" bodystart="51" bodyend="59" declfile="titan/comms/verilog/tests/sim_build/Vtop.cpp" declline="135" declcolumn="19"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Verilated<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DESCRIPTION:<sp/>Verilator<sp/>output:<sp/>Model<sp/>implementation<sp/>(design<sp/>independent<sp/>parts)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Vtop__Syms.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;verilated_vcd_c.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;verilated_dpi.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//============================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Constructors</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal">Vtop::Vtop(VerilatedContext*<sp/>_vcontextp__,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>_vcname__)</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/>VerilatedModel{*_vcontextp__}</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>vlSymsp{new<sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>(contextp(),<sp/>_vcname__,<sp/>this)}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>sel_i{vlSymsp-&gt;TOP.sel_i}</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>in1{vlSymsp-&gt;TOP.in1}</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>in2{vlSymsp-&gt;TOP.in2}</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>in3{vlSymsp-&gt;TOP.in3}</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>in4{vlSymsp-&gt;TOP.in4}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>mux_o{vlSymsp-&gt;TOP.mux_o}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>rootp{&amp;(vlSymsp-&gt;TOP)}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Register<sp/>model<sp/>with<sp/>the<sp/>context</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>contextp()-&gt;addModel(</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">Vtop::Vtop(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>_vcname__)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/>Vtop(Verilated::threadContextp(),<sp/>_vcname__)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//============================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Destructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">Vtop::~Vtop()<sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/>vlSymsp;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="comment">//============================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Evaluation<sp/>function</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>VL_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root___eval_debug_assertions(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="comment">//<sp/>VL_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root___eval_static(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root___eval_initial(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root___eval_settle(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root___eval(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop::eval_step()<sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+++++TOP<sp/>Evaluate<sp/>Vtop::eval_step\n&quot;</highlight><highlight class="normal">);<sp/>);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>VL_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Debug<sp/>assertions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>Vtop___024root___eval_debug_assertions(&amp;(vlSymsp-&gt;TOP));</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="comment">//<sp/>VL_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>vlSymsp-&gt;<ref refid="classVtop____Syms_1a43bf9072b6f4245fb43f984ac44f6a08" kindref="member">__Vm_activity</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(VL_UNLIKELY(!vlSymsp-&gt;__Vm_didInit))<sp/>{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vlSymsp-&gt;__Vm_didInit<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+<sp/>Initial\n&quot;</highlight><highlight class="normal">););</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Vtop___024root___eval_static(&amp;(vlSymsp-&gt;TOP));</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Vtop___024root___eval_initial(&amp;(vlSymsp-&gt;TOP));</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Vtop___024root___eval_settle(&amp;(vlSymsp-&gt;TOP));</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>MTask<sp/>0<sp/>start</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;MTask0<sp/>starting\n&quot;</highlight><highlight class="normal">););</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>Verilated::mtaskId(0);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+<sp/>Eval\n&quot;</highlight><highlight class="normal">););</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>Vtop___024root___eval(&amp;(vlSymsp-&gt;TOP));</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Evaluate<sp/>cleanup</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>Verilated::endOfThreadMTask(vlSymsp-&gt;__Vm_evalMsgQp);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>Verilated::endOfEval(vlSymsp-&gt;__Vm_evalMsgQp);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop::eval_end_step()<sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>VL_DEBUG_IF(VL_DBG_MSGF(</highlight><highlight class="stringliteral">&quot;+eval_end_step<sp/>Vtop::eval_end_step\n&quot;</highlight><highlight class="normal">);<sp/>);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>VM_TRACE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Tracing</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(VL_UNLIKELY(vlSymsp-&gt;__Vm_dumping))<sp/>vlSymsp-&gt;_traceDump();</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="comment">//<sp/>VM_TRACE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//============================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Events<sp/>and<sp/>timing</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Vtop::eventsPending()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!vlSymsp-&gt;TOP.__VdlySched.empty();<sp/>}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal">uint64_t<sp/>Vtop::nextTimeSlot()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>vlSymsp-&gt;TOP.__VdlySched.nextTimeSlot();<sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//============================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Utilities</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Vtop::name()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>vlSymsp-&gt;name();</highlight></codeline>
+<codeline lineno="93"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">//============================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Invoke<sp/>final<sp/>blocks</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root___eval_final(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop::final()<sp/>{</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>Vtop___024root___eval_final(&amp;(vlSymsp-&gt;TOP));</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//============================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Implementations<sp/>of<sp/>abstract<sp/>methods<sp/>from<sp/>VerilatedModel</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Vtop::hierName()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>vlSymsp-&gt;name();<sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Vtop::modelName()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;Vtop&quot;</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/>Vtop::threads()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1;<sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal">std::unique_ptr&lt;VerilatedTraceConfig&gt;<sp/>Vtop::traceConfig()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::unique_ptr&lt;VerilatedTraceConfig&gt;{</highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>VerilatedTraceConfig{</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">}};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="comment">//============================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Trace<sp/>configuration</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_init_top(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf,<sp/>VerilatedVcd*<sp/>tracep);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>trace_init(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>voidSelf,<sp/>VerilatedVcd*<sp/>tracep,<sp/>uint32_t<sp/>code)<sp/>{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Callback<sp/>from<sp/>tracep-&gt;open()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>__restrict<sp/>vlSelf<sp/>VL_ATTR_UNUSED<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(voidSelf);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classVtop____Syms" kindref="compound">Vtop__Syms</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>__restrict<sp/>vlSymsp<sp/>VL_ATTR_UNUSED<sp/>=<sp/>vlSelf-&gt;vlSymsp;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!vlSymsp-&gt;_vm_contextp__-&gt;calcUnusedSigs())<sp/>{</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>VL_FATAL_MT(__FILE__,<sp/>__LINE__,<sp/>__FILE__,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Turning<sp/>on<sp/>wave<sp/>traces<sp/>requires<sp/>Verilated::traceEverOn(true)<sp/>call<sp/>before<sp/>time<sp/>0.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>vlSymsp-&gt;<ref refid="classVtop____Syms_1ae9e593ad5e18642270abefa435042500" kindref="member">__Vm_baseCode</ref><sp/>=<sp/>code;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;scopeEscape(</highlight><highlight class="charliteral">&apos;<sp/>&apos;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;pushNamePrefix(std::string{vlSymsp-&gt;name()}<sp/>+<sp/></highlight><highlight class="charliteral">&apos;<sp/>&apos;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>Vtop___024root__trace_init_top(vlSelf,<sp/>tracep);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;popNamePrefix();</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>tracep-&gt;scopeEscape(</highlight><highlight class="charliteral">&apos;.&apos;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop___024root__trace_register(<ref refid="classVtop______024root" kindref="compound">Vtop___024root</ref>*<sp/>vlSelf,<sp/>VerilatedVcd*<sp/>tracep);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal">VL_ATTR_COLD<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Vtop::trace(VerilatedVcdC*<sp/>tfp,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>levels,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>options)<sp/>{</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tfp-&gt;isOpen())<sp/>{</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vl_fatal(__FILE__,<sp/>__LINE__,<sp/>__FILE__,</highlight><highlight class="stringliteral">&quot;&apos;Vtop::trace()&apos;<sp/>shall<sp/>not<sp/>be<sp/>called<sp/>after<sp/>&apos;VerilatedVcdC::open()&apos;.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>&amp;&amp;<sp/>levels<sp/>&amp;&amp;<sp/>options)<sp/>{}<sp/><sp/></highlight><highlight class="comment">//<sp/>Prevent<sp/>unused</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>tfp-&gt;spTrace()-&gt;addModel(</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/>tfp-&gt;spTrace()-&gt;addInitCb(&amp;trace_init,<sp/>&amp;(vlSymsp-&gt;TOP));</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>Vtop___024root__trace_register(&amp;(vlSymsp-&gt;TOP),<sp/>tfp-&gt;spTrace());</highlight></codeline>
+<codeline lineno="145"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="titan/comms/verilog/tests/sim_build/Vtop.cpp"/>
+  </compounddef>
+</doxygen>

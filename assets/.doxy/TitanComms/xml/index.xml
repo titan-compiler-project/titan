@@ -1,0 +1,320 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.4" xml:lang="en-US">
+  <compound refid="classTitanComms" kind="class"><name>TitanComms</name>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12" kind="enum"><name>instruction</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a6a60c2fa34554069d72f2f53374c9887" kind="enumvalue"><name>NOP</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a5609ea2fa2fb21f34699429d315d81eb" kind="enumvalue"><name>WRITE</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12ae98b00d96f88535e4c8f94c956697920" kind="enumvalue"><name>READ</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12abf73267656c9d58380a1fea3aeacf52a" kind="enumvalue"><name>STREAM</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12acb04f6107a769cdd0c1f52d9e23ea429" kind="enumvalue"><name>BIND_INTERRUPT</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a8d2ce5f16d60580613a3913cdfd22257" kind="enumvalue"><name>BIND_READ_ADDRESS</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a8e777360adef7e7e22d27b23c0dcc6dc" kind="enumvalue"><name>BIND_WRITE_ADDRESS</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a43642cf6175b89ef28d075fca7dcb422" kind="enumvalue"><name>TRANSFER</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12a0a1fef49265e9b21b7b845e3eae03122" kind="enumvalue"><name>REPEAT</name></member>
+    <member refid="classTitanComms_1a7b8e92fad206ab2984392cef81873e12aba5150e33606b716107073cbbe8695d8" kind="enumvalue"><name>GET_METADATA</name></member>
+    <member refid="classTitanComms_1a14bd4d60abf1cbed85d7db856b576955" kind="variable"><name>_cs_pin</name></member>
+    <member refid="classTitanComms_1a50dad81da622b845720990919a8dbdb6" kind="variable"><name>_spi_settings</name></member>
+    <member refid="classTitanComms_1af4621aae6e6943c1842d8dd94158a0de" kind="function"><name>TitanComms</name></member>
+    <member refid="classTitanComms_1a10cc0ed240ba4c2e62a2acb59ac126a0" kind="function"><name>begin</name></member>
+    <member refid="classTitanComms_1a0c7dee7279317e11fcdc7a454124346d" kind="function"><name>read</name></member>
+    <member refid="classTitanComms_1a42207a40842d720a834c4551a7a4572c" kind="function"><name>write</name></member>
+    <member refid="classTitanComms_1a19ccfbfe6d2f1340b26fdf5e58025a6a" kind="function"><name>stream</name></member>
+    <member refid="classTitanComms_1a3f474762a9ebca7b46a8964514758e00" kind="function"><name>set_stream_write_address</name></member>
+    <member refid="classTitanComms_1afb57a5ecc908e49f9a0df0a99acb8605" kind="function"><name>set_stream_read_address</name></member>
+    <member refid="classTitanComms_1ab7bf6978e6c00a0ac74bdf2a92b950aa" kind="function"><name>bind_address</name></member>
+    <member refid="classTitanComms_1a35c5f63d957b19064c1d5a90ca7dc293" kind="function"><name>set_core_interrupt</name></member>
+    <member refid="classTitanComms_1a815a3d5ab4cbcfbed8712dfe612ce101" kind="function"><name>_nop_and_read8</name></member>
+    <member refid="classTitanComms_1a9c5376e38cb6216d77b8c687a14cc588" kind="function"><name>_nop_and_read16</name></member>
+    <member refid="classTitanComms_1a4510700c1f33a1ef332c0cddf06e40da" kind="function"><name>_repeat</name></member>
+    <member refid="classTitanComms_1a5f684c3b961a86a374857a1d43f2e4bd" kind="function"><name>_extract_byte_from_int</name></member>
+    <member refid="classTitanComms_1ab5e57f760292cb470d5d3ecdda3efff8" kind="function"><name>_chip_select</name></member>
+    <member refid="classTitanComms_1a50c0b10d649cd7880cdcc61770b13b0e" kind="function"><name>_chip_deselect</name></member>
+    <member refid="classTitanComms_1a1cc35a54ceb085cfc58f84408b4dd5ac" kind="function"><name>_xor_checksum</name></member>
+  </compound>
+  <compound refid="structTitanComms_1_1u__int24" kind="struct"><name>TitanComms::u_int24</name>
+    <member refid="structTitanComms_1_1u__int24_1a13aa50bbf2a0bbf162f3c4270caa9391" kind="variable"><name>data</name></member>
+  </compound>
+  <compound refid="classVL__NOT__FINAL" kind="class"><name>VL_NOT_FINAL</name>
+    <member refid="classVL__NOT__FINAL_1abb8ea188ff4e9a37a473f2ddff699143" kind="variable"><name>vlSymsp</name></member>
+    <member refid="classVL__NOT__FINAL_1af39be0772fe5ce3c30a04c980287d575" kind="variable"><name>sel_i</name></member>
+    <member refid="classVL__NOT__FINAL_1ac4058efe994f638a26cfba12daa5b779" kind="variable"><name>in1</name></member>
+    <member refid="classVL__NOT__FINAL_1ad1edd6951de50af940d4b07ef45d5a65" kind="variable"><name>in2</name></member>
+    <member refid="classVL__NOT__FINAL_1adbf9580a765e0111374bea9fd2088d57" kind="variable"><name>in3</name></member>
+    <member refid="classVL__NOT__FINAL_1abde7f0dabe427432e650fda5dd2264e6" kind="variable"><name>in4</name></member>
+    <member refid="classVL__NOT__FINAL_1aadb2baac1d614f0f580de6dcc8baa117" kind="variable"><name>mux_o</name></member>
+    <member refid="classVL__NOT__FINAL_1a89071d0b3f4ace0ab4e48f79d8f1bcdd" kind="variable"><name>rootp</name></member>
+    <member refid="classVL__NOT__FINAL_1a5b575b2f1bc01cff5da058ae5dcc80c5" kind="function"><name>Vtop</name></member>
+    <member refid="classVL__NOT__FINAL_1a012429f1fe31c8b6e1c3065110cef62a" kind="function"><name>Vtop</name></member>
+    <member refid="classVL__NOT__FINAL_1a27661fa334d42735e3da8b3166759c73" kind="function"><name>~Vtop</name></member>
+    <member refid="classVL__NOT__FINAL_1a710afbfa4354a5ad17828f0c26628644" kind="function"><name>eval</name></member>
+    <member refid="classVL__NOT__FINAL_1a157cea2583808135c9ffc9b7934e96bb" kind="function"><name>eval_step</name></member>
+    <member refid="classVL__NOT__FINAL_1a23a954cd42b0ac3d911459a91db71b94" kind="function"><name>eval_end_step</name></member>
+    <member refid="classVL__NOT__FINAL_1ab1e83aa2b8ae7a0549acce23391d2194" kind="function"><name>final</name></member>
+    <member refid="classVL__NOT__FINAL_1aa9e6a3e058ce233bd36360c95c2c3b75" kind="function"><name>eventsPending</name></member>
+    <member refid="classVL__NOT__FINAL_1a91a1a77360117f14543f9b5cdbfe2771" kind="function"><name>nextTimeSlot</name></member>
+    <member refid="classVL__NOT__FINAL_1a8ee5dc820670ef211a29d622851eac2b" kind="function"><name>trace</name></member>
+    <member refid="classVL__NOT__FINAL_1ab1d3305b0868ad77d472a6940e9cae32" kind="function"><name>name</name></member>
+    <member refid="classVL__NOT__FINAL_1a30b149d2620a96d0e5d0acf3d52a4362" kind="function"><name>hierName</name></member>
+    <member refid="classVL__NOT__FINAL_1aa0c9af2d137f897b7b89e6e8197b11c9" kind="function"><name>modelName</name></member>
+    <member refid="classVL__NOT__FINAL_1a62af342a38e81380336dadbff8598bfa" kind="function"><name>threads</name></member>
+    <member refid="classVL__NOT__FINAL_1acd7bd07deb4982a30bac6e2286cb8aba" kind="function"><name>traceConfig</name></member>
+    <member refid="classVL__NOT__FINAL_1a8c267eaed7c37e860d9bdef88687091b" kind="function"><name>VL_UNCOPYABLE</name></member>
+  </compound>
+  <compound refid="classVtop______024root" kind="class"><name>Vtop___024root</name>
+    <member refid="classVtop______024root_1a1e483e54f8ae1a1b18e12a1f9b9bec1f" kind="variable"><name>dut_param_mux__DOT__sel_i</name></member>
+    <member refid="classVtop______024root_1a36ea136dda02d3c9d304f23d7fd866a9" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__selector</name></member>
+    <member refid="classVtop______024root_1a18752d021313f71b0749cc5306032273" kind="variable"><name>__VactContinue</name></member>
+    <member refid="classVtop______024root_1a900e65164e026310cdd27f405a70fbfe" kind="variable"><name>dut_param_mux__DOT__in1</name></member>
+    <member refid="classVtop______024root_1ad1e580afc0b02ec19d464ca5d4707cde" kind="variable"><name>dut_param_mux__DOT__in2</name></member>
+    <member refid="classVtop______024root_1ac6b0d22a357cda92ac67952bda6c2b66" kind="variable"><name>dut_param_mux__DOT__in3</name></member>
+    <member refid="classVtop______024root_1aa01ea79a68da9a9e6371bff0785ab927" kind="variable"><name>dut_param_mux__DOT__in4</name></member>
+    <member refid="classVtop______024root_1ad6a1e482d56b02c5b1ca54f280038c9e" kind="variable"><name>dut_param_mux__DOT__mux_o</name></member>
+    <member refid="classVtop______024root_1a498716643a5897fd97e7126fa00b2e6b" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__out</name></member>
+    <member refid="classVtop______024root_1a34cafbb5cf86fb84b1ed032ac50b8911" kind="variable"><name>__VstlIterCount</name></member>
+    <member refid="classVtop______024root_1ae7bef2d7766938e0af58c949ed258165" kind="variable"><name>__VicoIterCount</name></member>
+    <member refid="classVtop______024root_1a455899ed300bc5e2cd07e2f5668b04ec" kind="variable"><name>__VactIterCount</name></member>
+    <member refid="classVtop______024root_1a03f73bddcb97cde4fc110a9e6e2cecb8" kind="variable"><name>dut_param_mux__DOT____Vcellinp__uut_pmux__inputs</name></member>
+    <member refid="classVtop______024root_1ab99a487956630e6aef5660de098cd841" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__inputs</name></member>
+    <member refid="classVtop______024root_1acfd22cb3e16e408b0ea68647fdbd57ff" kind="variable"><name>__VdlySched</name></member>
+    <member refid="classVtop______024root_1a239eb59b0ad0b56e9e9142966ea44774" kind="variable"><name>__VstlTriggered</name></member>
+    <member refid="classVtop______024root_1a47734fb92b1159edaf007bbfff0ea907" kind="variable"><name>__VicoTriggered</name></member>
+    <member refid="classVtop______024root_1a03041095d270dae431fbc627c8423a10" kind="variable"><name>__VactTriggered</name></member>
+    <member refid="classVtop______024root_1a25b6a73ae38c3da085518d5ce0b7cd2d" kind="variable"><name>__VnbaTriggered</name></member>
+    <member refid="classVtop______024root_1a5a67d5199b9040cf3a5f07187d3e2ecc" kind="variable"><name>vlSymsp</name></member>
+    <member refid="classVtop______024root_1ab736333807d3c06f255f6f5d64606d91" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__INPUT_WIDTH</name></member>
+    <member refid="classVtop______024root_1a95820de3ff9590a9d20a9d4a42ef939d" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__SELECTOR_WIDTH</name></member>
+    <member refid="classVtop______024root_1a8f0fc59b344a50b8a8c9c814c8abc23b" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__SIGNAL_COUNT</name></member>
+    <member refid="classVtop______024root_1ac1691daec37fbd8d70209f021b1f1978" kind="function"><name>VL_IN8</name></member>
+    <member refid="classVtop______024root_1afdc5b6b54f7f9d0d51a37bcb63c9e1a7" kind="function"><name>VL_IN</name></member>
+    <member refid="classVtop______024root_1ac73ec3a0584b54eb5ef51fce7a669672" kind="function"><name>VL_IN</name></member>
+    <member refid="classVtop______024root_1ab48bf2fe2739102defa2528f268a9c35" kind="function"><name>VL_IN</name></member>
+    <member refid="classVtop______024root_1ab638a96c221f1b0b529a3dbfdb0a2250" kind="function"><name>VL_IN</name></member>
+    <member refid="classVtop______024root_1aa08cbf4362d2f38be3d176d7e4bb28a6" kind="function"><name>VL_OUT</name></member>
+    <member refid="classVtop______024root_1af1657f16942dc0691bd5fc5a782130c4" kind="function"><name>Vtop___024root</name></member>
+    <member refid="classVtop______024root_1a0c566481190f2d8fad69133720452e8b" kind="function"><name>~Vtop___024root</name></member>
+    <member refid="classVtop______024root_1a7e44ef638626803b624a5f95f3bf977e" kind="function"><name>VL_UNCOPYABLE</name></member>
+    <member refid="classVtop______024root_1ac89b61652c15cc46a46a4a8ecde79001" kind="function"><name>__Vconfigure</name></member>
+  </compound>
+  <compound refid="classVtop______024unit" kind="class"><name>Vtop___024unit</name>
+    <member refid="classVtop______024unit_1a7475439cfbeb1882cebe539de1cbff15" kind="variable"><name>vlSymsp</name></member>
+    <member refid="classVtop______024unit_1a48a87ce1572a2dab8147bfb9c5d9b821" kind="function"><name>Vtop___024unit</name></member>
+    <member refid="classVtop______024unit_1a07387103e37a203ed6055d17969fa4de" kind="function"><name>~Vtop___024unit</name></member>
+    <member refid="classVtop______024unit_1a9a0faa602ff47de2761a3b8407eef699" kind="function"><name>VL_UNCOPYABLE</name></member>
+    <member refid="classVtop______024unit_1ad677bfa5b5ef0b700892a57022940d81" kind="function"><name>__Vconfigure</name></member>
+  </compound>
+  <compound refid="classVtop____Syms" kind="class"><name>Vtop__Syms</name>
+    <member refid="classVtop____Syms_1a7d127322e6cbfa73c7d04eef843a8a96" kind="variable"><name>__Vm_modelp</name></member>
+    <member refid="classVtop____Syms_1a07021a6312f65f763c6e7bc8b67061fc" kind="variable"><name>__Vm_dumping</name></member>
+    <member refid="classVtop____Syms_1a1066235196eccbb7bcff0891d2c77d52" kind="variable"><name>__Vm_dumperMutex</name></member>
+    <member refid="classVtop____Syms_1a43bf9072b6f4245fb43f984ac44f6a08" kind="variable"><name>__Vm_activity</name></member>
+    <member refid="classVtop____Syms_1ae9e593ad5e18642270abefa435042500" kind="variable"><name>__Vm_baseCode</name></member>
+    <member refid="classVtop____Syms_1a18cd61353560fe92c1cde67c50f69e4c" kind="variable"><name>__Vm_didInit</name></member>
+    <member refid="classVtop____Syms_1a954e51ce489b87885f739f34a8fd709a" kind="variable"><name>TOP</name></member>
+    <member refid="classVtop____Syms_1ac63c7e368831e11c42c3e148b092d30b" kind="variable"><name>__Vscope_TOP</name></member>
+    <member refid="classVtop____Syms_1a41e0e8946efff6c58b1bfec91e417d26" kind="variable"><name>__Vscope_dut_param_mux</name></member>
+    <member refid="classVtop____Syms_1a8971e3c62c2b0bcefbe9ee05863796fa" kind="variable"><name>__Vscope_dut_param_mux__uut_pmux</name></member>
+    <member refid="classVtop____Syms_1ab4e9417ad88a5eee998dea2d009c9240" kind="variable"><name>__Vhier</name></member>
+    <member refid="classVtop____Syms_1a9db75def207c2e1fba993fa8b5f3738e" kind="function"><name>VL_GUARDED_BY</name></member>
+    <member refid="classVtop____Syms_1a991aff55e85919c415e2b5eb24917df6" kind="function"><name>Vtop__Syms</name></member>
+    <member refid="classVtop____Syms_1a0024d7cbc8b0286f69a17f0de444861b" kind="function"><name>~Vtop__Syms</name></member>
+    <member refid="classVtop____Syms_1ac2a731193172eda008469345de8798eb" kind="function"><name>name</name></member>
+    <member refid="classVtop____Syms_1a13921971cc60323b33bd13f59b40947c" kind="function"><name>_traceDump</name></member>
+    <member refid="classVtop____Syms_1ab0d950ceb1db4da2942683d907a8439d" kind="function"><name>_traceDumpOpen</name></member>
+    <member refid="classVtop____Syms_1a83e4c0b29fd7e75443a3b7db7748d73b" kind="function"><name>_traceDumpClose</name></member>
+  </compound>
+  <compound refid="TitanComms_8cpp" kind="file"><name>TitanComms.cpp</name>
+    <member refid="TitanComms_8cpp_1ad72dbcf6d0153db1b8d8a58001feed83" kind="define"><name>DEBUG</name></member>
+  </compound>
+  <compound refid="TitanComms_8h" kind="file"><name>TitanComms.h</name>
+  </compound>
+  <compound refid="TitanCommsDebug_8h" kind="file"><name>TitanCommsDebug.h</name>
+    <member refid="TitanCommsDebug_8h_1af6551f0b4c3964c3128f808e7bf987c7" kind="define"><name>DEBUG_PRINT</name></member>
+    <member refid="TitanCommsDebug_8h_1aeed73e46c48b69567242c3065861ce5e" kind="define"><name>DEBUG_PRINT_STR</name></member>
+    <member refid="TitanCommsDebug_8h_1a19e5168be3b06597c69033f1077b770c" kind="define"><name>DEBUG_PRINTLN</name></member>
+    <member refid="TitanCommsDebug_8h_1a86970af65289e7b09aa653658673022c" kind="define"><name>DEBUG_PRINTLN_STR</name></member>
+    <member refid="TitanCommsDebug_8h_1a5b3908be5ec2679054120779fa49fb84" kind="define"><name>DEBUG_PRINT_HEX</name></member>
+    <member refid="TitanCommsDebug_8h_1a4ba90737a174cfa716f877b95156a41a" kind="define"><name>DEBUG_PRINT_INT</name></member>
+    <member refid="TitanCommsDebug_8h_1a0b4b9b8583f8b361db4076f2c1a4bc0f" kind="define"><name>DEBUG_PRINT_BIN</name></member>
+    <member refid="TitanCommsDebug_8h_1a5d62f1969242035c7ce23f5c24725530" kind="define"><name>DEBUG_PRINT_SIZEOF</name></member>
+  </compound>
+  <compound refid="Vtop_8cpp" kind="file"><name>Vtop.cpp</name>
+    <member refid="Vtop_8cpp_1a8bc012b8eefe7323e2fadc13e74bb14a" kind="function"><name>Vtop___024root___eval_static</name></member>
+    <member refid="Vtop_8cpp_1a65c0abf5a6e3043164c4e8a904b4bc35" kind="function"><name>Vtop___024root___eval_initial</name></member>
+    <member refid="Vtop_8cpp_1aaba5bd747a6e48dfe2395c055b3e9c27" kind="function"><name>Vtop___024root___eval_settle</name></member>
+    <member refid="Vtop_8cpp_1a8d33b227a94867ce857d7af0ac8d8722" kind="function"><name>Vtop___024root___eval</name></member>
+    <member refid="Vtop_8cpp_1a7d7e1c36883409e84c142cf9d1843ac5" kind="function"><name>Vtop___024root___eval_final</name></member>
+    <member refid="Vtop_8cpp_1ab6974385e7b04f6090b3f82a20a3d409" kind="function"><name>Vtop___024root__trace_init_top</name></member>
+    <member refid="Vtop_8cpp_1a2643b3cbcc155e6195ee3827dffff137" kind="function"><name>trace_init</name></member>
+    <member refid="Vtop_8cpp_1a3f83c6882c3fe94d3c8ef38c70e60110" kind="function"><name>Vtop___024root__trace_register</name></member>
+  </compound>
+  <compound refid="Vtop_8h" kind="file"><name>Vtop.h</name>
+    <member refid="Vtop_8h_1a85c45a2272f4b3603a885b500c254a96" kind="define"><name>VERILATED_VTOP_H_</name></member>
+    <member refid="Vtop_8h_1a75d02fdd32e22f33749cee867d6c08d5" kind="variable"><name>vlSymsp</name></member>
+    <member refid="Vtop_8h_1ab87d8e0fd105220adfdcb44d3f1381e3" kind="variable"><name>sel_i</name></member>
+    <member refid="Vtop_8h_1ab7698cd379305dc481d43e7e02bfb376" kind="variable"><name>in1</name></member>
+    <member refid="Vtop_8h_1aa6db460557f28aa97000e5ea930e2570" kind="variable"><name>in2</name></member>
+    <member refid="Vtop_8h_1ad2f00104da70919ee66d98a8e5b441eb" kind="variable"><name>in3</name></member>
+    <member refid="Vtop_8h_1a7efcbea94a1094a2269a1e760419f2e1" kind="variable"><name>in4</name></member>
+    <member refid="Vtop_8h_1a355b5b6aafed74e4861dff1459358567" kind="variable"><name>mux_o</name></member>
+    <member refid="Vtop_8h_1a3de4cbaebec6ac35249e5630e3ddd388" kind="variable"><name>rootp</name></member>
+    <member refid="Vtop_8h_1a93d9e2379f0ca10d7342647f4ded2e0e" kind="function"><name>VL_ATTR_ALIGNED</name></member>
+    <member refid="Vtop_8h_1a149dbd753b75d0ade0291e53c3c9e0f4" kind="function"><name>Vtop</name></member>
+    <member refid="Vtop_8h_1a4c27e047cb25ec06acdc1507ae582aa4" kind="function"><name>Vtop</name></member>
+    <member refid="Vtop_8h_1a38e86dac819ff8ac42c7aca083a6abeb" kind="function"><name>~Vtop</name></member>
+    <member refid="Vtop_8h_1af71f8828d217fa8f5330047a6455ed21" kind="function"><name>VL_UNCOPYABLE</name></member>
+    <member refid="Vtop_8h_1a675ed06c959be000dccdf115b463e4d9" kind="function"><name>eval</name></member>
+    <member refid="Vtop_8h_1a7949ec32ab91f21585a2dbbe37df5b21" kind="function"><name>eval_step</name></member>
+    <member refid="Vtop_8h_1a034462b9a649e39d996ce190a2b9571c" kind="function"><name>eval_end_step</name></member>
+    <member refid="Vtop_8h_1af9a39e594db0c77afb2a10410ae9586a" kind="function"><name>final</name></member>
+    <member refid="Vtop_8h_1ac2482ba89b3dce3a340db35fe486dbbc" kind="function"><name>eventsPending</name></member>
+    <member refid="Vtop_8h_1aa20160a8105a4a5e23f1edc423ff9c5b" kind="function"><name>nextTimeSlot</name></member>
+    <member refid="Vtop_8h_1a9003078d56517fbd2d1187f5f19ed78d" kind="function"><name>trace</name></member>
+    <member refid="Vtop_8h_1ae007bb9cd9890eb19e96891444d822a7" kind="function"><name>name</name></member>
+    <member refid="Vtop_8h_1a0f388acb54cbac50f48675785d128e1f" kind="function"><name>hierName</name></member>
+    <member refid="Vtop_8h_1a4d9a5a8c5e5e365f124cb4b6b2421709" kind="function"><name>modelName</name></member>
+    <member refid="Vtop_8h_1a7ba7ef1a704b4bc742b48290c5b88f8e" kind="function"><name>threads</name></member>
+    <member refid="Vtop_8h_1a1ab14b401951b0fbd1c6c84ebb020a50" kind="function"><name>traceConfig</name></member>
+  </compound>
+  <compound refid="Vtop______024root_8h" kind="file"><name>Vtop___024root.h</name>
+    <member refid="Vtop______024root_8h_1a1f1505c3eab503e12cabc30dd9f9e385" kind="define"><name>VERILATED_VTOP___024ROOT_H_</name></member>
+    <member refid="Vtop______024root_8h_1a42ec3d959402eb175f811984a02b20e4" kind="variable"><name>dut_param_mux__DOT__sel_i</name></member>
+    <member refid="Vtop______024root_8h_1a0c18a12ee3dc4a6adc82e32dc72f1743" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__selector</name></member>
+    <member refid="Vtop______024root_8h_1a81799916d595317709746054c464247c" kind="variable"><name>__VactContinue</name></member>
+    <member refid="Vtop______024root_8h_1ac3a6d20a57638b4554a1b6ad92b88d53" kind="variable"><name>dut_param_mux__DOT__in1</name></member>
+    <member refid="Vtop______024root_8h_1a2b97e78d141be754c474308e133f7710" kind="variable"><name>dut_param_mux__DOT__in2</name></member>
+    <member refid="Vtop______024root_8h_1a951ebbd9e4146ae90c58f435c3754671" kind="variable"><name>dut_param_mux__DOT__in3</name></member>
+    <member refid="Vtop______024root_8h_1a37df93cb99ccf93a63e380d4dac0110e" kind="variable"><name>dut_param_mux__DOT__in4</name></member>
+    <member refid="Vtop______024root_8h_1ad0b4d5c44b393d1f88504e3bb592d9e8" kind="variable"><name>dut_param_mux__DOT__mux_o</name></member>
+    <member refid="Vtop______024root_8h_1aff70413802e0ebae81490e27bdb33d44" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__out</name></member>
+    <member refid="Vtop______024root_8h_1aca467322aec16be395c18e8e555cfb81" kind="variable"><name>__VstlIterCount</name></member>
+    <member refid="Vtop______024root_8h_1ac37c18e513a70f16389f8b3c0dc131bd" kind="variable"><name>__VicoIterCount</name></member>
+    <member refid="Vtop______024root_8h_1abd032326b89956ee7ea9829c65b07387" kind="variable"><name>__VactIterCount</name></member>
+    <member refid="Vtop______024root_8h_1ac3264ceeb926f00ae9e7d94b5e5bf679" kind="variable"><name>dut_param_mux__DOT____Vcellinp__uut_pmux__inputs</name></member>
+    <member refid="Vtop______024root_8h_1af4dd5b3b05e46c53300be048f6b2aac0" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__inputs</name></member>
+    <member refid="Vtop______024root_8h_1aade34b4c993a7467f52988216e1e3c77" kind="variable"><name>__VdlySched</name></member>
+    <member refid="Vtop______024root_8h_1aa0d99b8ccb35d15dbab85e899f4d2700" kind="variable"><name>__VstlTriggered</name></member>
+    <member refid="Vtop______024root_8h_1aa75a79fc1286e0deea7e2805bb0cffa1" kind="variable"><name>__VicoTriggered</name></member>
+    <member refid="Vtop______024root_8h_1a322bcc180b94277fa5a1df297b1dd598" kind="variable"><name>__VactTriggered</name></member>
+    <member refid="Vtop______024root_8h_1a4e00d6d197f955fa085ced688d5b6b7d" kind="variable"><name>__VnbaTriggered</name></member>
+    <member refid="Vtop______024root_8h_1a75d02fdd32e22f33749cee867d6c08d5" kind="variable"><name>vlSymsp</name></member>
+    <member refid="Vtop______024root_8h_1a4e0873fb550bc6fd76cd7f8526eb1e03" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__INPUT_WIDTH</name></member>
+    <member refid="Vtop______024root_8h_1a34e11f0e689cc1c90979c59bc274211f" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__SELECTOR_WIDTH</name></member>
+    <member refid="Vtop______024root_8h_1a33c405af423f7f2c1548614d16a10aa6" kind="variable"><name>dut_param_mux__DOT__uut_pmux__DOT__SIGNAL_COUNT</name></member>
+    <member refid="Vtop______024root_8h_1a658b6ca15bfd92e7c6100bd80ec5c0a6" kind="function"><name>VL_ATTR_ALIGNED</name></member>
+    <member refid="Vtop______024root_8h_1a05006a711fbb8a65ab1c40afc85785af" kind="function"><name>VL_IN8</name></member>
+    <member refid="Vtop______024root_8h_1aeeced38eeb43c86b05b15762af4d669c" kind="function"><name>VL_IN</name></member>
+    <member refid="Vtop______024root_8h_1ac7fa29610e8731801e59eedee807cf71" kind="function"><name>VL_IN</name></member>
+    <member refid="Vtop______024root_8h_1a9bfaa9623b80ca94842fabb173c5e229" kind="function"><name>VL_IN</name></member>
+    <member refid="Vtop______024root_8h_1a17a89cf886a608ae428a7ded80a7b105" kind="function"><name>VL_IN</name></member>
+    <member refid="Vtop______024root_8h_1a7c3686020f4190627f843ed58f75393d" kind="function"><name>VL_OUT</name></member>
+    <member refid="Vtop______024root_8h_1a8de38b2ea45176a5d9b5272d39f96a1d" kind="function"><name>Vtop___024root</name></member>
+    <member refid="Vtop______024root_8h_1afe8b66d9cb9b406da60e4f46cf8a6ce7" kind="function"><name>~Vtop___024root</name></member>
+    <member refid="Vtop______024root_8h_1a510866a5cb5a685d4cb407ba7aa205be" kind="function"><name>VL_UNCOPYABLE</name></member>
+    <member refid="Vtop______024root_8h_1ad086ebdddf11126ec12102b05fd45a69" kind="function"><name>__Vconfigure</name></member>
+  </compound>
+  <compound refid="Vtop______024root____DepSet__h84412442____0_8cpp" kind="file"><name>Vtop___024root__DepSet_h84412442__0.cpp</name>
+    <member refid="Vtop______024root____DepSet__h84412442____0_8cpp_1a5416d4e24fb00cf8b580756c873fb9fe" kind="function"><name>Vtop___024root___eval_initial__TOP__0</name></member>
+    <member refid="Vtop______024root____DepSet__h84412442____0_8cpp_1a6d1d260eb58a8d4ca201641c569238e3" kind="function"><name>Vtop___024root___eval_triggers__ico</name></member>
+    <member refid="Vtop______024root____DepSet__h84412442____0_8cpp_1ad6c4d80d009bd064b4ec94ed0eccad18" kind="function"><name>Vtop___024root___eval_triggers__act</name></member>
+  </compound>
+  <compound refid="Vtop______024root____DepSet__h84412442____0____Slow_8cpp" kind="file"><name>Vtop___024root__DepSet_h84412442__0__Slow.cpp</name>
+    <member refid="Vtop______024root____DepSet__h84412442____0____Slow_8cpp_1a1bce4607921c6e420f7bb0a99ad40369" kind="function"><name>Vtop___024root___eval_triggers__stl</name></member>
+  </compound>
+  <compound refid="Vtop______024root____DepSet__heccd7ead____0_8cpp" kind="file"><name>Vtop___024root__DepSet_heccd7ead__0.cpp</name>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1a53a43bfd60a72c5c00d5c053abedd74d" kind="function"><name>Vtop___024root___eval_initial__TOP__0</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1a65c0abf5a6e3043164c4e8a904b4bc35" kind="function"><name>Vtop___024root___eval_initial</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1a9f8990c2b3818aadbd186ba9c809f348" kind="function"><name>Vtop___024root___ico_sequent__TOP__0</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1a0161863568c71f76c42c712f42eb580b" kind="function"><name>Vtop___024root___eval_ico</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1a0744aa7af37385d512cb574a94bc2aba" kind="function"><name>Vtop___024root___eval_act</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1ac169b013bb48a9226f587cb5e880ed4e" kind="function"><name>Vtop___024root___eval_nba</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1a6d1d260eb58a8d4ca201641c569238e3" kind="function"><name>Vtop___024root___eval_triggers__ico</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1ad6c4d80d009bd064b4ec94ed0eccad18" kind="function"><name>Vtop___024root___eval_triggers__act</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1ae0a2ed4bf5a90b4d950c09b3770bfc72" kind="function"><name>Vtop___024root___timing_resume</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0_8cpp_1a8d33b227a94867ce857d7af0ac8d8722" kind="function"><name>Vtop___024root___eval</name></member>
+  </compound>
+  <compound refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp" kind="file"><name>Vtop___024root__DepSet_heccd7ead__0__Slow.cpp</name>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp_1a53ed4dbf2e79b940b48d601da1f152e4" kind="function"><name>Vtop___024root___eval_static</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp_1ad0654430f58d2c0c434d09389ed467e6" kind="function"><name>Vtop___024root___eval_final</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp_1a1bce4607921c6e420f7bb0a99ad40369" kind="function"><name>Vtop___024root___eval_triggers__stl</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp_1afdb1871c1bf4663c6e28537d8a695099" kind="function"><name>Vtop___024root___eval_stl</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp_1a65e2bc06cf9bcee874f207c91dc9f140" kind="function"><name>Vtop___024root___eval_settle</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp_1aec32a515cc0af6e29ff58dd2611cfc68" kind="function"><name>Vtop___024root___ico_sequent__TOP__0</name></member>
+    <member refid="Vtop______024root____DepSet__heccd7ead____0____Slow_8cpp_1a971eac50bc5bf16778de9314a4562028" kind="function"><name>Vtop___024root___ctor_var_reset</name></member>
+  </compound>
+  <compound refid="Vtop______024root____Slow_8cpp" kind="file"><name>Vtop___024root__Slow.cpp</name>
+    <member refid="Vtop______024root____Slow_8cpp_1a271289c2c2cd50d634f60bc1213b07e1" kind="function"><name>Vtop___024root___ctor_var_reset</name></member>
+  </compound>
+  <compound refid="Vtop______024unit_8h" kind="file"><name>Vtop___024unit.h</name>
+    <member refid="Vtop______024unit_8h_1af50d2b7a3474daf9da731ae5ef058749" kind="define"><name>VERILATED_VTOP___024UNIT_H_</name></member>
+    <member refid="Vtop______024unit_8h_1a75d02fdd32e22f33749cee867d6c08d5" kind="variable"><name>vlSymsp</name></member>
+    <member refid="Vtop______024unit_8h_1a35e24707e2688f459b222cfab9b3f2c1" kind="function"><name>VL_ATTR_ALIGNED</name></member>
+    <member refid="Vtop______024unit_8h_1ab5c95340c8b0ce11bc429763abbdedcc" kind="function"><name>Vtop___024unit</name></member>
+    <member refid="Vtop______024unit_8h_1a7130417729726b8c1599bbb17214eefc" kind="function"><name>~Vtop___024unit</name></member>
+    <member refid="Vtop______024unit_8h_1aed95cb1c3b58ffb49d979697c345c77d" kind="function"><name>VL_UNCOPYABLE</name></member>
+    <member refid="Vtop______024unit_8h_1ad086ebdddf11126ec12102b05fd45a69" kind="function"><name>__Vconfigure</name></member>
+  </compound>
+  <compound refid="Vtop______024unit____DepSet__hff17caec____0____Slow_8cpp" kind="file"><name>Vtop___024unit__DepSet_hff17caec__0__Slow.cpp</name>
+    <member refid="Vtop______024unit____DepSet__hff17caec____0____Slow_8cpp_1a10b0f4b87596eed122b5ec6f1d030031" kind="function"><name>Vtop___024unit___ctor_var_reset</name></member>
+  </compound>
+  <compound refid="Vtop______024unit____Slow_8cpp" kind="file"><name>Vtop___024unit__Slow.cpp</name>
+    <member refid="Vtop______024unit____Slow_8cpp_1a9e021e2c65ff32eba6bbd6b1faf7d732" kind="function"><name>Vtop___024unit___ctor_var_reset</name></member>
+  </compound>
+  <compound refid="Vtop____ALL_8cpp" kind="file"><name>Vtop__ALL.cpp</name>
+    <member refid="Vtop____ALL_8cpp_1aaed3d2b62f3395a4ddd69bc6beb7a35b" kind="define"><name>VL_INCLUDE_OPT</name></member>
+  </compound>
+  <compound refid="Vtop____Dpi_8cpp" kind="file"><name>Vtop__Dpi.cpp</name>
+  </compound>
+  <compound refid="Vtop____Dpi_8h" kind="file"><name>Vtop__Dpi.h</name>
+    <member refid="Vtop____Dpi_8h_1a8dc5a768484508f3a9ea6d01a459cf62" kind="define"><name>VERILATED_VTOP__DPI_H_</name></member>
+  </compound>
+  <compound refid="Vtop____Syms_8cpp" kind="file"><name>Vtop__Syms.cpp</name>
+  </compound>
+  <compound refid="Vtop____Syms_8h" kind="file"><name>Vtop__Syms.h</name>
+    <member refid="Vtop____Syms_8h_1a4fa242d7c54a1c1b8c53e03f065d4fdc" kind="define"><name>VERILATED_VTOP__SYMS_H_</name></member>
+    <member refid="Vtop____Syms_8h_1aa2637e1e6cef214a55ae55d94f754be6" kind="variable"><name>__Vm_modelp</name></member>
+    <member refid="Vtop____Syms_8h_1a16f17aabf93e9f963b833ea83090391e" kind="variable"><name>__Vm_dumping</name></member>
+    <member refid="Vtop____Syms_8h_1aff6d27e674fbce5956e33d4cc6538ffa" kind="variable"><name>__Vm_dumperMutex</name></member>
+    <member refid="Vtop____Syms_8h_1a31fa86f1b5babbcc85e4b7444425d757" kind="variable"><name>__Vm_activity</name></member>
+    <member refid="Vtop____Syms_8h_1a48057b5f63cbfa94670af4d13b208621" kind="variable"><name>__Vm_baseCode</name></member>
+    <member refid="Vtop____Syms_8h_1abc9ba8d82211ddbbc90232fe4165ae27" kind="variable"><name>__Vm_didInit</name></member>
+    <member refid="Vtop____Syms_8h_1a84670e728304a5a9bc1837573ac68562" kind="variable"><name>TOP</name></member>
+    <member refid="Vtop____Syms_8h_1a65c5a08c9646e2b717d221a47a70bf72" kind="variable"><name>__Vscope_TOP</name></member>
+    <member refid="Vtop____Syms_8h_1ae93ddc7019da97565029952bb5b7787b" kind="variable"><name>__Vscope_dut_param_mux</name></member>
+    <member refid="Vtop____Syms_8h_1ae9c8a7ad47d61f45ca97d4312ab14d03" kind="variable"><name>__Vscope_dut_param_mux__uut_pmux</name></member>
+    <member refid="Vtop____Syms_8h_1abd1f71ca33127d09ede54da14a9a3136" kind="variable"><name>__Vhier</name></member>
+    <member refid="Vtop____Syms_8h_1af861e01ee92a7dc298fb5f562531c10a" kind="function"><name>VL_ATTR_ALIGNED</name></member>
+    <member refid="Vtop____Syms_8h_1a99dc5eeaefe6fb6f207450211a0bb273" kind="function"><name>VL_GUARDED_BY</name></member>
+    <member refid="Vtop____Syms_8h_1a713abcf7f581d610c1db0020644d396b" kind="function"><name>Vtop__Syms</name></member>
+    <member refid="Vtop____Syms_8h_1adaa11959975e5ef5e0d5ac1f30580330" kind="function"><name>~Vtop__Syms</name></member>
+    <member refid="Vtop____Syms_8h_1ac5f816419753bd1c34319d73b92378a4" kind="function"><name>name</name></member>
+    <member refid="Vtop____Syms_8h_1ada3023c3add1a40aaa18c58e14de4a80" kind="function"><name>_traceDump</name></member>
+    <member refid="Vtop____Syms_8h_1ac0f5b14085a505ca16e2d51312046edf" kind="function"><name>_traceDumpOpen</name></member>
+    <member refid="Vtop____Syms_8h_1aa06c97be1660128017c59ffbd7d57cf0" kind="function"><name>_traceDumpClose</name></member>
+  </compound>
+  <compound refid="Vtop____Trace____0_8cpp" kind="file"><name>Vtop__Trace__0.cpp</name>
+    <member refid="Vtop____Trace____0_8cpp_1a42830126ec21dc11cb35cc467e1903f4" kind="function"><name>Vtop___024root__trace_chg_sub_0</name></member>
+    <member refid="Vtop____Trace____0_8cpp_1a46ca7e9178c2452bec58d292f5eb3cd8" kind="function"><name>Vtop___024root__trace_chg_top_0</name></member>
+    <member refid="Vtop____Trace____0_8cpp_1ae4c4ba8438ab5a3bf376ccbd77496fcd" kind="function"><name>Vtop___024root__trace_cleanup</name></member>
+  </compound>
+  <compound refid="Vtop____Trace____0____Slow_8cpp" kind="file"><name>Vtop__Trace__0__Slow.cpp</name>
+    <member refid="Vtop____Trace____0____Slow_8cpp_1a21c62866a6566f3d9ba956ee670318c3" kind="function"><name>Vtop___024root__trace_init_sub__TOP__0</name></member>
+    <member refid="Vtop____Trace____0____Slow_8cpp_1adf9e0500bdee7601aa11f4f1801413c5" kind="function"><name>Vtop___024root__trace_init_top</name></member>
+    <member refid="Vtop____Trace____0____Slow_8cpp_1a5a971e2c4ff32b3e93a17ed14e23aa8f" kind="function"><name>Vtop___024root__trace_full_top_0</name></member>
+    <member refid="Vtop____Trace____0____Slow_8cpp_1a46ca7e9178c2452bec58d292f5eb3cd8" kind="function"><name>Vtop___024root__trace_chg_top_0</name></member>
+    <member refid="Vtop____Trace____0____Slow_8cpp_1ae4c4ba8438ab5a3bf376ccbd77496fcd" kind="function"><name>Vtop___024root__trace_cleanup</name></member>
+    <member refid="Vtop____Trace____0____Slow_8cpp_1a3f83c6882c3fe94d3c8ef38c70e60110" kind="function"><name>Vtop___024root__trace_register</name></member>
+    <member refid="Vtop____Trace____0____Slow_8cpp_1a0f62122aac5748bf39ada5724945f8c2" kind="function"><name>Vtop___024root__trace_full_sub_0</name></member>
+  </compound>
+  <compound refid="dir_15e9a61cbc095141a3f886f43eb6818f" kind="dir"><name>titan/comms</name>
+  </compound>
+  <compound refid="dir_816ed350c72cf5de8127e0b7e8b74e54" kind="dir"><name>titan/comms/verilog/tests/sim_build</name>
+  </compound>
+  <compound refid="dir_359bc3875cb3adaee3d3f269dbe0d6e4" kind="dir"><name>titan/comms/verilog/tests</name>
+  </compound>
+  <compound refid="dir_eedd3c7d49ee25ac76e1232870c4d0af" kind="dir"><name>titan</name>
+  </compound>
+  <compound refid="dir_5bea15bd51704c26ebfcf0ce33d5c553" kind="dir"><name>titan/comms/TitanComms</name>
+  </compound>
+  <compound refid="dir_549b42112f6dc36cf8af5f13bada3f17" kind="dir"><name>titan/comms/verilog</name>
+  </compound>
+</doxygenindex>
