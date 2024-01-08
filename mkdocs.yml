@@ -1,0 +1,69 @@
+site_name: Titan Compiler Project
+
+theme:
+  name: "material"
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to light mode
+
+plugins:
+- mkdocstrings
+- search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.superfences:
+      custom_fences:
+      - name: mermaid
+        class: mermaid
+        format: !!python/name:pymdownx.superfences.fence_code_format
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - abbr
+  - attr_list
+  - pymdownx.snippets
+    #  auto_append:
+      #  - includes/abbreviations.md
+  - md_in_html
+
+extra_css:
+  - extra/card_grid.css
+
+nav:
+  - Concept: "concept.md"
+    # - "Introduction": "concept/intro.md"
+  - User Guide:
+    - "Getting Started": "user-guide/getting-started.md"
+    - "Command Line Options Reference": "user-guide/cli-options.md"
+    - "Compiler":
+      - "Introduction" : "user-guide/compiler/intro.md"
+      - "Python to SPIR-V" : "user-guide/compiler/python-spirv.md"
+      - "SPIR-V to SystemVerilog" : "user-guide/compiler/spirv-systemverilog.md"
+    - "Communications": "user-guide/comms.md"
+    - "Synthesised Modules": "user-guide/synthesised-modules.md"
+  - Reference Docs:
+    - "Compiler":
+      - "common":
+        - "errors.py": "reference-docs/compiler/common/errors.md"
+        - "grammar.py": "reference-docs/compiler/common/grammar.md"
+        - "options.py": "reference-docs/compiler/common/options.md"
+        - "symbols.py": "reference-docs/compiler/common/symbols.md"
+        - "type.py": "reference-docs/compiler/common/type.md"
+
+      - "ast_crawl.py": "reference-docs/compiler/ast_crawl.md"
+      - "dataflow.py" : "reference-docs/compiler/dataflow.md"
+      - "generate.py" : "reference-docs/compiler/generate.md"
+      - "machine.py" : "reference-docs/compiler/machine.md"
+      - "main.py" : "reference-docs/compiler/main.md"
+      - "parse.py" : "reference-docs/compiler/parse.md"
+  - About: "about.md"
+  - License: "license.md"

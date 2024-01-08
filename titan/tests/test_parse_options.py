@@ -2,7 +2,7 @@ import pytest, sys, random, string
 from unittest.mock import patch
 
 from main import _parse_options
-from options import Options
+from common.options import Options
 from machine import Machine
 
 

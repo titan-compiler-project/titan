@@ -1,6 +1,6 @@
 import tokenize, machine, io
 from typing import NamedTuple
-from grammar import *
+from common.grammar import *
 import pyparsing as pp
 
 
@@ -94,7 +94,21 @@ def parse_processed_python(machine_object: machine.Machine):
 
 
 def parse_spriv(m: machine.Machine):
+    """ Reads SPIR-V and parses it using ``pyparsing``.
 
+        Slightly convoluted method since it does not read from a file, but rather
+        creates an IO object and gets used when reading the SPIR-V assembly from an
+        internal object.
+
+        TODO:
+            Fix function name typo.
+
+        Args:
+            Machine object containing SPIR-V object that contains the SPIR-V assembly code.
+
+        Returns:
+            Pyparsing parse result for SPIR-V assembly.
+    """
     # creates file in memory using what has already been generated
     with io.StringIO(m.SPIRV_asm_obj.create_file_as_string()) as x:
         # applies grammar

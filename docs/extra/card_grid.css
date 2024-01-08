@@ -1,0 +1,59 @@
+/* :root {
+    --icon-light-colour: #000;
+    --icon-dark-color: #ddd;
+
+} */
+
+[data-md-color-scheme="default"] {
+    --card-icon-colour: #000;
+    --border-colour: #000;
+    --card-link-colour: #666de6
+}
+
+[data-md-color-scheme="slate"] {
+    --card-icon-colour: #e4e4e4;
+    --border-colour: #ddd;
+    --card-link-colour: #666de6;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px; /* Adjust the gap between cards as needed */
+}
+
+.card {
+    display: inline;
+    border: 1px solid var(--border-colour);
+    border-radius: 5px;
+    padding: 15px;
+    /* text-align: center; */
+    margin: 2px;
+}
+
+.card h2 {
+    display: inline;
+    font-size: 24px;
+    padding-bottom: 10px;
+    margin: 0;
+}
+
+.card p {
+    /* display: inline; */
+    font-size: 16px;
+    margin: 10px 0;
+    padding-bottom: 10x;
+}
+
+.card i {
+    position: relative;
+    top: 1px;
+    display: inline;
+    font-size: 28px;
+    color: var(--card-icon-colour);
+    margin: 0 10px 0 0;
+}
+
+.card a {
+    color: var(--card-link-colour);
+}
