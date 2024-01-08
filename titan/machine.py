@@ -6,15 +6,19 @@ import common.type as type
 import dataflow as d
 from common.errors import TitanErrors
 from common.symbols import Operation, Operation_Type
+from common.options import Options
 from enum import Enum, auto
 from typing import NamedTuple, TypedDict, Union, List
 
 class Machine:
     """ Class that attempts to wrap the functionality/required components of the compiler."""
 
-    def __init__(self):
+    def __init__(self, args = None):
         """ Init function for Machine.
         
+            Args:
+                args: Arguments from the ``argparse`` library ``parse_args()`` method.
+
             Attributes:
                 options: List of options that the user provided via the CLI.
                 output_options: List of options that relate to the output of the compiler.
@@ -25,6 +29,8 @@ class Machine:
                 name_of_top_module: TODO
                 SPIRV_asm_obj: SPIR-V ASM generator object. (unused)
         """
+
+        self._args = args
         self.options = []   # parsed options (anything but output stuff)
         self.output_options = []    # parsed outputting options
         self.processed_text = []    # preprocessed python
@@ -33,6 +39,24 @@ class Machine:
         self.functions = []
         self.name_of_top_module = None
         self.SPIRV_asm_obj: SPIRV_ASM = None
+
+        self._legacy_arg_setter()
+
+    def _legacy_arg_setter(self):
+        """ Legacy method to set the arguments.
+        
+            I changed my mind about the original implementation,
+            so this is a slight work-around.
+        """
+
+        if self._args.top is not None:
+            self.options.append(Options.DEFINE_TOP_MODULE)
+            self.name_of_top_module = self._args.top
+
+        if self._args.asm:
+            self.output_options.append(Options.OUTPUT_SPIRV_ASM)
+
+        self.files.append(self._args.source_file)
 
 class Function:
     """ Object to represent a function."""
