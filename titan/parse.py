@@ -74,26 +74,26 @@ def preprocess(machine_object):
         machine_object.processed_text.append(joined_lines)
 
 # https://docs.python.org/3/library/typing.html
-def parse_processed_python(machine_object: machine.Machine):
+# def parse_processed_python(machine_object: machine.Machine):
 
-    for entry in machine_object.processed_text:
-        parse_result = TitanPythonGrammar.module.parse_string(entry)
-        machine_object.parsed_modules.append(parse_result)
-        # parse_result.pprint()
+#     for entry in machine_object.processed_text:
+#         parse_result = TitanPythonGrammar.module.parse_string(entry)
+#         machine_object.parsed_modules.append(parse_result)
+#         # parse_result.pprint()
 
-        for result in parse_result:
-            machine_object.functions.append(
-                machine.Function(
-                  name= result.function_name,
-                  params= result.function_param_list,
-                  body= result.function_statements,
-                  returns= result.function_returns,
-                  return_type= result.function_return_type
-                )
-            )
+#         for result in parse_result:
+#             machine_object.functions.append(
+#                 machine.Function(
+#                   name= result.function_name,
+#                   params= result.function_param_list,
+#                   body= result.function_statements,
+#                   returns= result.function_returns,
+#                   return_type= result.function_return_type
+#                 )
+#             )
 
 
-def parse_spriv(m: machine.Machine):
+def parse_spriv(m):
     """ Reads SPIR-V and parses it using ``pyparsing``.
 
         Slightly convoluted method since it does not read from a file, but rather

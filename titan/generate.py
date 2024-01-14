@@ -11,7 +11,7 @@ from common.errors import TitanErrors
 from typing import NamedTuple
 # from pyparsing import ParseResults
 
-def generate_spirv_asm(machine_object: m.Machine, symbol_table: s.SymbolTable):
+def generate_spirv_asm(machine_object, symbol_table: s.SymbolTable):
 
     # checking if we have a top module/entry point defined
     # TODO: package this up in another function
@@ -684,7 +684,7 @@ def _get_datatype_from_string(type_string):
             raise Exception(f"{TitanErrors.UNEXPECTED.value} unexpected type {type_string}", TitanErrors.UNEXPECTED.name)            
 
 
-def generate_symbols(machine_object: m.Machine, symbol_table: s.SymbolTable):
+def generate_symbols(machine_object, symbol_table: s.SymbolTable):
 
     for function in machine_object.functions:
         
