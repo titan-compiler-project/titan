@@ -485,7 +485,7 @@ class _SPIRVHelperGenerator():
 
             Args:
                 type: The type to add.
-                ID: The ID to associate with the type.
+                id: The ID to associate with the type.
 
             Returns:
                 type_id: The ID of the type.
