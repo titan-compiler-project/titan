@@ -277,6 +277,10 @@ class Verilog_ASM():
         BODY = auto()
         END = auto()
 
+    class Templates(Enum):
+        """ Enum to keep track of every file that needs to be updated when compiling the project. """
+        CORE_INTERFACE = auto()
+        TOP = auto()
 
     def __init__(self):
         """ Init function for Verilog_ASM.
@@ -294,6 +298,12 @@ class Verilog_ASM():
         self.declared_symbols = []
         self.marked_symbols_for_deletion = []
 
+
+        file_dump = lambda file_name : open(file_name).readlines()
+        self.templates = {
+            self.Templates.CORE_INTERFACE: file_dump("templates/verilog/core_interface.sv"),
+            self.Templates.TOP: file_dump("templates/verilog/top.sv")
+        }
 
     ## helper functions
     def _overwrite_body_nodes(self, fn_name, nodes):
