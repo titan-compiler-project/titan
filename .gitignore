@@ -11,6 +11,8 @@ yosys*.txt
 *.zip
 
 .docsvenv
+site
+compiler_log.txt
 
 # kicad
 # For PCBs designed using KiCad: https://www.kicad.org/
