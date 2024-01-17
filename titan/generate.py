@@ -481,7 +481,7 @@ def generate_verilog(parsed_spirv: pp.ParseResults):
                     )
 
                 # TODO: this might need to handle "OpShiftRightArithmetic"
-                case "OpShiftRightLogical":
+                case "ShiftRightLogical":
                     l = verilog.get_node(fn_name, line.opcode_args[1])
                     r = verilog.get_node(fn_name, line.opcode_args[2])
 
