@@ -10,7 +10,6 @@ from common.options import Options
 from enum import Enum, auto
 from typing import NamedTuple, TypedDict, Union, List
 
-# NOTE: unused
 class _VerilogTypeContext(NamedTuple):
     type: type.DataType = None
     data: list = []
