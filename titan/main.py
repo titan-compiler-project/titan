@@ -1,11 +1,8 @@
 import io, logging, datetime, argparse, os
-import machine, parse, generate, common.symbols as symbols
 
 from compiler.helper import CompilerContext
-
-import ast_crawl
-
-# py -3.10-64 main.py
+from compiler.spirv import SPIRVAssembler
+from compiler.verilog import VerilogAssember
 
 def main():
     """ Entry point for the program.
@@ -15,7 +12,7 @@ def main():
     logging.basicConfig(
         level=logging.DEBUG,
         handlers=[
-            logging.FileHandler("compiler_log.txt"),
+            logging.FileHandler("compiler_log_new.txt"),
             logging.StreamHandler()
         ],
         format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"
@@ -39,23 +36,18 @@ def main():
     compiler_ctx = CompilerContext(args)
 
 
-    # FIXME: currently only works on file
     logging.info(f"Generating SPIR-V from {compiler_ctx.files[0]} ...")
-    input_python_file = compiler_ctx.files[0]
+    spirv_assembler = SPIRVAssembler(compiler_ctx.files[0], disable_debug=False)
+    spirv_assembler.compile()
 
-    x = ast_crawl.GenerateSPIRVFromAST(input_python_file)
-    x.crawl() # generates spirv TODO: rename function probably
+    if compiler_ctx.user_wants_spirv_asm():
+        spirv_assembler.output_to_file(os.path.basename(compiler_ctx.files[0])[:-3])
 
-    # dump file in pwd instead of given filepath of source file
-    if compiler_ctx.user_wants_spirv_asm:
-        x.output_to_file(os.path.basename(compiler_ctx.files[0])[:-3])
-
-    parse_result = None
-    with io.StringIO(x.create_file_as_string()) as y:
-        parse_result = parse.TitanSPIRVGrammar.spirv_body.parse_file(y)
-
+    
     logging.info(f"Generating RTL...")
-    generate.generate_verilog(parse_result)
+    verilog_assembler = VerilogAssember(spirv_assembler.create_file_as_string())
+    verilog_assembler.compile(os.path.basename(compiler_ctx.files[0])[:-3])
+
 
 if __name__ == "__main__":
     main()
