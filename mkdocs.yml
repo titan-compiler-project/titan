@@ -17,7 +17,11 @@ theme:
     repo: fontawesome/brands/github
 
 plugins:
-- mkdocstrings
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          filters: None
 - search
 - git-revision-date-localized:
     enable_creation_date: false
@@ -76,13 +80,14 @@ nav:
         - "options.py": "reference-docs/compiler/common/options.md"
         - "symbols.py": "reference-docs/compiler/common/symbols.md"
         - "type.py": "reference-docs/compiler/common/type.md"
-
-      - "ast_crawl.py": "reference-docs/compiler/ast_crawl.md"
-      - "dataflow.py" : "reference-docs/compiler/dataflow.md"
-      - "generate.py" : "reference-docs/compiler/generate.md"
-      - "machine.py" : "reference-docs/compiler/machine.md"
+      - "compiler":
+        - "helper.py": "reference-docs/compiler/compiler/helper.md"
+        - "hinting.py": "reference-docs/compiler/compiler/hinting.md"
+        - "node.py": "reference-docs/compiler/compiler/node.md"
+        - "spirv.py": "reference-docs/compiler/compiler/spirv.md"
+        - "verilog.py": "reference-docs/compiler/compiler/verilog.md"
       - "main.py" : "reference-docs/compiler/main.md"
-      - "parse.py" : "reference-docs/compiler/parse.md"
+
     - "Comms Library":
       - "TitanComms.cpp" : "reference-docs/library/TitanComms.cpp.md"
     - "FPGA Shield": "reference-docs/pcb.md"
