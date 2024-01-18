@@ -9,13 +9,25 @@ from common.errors import TitanErrors
 
 
 class VerilogAssember():
+    """ VerilogAssembler class. 
+    
+        Contains functionality to create Verilog from Nodes.
+    """
 
     class FunctionLocation(NamedTuple):
+        """ Tuple to track the start and end position of a SPIR-V function.
+        
+            Attributes:
+                start_position: Start position of function.
+                end_position: End position of function.
+                name: Function name.
+        """
         start_position: int
         end_position: int
         name: str
 
     class Sections(Enum):
+        """ Enum describing different sections of the verilog file."""
         MODULE_AND_PORTS = auto()
         INTERNAL = auto()
         ALWAYS_BLOCK = auto()
@@ -50,7 +62,8 @@ class VerilogAssember():
         with io.StringIO(self.spirv_assembly) as fake_file:
             self.parsed_spirv = TitanSPIRVGrammar.spirv_body.parse_file(fake_file)
 
-    def _get_spirv_function_locations(self, parsed_spirv):
+    def _get_spirv_function_locations(self, parsed_spirv) -> List:
+        """ Determine location of SPIR-V functions from parsed SPIR-V assembly. """
         # TODO: figure out how to improve this
         line_no = fn_start = 0
         fn_name = ""
@@ -77,9 +90,20 @@ class VerilogAssember():
             raise Exception(f"failed to determine start/end point of function (start: {_marked_start}, end: {_marked_end})")
 
     def append_code(self, section: Sections, code: str):
+        """ Add code.
+        
+            Args:
+                section: Section to add to.
+                code: Code to add.
+        """
         self.generated_verilog_text[section].append(code)
 
     def write_to_file(self, filename: str):
+        """ Write verilog content out to a file.
+        
+            Args:
+                filename: Name of file to create/overwrite.
+        """
         logging.info(f"Writing RTL to file ({filename}.sv)")
         with open(f"{filename}.sv", "w") as f:
             for section, list_of_lines in self.generated_verilog_text.items():
@@ -90,6 +114,12 @@ class VerilogAssember():
                     f.write(f"\n")
 
     def compile(self, filename: str, gen_yosys_script: bool = False):
+        """ Function to begin compiling. Calls other relevant functions. 
+        
+            Args:
+                filename: Name of file to create/overwrite when writing Verilog.
+                gen_yosys_script: Create a Yosys script to visualise the verilog.
+        """
         node_assember = self.compile_nodes()
         # node_assember = self.compile_nodes_copied()
         self.node_assembler = node_assember
@@ -461,8 +491,21 @@ class VerilogAssember():
         return node_assembler
     
     def compile_text(self):
-        
+        """ Generate Verilog source code from Nodes. """
+
+
         def _get_correct_id(node: Node):
+            """ Determine the correct ID/value to return.
+            
+                Needed because literal constant values need to be returned
+                instead of the ID for them.
+
+                Args:
+                    node: Node to determine ID for.
+
+                TODO:
+                    Rename the function to something that describes it better.
+            """
             if node.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
                 return node.data[0]
             else:
@@ -590,7 +633,7 @@ class VerilogAssember():
                                 else:
                                     logging.debug("no reference found")
 
-                        logging.debug(f"stopped checking 1 tick ahea..")
+                        logging.debug(f"stopped checking 1 tick ahead..")
 
                         if not defer_node_creation:
                             self.append_code(
@@ -638,7 +681,6 @@ class VerilogAssember():
 
 
                     if node.operation in Operation_Type.BITWISE:
-                        logging.debug(f"HELLO BITWISE: {node.spirv_id} {node}")
                         width = int(self.node_assembler.get_type_context_from_module(module, node.type_id).data[0])
                         
                         self.append_code(

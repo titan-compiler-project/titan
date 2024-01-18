@@ -20,7 +20,7 @@ class NodeContext(NamedTuple):
             input_left (titan.Node): Left parent node.
             input_right (titan.Node): Right parent node.
             operation (titan.common.symbols.Operation): Operation being performed by the node.
-            data: (list): Additional information stored by the node.
+            data: Additional information stored by the node.
             is_comparison (bool): Set if this node doing a comparison.
     """
     line_no: int = 0
@@ -34,9 +34,18 @@ class NodeContext(NamedTuple):
 
 
 class Node:
-    """ Node class. Generated when transpiling SPIR-V into SystemVerilog. 
+    """ Node class. 
     
-        Attempts to replicate the dataflow structure of SPIR-V, so that generating SystemVerilog would be easier.
+        Attributes:
+            spirv_line_no (int): SPIR-V assembly line number.
+            spirv_id (str): Assigned SPIR-V ID.
+            type_id (str): Stores the type ID of the nodes type.
+            input_left (titan.compiler.node.Node): Left parent node.
+            input_right (titan.compiler.node.Node): Right parent node.
+            operation (titan.common.symbols.Operation): Operation that the node is performing.
+            data (None): TODO
+            is_comparison (bool): TODO
+            tick (int): Integer representing at what stage in the pipeline this should be executed.
     """
 
     @staticmethod
