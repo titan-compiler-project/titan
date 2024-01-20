@@ -508,6 +508,10 @@ class VerilogAssember():
             """
             if node.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
                 return node.data[0]
+            
+            # added for handling comparison node
+            if node.operation is Operation.STORE:
+                return node.input_left.spirv_id[1:]
             else:
                 return node.spirv_id[1:]
             
@@ -666,7 +670,7 @@ class VerilogAssember():
 
                         self.append_code(
                             self.Sections.INTERNAL,
-                            f"\tlogic [{width-1}:0] {node.spirv_id[1:]}"
+                            f"\tlogic [{width-1}:0] {node.spirv_id[1:]};"
                         )
 
                         compare_op = Operation(comparison_node.operation).value

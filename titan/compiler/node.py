@@ -473,8 +473,8 @@ class NodeAssembler():
                 file_name_suffix: String to append to the filename.
                 clean_nodes: List of clean/optimised nodes.
         """
-        for key in self.content.keys():
-            dot = graphviz.Digraph(comment=f"digraph for {key}", filename=f"digraph_{key}{file_name_suffix}.dot", directory="dots") 
+        for module in self.content.keys():
+            dot = graphviz.Digraph(comment=f"digraph for {module}", filename=f"digraph_{module}{file_name_suffix}.dot", directory="dots") 
             
             # dark mode
             dot.attr(bgcolor="gray10")
@@ -482,7 +482,7 @@ class NodeAssembler():
             dot.attr(fontcolor="white")
 
             if clean_nodes is None:
-                x = self._sort_body_nodes_by_tick(key)
+                x = self._sort_body_nodes_by_tick(module)
             else:
                 x = clean_nodes
 
@@ -510,8 +510,19 @@ class NodeAssembler():
                                         parent_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
                                         ds.edge(parent_id_label, current_node_label, color="white")
                                     case 3:
-                                        parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
-                                        parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
+
+                                        # TODO: need a better way to determine correct id & tick to use when dealing with decision nodes
+                                        # this solution will fail if it's basically a stack of Operation.STOREs because it only goes back
+                                        # two nodes.
+                                        if v.is_comparison:
+                                            if v.input_left.operation is Operation.STORE:
+                                                parent_l_id_label = f"{v.input_left.input_left.spirv_id}_{self.get_node(module, v.input_left.input_left.spirv_id).tick}"
+
+                                            if v.input_right.operation is Operation.STORE:
+                                                parent_r_id_label = f"{v.input_right.input_right.spirv_id}_{self.get_node(module, v.input_right.input_right.spirv_id).tick}"
+                                        else:
+                                            parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
+                                            parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
 
                                         ds.edge(parent_l_id_label, current_node_label, color="white" if not v.is_comparison else "green")
                                         ds.edge(parent_r_id_label, current_node_label, color="white" if not v.is_comparison else "red")
