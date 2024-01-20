@@ -12,7 +12,7 @@ def main():
     logging.basicConfig(
         level=logging.DEBUG,
         handlers=[
-            logging.FileHandler("compiler_log_new.txt"),
+            logging.FileHandler("compiler_log.txt"),
             logging.StreamHandler()
         ],
         format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"

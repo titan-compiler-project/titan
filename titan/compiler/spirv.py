@@ -100,6 +100,7 @@ class SPIRVAssembler(ast.NodeVisitor):
     _target_file = None
     _tree = None
 
+    # TODO: remove the .name operators
     generated_spirv = {
         Sections.CAPABILITY_AND_EXTENSION.name: [],
         Sections.ENTRY_AND_EXEC_MODES.name: [],
