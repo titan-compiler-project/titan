@@ -72,3 +72,11 @@ class CompilerContext():
                 Name of the top module as defined by the user.
         """
         return self.compiler_args.top
+    
+    def user_only_wants_spirv(self) -> bool:
+        """ Getter function to see if user only wants to run the SPIR-V portion of the compiler. 
+        
+            Returns:
+                True if user wants only SPIR-V, otherwise False.
+        """
+        return self.compiler_args.s
