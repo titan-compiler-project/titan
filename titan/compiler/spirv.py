@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast, logging, json
 from enum import Enum, auto
 from typing import NamedTuple, Union, TypedDict
+from bidict import bidict
 
 import compiler.hinting as hinting
 from common.type import DataType, StorageType
@@ -23,6 +24,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         ANNOTATIONS = auto()
         TYPES = auto()
         VAR_CONST_DECLARATIONS = auto()
+        ARRAY_TYPES = auto()
         FUNCTIONS = auto()
 
     class TypeContext(NamedTuple):
@@ -34,12 +36,15 @@ class SPIRVAssembler(ast.NodeVisitor):
                 is_constant (bool): Type describes a constant.
                 is_pointer (bool): Type describes a pointer.
                 is_function_typedef (bool): Type describes a function definition. 
+                is_array (bool): Type describes array.
         """
         primative_type: DataType
         storage_type: StorageType = StorageType.NONE
         is_constant: bool = False
         is_pointer: bool = False
         is_function_typedef: bool = False
+        is_array: bool = False
+        array_size: int = 0
 
     class ConstContext(NamedTuple):
         """ Tuple that provides context about a given constant.
@@ -57,9 +62,11 @@ class SPIRVAssembler(ast.NodeVisitor):
             Attributes:
                 type (titan.common.type.DataType): Base/primative (python) type.
                 location (titan.common.type.StorageType): Storage type in SPIR-V.
+                is_array (bool): Is the symbol an array type?
         """
         type: DataType
         location: StorageType
+        is_array: bool = False
 
 
     class symbol_info_hint(TypedDict):
@@ -77,6 +84,7 @@ class SPIRVAssembler(ast.NodeVisitor):
     _latest_compare_id = None
     _latest_function_name = None
     _decorator_dict = {}
+    _import_mapping = bidict()
 
 
     input_port_list: symbol_info_hint = {}
@@ -108,6 +116,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         Sections.ANNOTATIONS.name: [],
         Sections.TYPES.name: [],
         Sections.VAR_CONST_DECLARATIONS.name: [],
+        Sections.ARRAY_TYPES.name: [],
         Sections.FUNCTIONS.name: []
     }
 
@@ -141,6 +150,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 declared_types: List of declared types. Stores primative type and string ID.
                 body: TODO
                 generated_spirv (dict): Dictionary indexed with Sections enum, and stores generated lines in a list.
+                _import_mapping (bidict): Bi-directional dictionary to store import names & aliases
         """
 
         self._disable_debug = disable_debug
@@ -226,7 +236,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         return True if symbol in self.symbol_info else False
     
-    def add_symbol(self, symbol_id: str, type, location: StorageType):
+    def add_symbol(self, symbol_id: str, type, location: StorageType, is_array: bool = False):
         """ Add a symbol.
 
             The value ``type`` arg will be automatically converted into a valid ``titan.common.type.DataType`` value.
@@ -239,7 +249,7 @@ class SPIRVAssembler(ast.NodeVisitor):
             TODO:
                 Need to determine whether the symbol ID contains the "%" prefix or not.
         """
-        self.symbol_info[symbol_id] = self.SymbolInfo(DataType(type), location)
+        self.symbol_info[symbol_id] = self.SymbolInfo(DataType(type), location, is_array)
 
     def get_symbol_info(self, symbol_id: str) -> SymbolInfo:
         """ Get information regarding a given symbol via ID.
@@ -266,7 +276,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         self.symbol_info[symbol_id] = info
 
-    def add_symbol_if_nonexistant(self, symbol: str, type, location: StorageType) -> bool:
+    def add_symbol_if_nonexistant(self, symbol: str, type, location: StorageType, array_type_id: str = None, array_size: int = 0) -> bool:
         """ Add a symbol, only if it does not already exist.
 
             Method first checks if symbol exists or not. If not, it'll generate the corresponding SPIR-V
@@ -276,13 +286,21 @@ class SPIRVAssembler(ast.NodeVisitor):
                 symbol: Name of the symbol to add.
                 type: Python type of the symbol.
                 location: Given storage location for the symbol. Required for SPIR-V.
+                array_type_id: SPIR-V ID (with %) of the array type.
+                array_size: Total elements present in the array.
 
             Returns:
                 symbol_added: True if symbol has been added, else False.
         """
 
+        symbol_is_array = False if array_type_id is None else True
+
         if symbol not in self.symbol_info:
-            self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location)
+            
+            if symbol_is_array:
+                self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location, is_array=True)
+            else:
+                self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location)
             
             self.add_line(
                 self.Sections.DEBUG_STATEMENTS,
@@ -306,37 +324,52 @@ class SPIRVAssembler(ast.NodeVisitor):
                     )
 
                     # input variable pointer type
-                    ptr_ctx = self.TypeContext(
-                            DataType(type), StorageType.IN,
-                            False, True, False
-                    )
-
                     ptr_id = self.add_type_if_nonexistant(
-                        ptr_ctx,
+                        # ptr_ctx,
+                        self.TypeContext(
+                            DataType(type), StorageType.IN,
+                            is_pointer=True
+                        ),
                         f"%pointer_input_{DataType(type).name.lower()}"
                     )
 
-                    self.add_line(
-                        self.Sections.VAR_CONST_DECLARATIONS,
-                        f"%{symbol} = OpVariable {ptr_id} Input"
-                    )
+
+                    if symbol_is_array:
+                        self.add_line(
+                            self.Sections.VAR_CONST_DECLARATIONS,
+                            f"%{symbol} = OpVariable {array_type_id} Input"
+                        )
+                    else:
+                        self.add_line(
+                            self.Sections.VAR_CONST_DECLARATIONS,
+                            f"%{symbol} = OpVariable {ptr_id} Input"
+                        )
+
+
                 elif location is StorageType.OUT:
-                    ptr_ctx = self.TypeContext(
-                        DataType(type), StorageType.IN,
-                        False, True, False
-                    )
 
                     ptr_id = self.add_type_if_nonexistant(
-                        ptr_ctx,
+                        self.TypeContext(
+                            DataType(type), StorageType.IN, is_pointer=True
+                        ),
                         f"%pointer_output_{DataType(type).name.lower()}"
                     )
 
-                    self.add_line(
-                        self.Sections.VAR_CONST_DECLARATIONS,
-                        f"%{symbol} = OpVariable {ptr_id} Output"
-                    )
+                    if symbol_is_array:
+                        self.add_line(
+                            self.Sections.VAR_CONST_DECLARATIONS,
+                            f"%{symbol} = OpVariable {array_type_id} Output"
+                        )
+                    else:
+                        self.add_line(
+                            self.Sections.VAR_CONST_DECLARATIONS,
+                            f"%{symbol} = OpVariable {ptr_id} Output"
+                        )
+                        
+
+                    
             elif location is StorageType.FUNCTION_VAR:
-                
+            
                 ptr_id = self.add_type_if_nonexistant(
                     self.TypeContext(
                         DataType(type), StorageType.FUNCTION_VAR,
@@ -345,12 +378,19 @@ class SPIRVAssembler(ast.NodeVisitor):
                     f"%pointer_funcvar_{DataType(type).name.lower()}"
                 )
                 
-                self.add_line(
-                    self.Sections.FUNCTIONS,
-                    f"%{symbol} = OpVariable {ptr_id} Function"
-                )
+                if symbol_is_array:
+                    self.add_line(
+                        self.Sections.FUNCTIONS,
+                        f"%{symbol} = OpVariable {array_type_id} Function"
+                    )
+                else:
+                    self.add_line(
+                        self.Sections.FUNCTIONS,
+                        f"%{symbol} = OpVariable {ptr_id} Function"
+                    )
 
-            self.location_id += 1
+            # increment by 1 for regular variables, or by element count for arrays
+            self.location_id += 1 if not symbol_is_array else array_size
 
             return True
         else:
@@ -459,6 +499,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 - OpTypeInteger (32-bit signed)
                 - OpTypeBool
                 - OpTypeFloat (32-bit float)
+                - OpTypeArray
 
             Args:
                 type: The type to add.
@@ -477,7 +518,8 @@ class SPIRVAssembler(ast.NodeVisitor):
             if type.is_function_typedef:
                 prim_tid = self.get_primative_type_id(type.primative_type)
                 spirv_txt += f"OpTypeFunction {prim_tid}"
-            elif type.is_pointer:
+
+            elif type.is_pointer and not type.is_array:
                 prim_tid = self.get_primative_type_id(type.primative_type)
                 storage_type = ""
 
@@ -493,6 +535,34 @@ class SPIRVAssembler(ast.NodeVisitor):
                         raise Exception(f"no text for storage type for {type.storage_type}")
 
                 spirv_txt += f"OpTypePointer {storage_type} {prim_tid}"
+
+            elif type.is_array and not type.is_pointer:
+                prim_tid = self.get_primative_type_id(type.primative_type)
+
+                # get id for array size, may need to add if doesnt exist
+                const_size_id = self.add_const_if_nonexistant(
+                    self.ConstContext(
+                        type.primative_type,
+                        type.array_size
+                    )
+                )
+
+                spirv_txt += f"OpTypeArray {prim_tid} %{const_size_id}"
+
+            elif type.is_array and type.is_pointer:
+                
+                # get base array id for this specific pointer
+                array_type_id = self.get_type_id(
+                    self.TypeContext(
+                        primative_type=type.primative_type,
+                        storage_type=StorageType.NONE, # the base array id does not have storage type
+                        is_pointer=False,
+                        is_array=True,
+                        array_size=type.array_size
+                    )
+                )
+
+                spirv_txt += f"OpTypePointer {type.storage_type.value} {array_type_id}"
 
             # this should mean we're working with the primative types
             elif (not type.is_constant) and (not type.is_pointer) and (not type.is_function_typedef):
@@ -513,10 +583,17 @@ class SPIRVAssembler(ast.NodeVisitor):
                 logging.exception(f"unable to generate spirv text for type {id} -> {type}", exc_info=False)
                 raise Exception(f"unable to generate spirv text for type {id} -> {type}")
 
-            self.add_line(
-                self.Sections.TYPES,
-                spirv_txt
+
+            if not type.is_array:
+                self.add_line(
+                    self.Sections.TYPES,
+                    spirv_txt
             )
+            else:
+                self.add_line(
+                    self.Sections.ARRAY_TYPES,
+                    spirv_txt
+                )
 
             return id
         else:
@@ -665,13 +742,10 @@ class SPIRVAssembler(ast.NodeVisitor):
         return eval(type.split("'")[0])
     
     # TODO: can these be turned into enums instead?
-    def _return_string_from_type(self, type) -> str:
+    def _get_string_from_type(self, type) -> str:
         """ Returns a string depending on the type() of a variable. 
 
             Works on int, float and bool. 
-
-            Warning:
-                Should be replaced when possible.
 
             Args:
                 type: Returned value of ``type()``.
@@ -693,7 +767,7 @@ class SPIRVAssembler(ast.NodeVisitor):
             logging.exception(f"unexpected type {type}", exc_info=False)
             raise Exception(f"unexpected type {type}")
         
-    def _return_type_from_string(self, type_as_string: str):
+    def _get_type_from_string(self, type_as_string: str):
         """ Returns the type object when given a string.
         
             Args:
@@ -743,14 +817,32 @@ class SPIRVAssembler(ast.NodeVisitor):
         logging.debug(f"found {len(node.body)} functions")
 
         for i in range(len(node.body)):
-            if node.body[i].name == "step":
-                _module_contains_step_function = True
+            # skip over imports in module definition
+            if node is ast.Import or ast.ImportFrom:
+                continue
+            else:
+                if node.body[i].name == "step":
+                    _module_contains_step_function = True
+                    self.entry_point = "step"
 
-        if _module_contains_step_function:
-            self.entry_point = "step"
-        else:
-            # TODO: better to error or assume?
-            self.entry_point = node.body[0].name
+        if not _module_contains_step_function:
+            total_func_defs = 0
+            func_def_pos = 0
+
+            for i in range(len(node.body)):
+                operation = node.body[i]
+
+                if type(operation) is ast.FunctionDef:
+                    total_func_defs += 1
+                    func_def_pos = i
+            
+            if total_func_defs == 0:
+                raise Exception(f"no function definitions found")
+            elif total_func_defs == 1:
+                self.entry_point = node.body[func_def_pos].name
+                logging.debug(f"setting entry point as '{self.entry_point}'")
+            elif total_func_defs > 1:
+                raise Exception(f"multiple function defintions found, please specify top")
 
         # spirv boilerplate
         self.add_line(
@@ -763,8 +855,26 @@ class SPIRVAssembler(ast.NodeVisitor):
             f"OpMemoryModel Logical GLSL450"
         )
 
+        # this makes the assumption that the module body only contains FunctionDef nodes
+        # may not always be the case...
+        # TODO: rename 'fn', misleading
         for fn in node.body:
-            # print(f"function: {fn.name} returns {fn.returns.id}")
+            
+            # deal with imports
+            if type(fn) is ast.Import:
+                self.visit_Import(fn)
+                continue
+            elif type(fn) is ast.ImportFrom:
+                self.visit_ImportFrom(fn)
+                continue
+
+            # ignore everything else
+            elif type(fn) is not ast.FunctionDef:
+                logging.debug(f"not processing {type(fn)}")
+                continue
+
+            # if type(fn) is ast.Import or ast.ImportFrom:
+                # raise Exception("")
             self.visit_FunctionDef(fn)
 
             # if the function is our entry point, we want to capture its params
@@ -791,6 +901,31 @@ class SPIRVAssembler(ast.NodeVisitor):
 
             logging.debug(f"exit function {fn.name}")
 
+
+    def visit_Import(self, node):
+        """ Function called when visiting import nodes.
+        
+            Updates an internal attribute to keep track of imported modules, as names only.
+            Does not actually evaluate if module exists, only intended to work with Numpy for arrays.
+        """
+
+        for imported_module in node.names:
+            # cant use hasattr() because it will always return true, check against None instead
+            if imported_module.asname is None:
+                # no alternative name given
+                self._import_mapping[imported_module.name] = imported_module.name
+            else:
+                self._import_mapping[imported_module.name] = imported_module.asname
+    
+    
+    def visit_ImportFrom(self, node):
+        """ Function called when visiting import from 'x' nodes. 
+
+            Does not implement any functionality.
+        """
+        logging.error(f"importing directly from modules not supported: {ast.dump(node)}")
+
+
     def visit_FunctionDef(self, node):
         """ Function called when visiting a function definition.
 
@@ -800,7 +935,15 @@ class SPIRVAssembler(ast.NodeVisitor):
                 node: The current node.
         
         """
-        logging.debug(f"function {node.name} returns type {node.returns.id} -- {node._fields}")
+
+        _debug_returns = None
+        if hasattr(node, "returns"):
+            _debug_returns = f"returns type {node.returns.id}"
+        else:
+            _debug_returns = "does not hint at returning anything"
+            logging.info(f"'{node.name}' does not have a return type hint - is this expected?")
+
+        logging.debug(f"function {node.name} {_debug_returns}")
         self._latest_function_name = node.name
 
 
@@ -809,7 +952,6 @@ class SPIRVAssembler(ast.NodeVisitor):
             f"OpName %{node.name} \"{node.name}\""
         )
 
-        # TODO: how to make so this only needs to run once? (low priority)
         void_ctx = self.TypeContext(
             DataType.VOID, StorageType.NONE
         )
@@ -852,6 +994,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 type_class = eval(args.annotation.id.split("'")[0])
 
 
+                # TODO: update true/false for arrays?
                 # check if generic type exists
                 t_ctx = self.TypeContext(
                     DataType(type_class), StorageType.NONE,
@@ -878,6 +1021,8 @@ class SPIRVAssembler(ast.NodeVisitor):
                     type_class,
                     StorageType.IN
                 )
+
+            # TODO: explain?
             except AttributeError:
                 self.add_symbol(args.arg, None, StorageType.IN)
 
@@ -999,6 +1144,13 @@ class SPIRVAssembler(ast.NodeVisitor):
             logging.exception(f"multiple assignments not supported", exc_info=False)
             raise Exception("multiple assignments not supported")
 
+        # if assigning, but using a function call, deal with that within the _eval_line function instead
+        # assuming that the function call for now is only for numpy & its arrays
+        if isinstance(node.value, ast.Call):
+            eval_id, eval_ctx = self._eval_line_wrap(node)
+            return
+        
+
         try:
             eval_id, eval_ctx = self._eval_line_wrap(node)
         except Exception as e:
@@ -1069,9 +1221,11 @@ class SPIRVAssembler(ast.NodeVisitor):
             if self.symbol_exists(id):
                 s_info = self.get_symbol_info(id)
 
+                # because the symbol exists, and isn't a temporary one
+                # and if we're returning it, it must be an output
                 if s_info.location == StorageType.FUNCTION_VAR:
                     s_info_new = self.SymbolInfo(
-                        ctx, StorageType.OUT
+                        ctx, StorageType.OUT, s_info.is_array
                     )
 
                     self.update_symbol_info(id, s_info_new)
@@ -1489,7 +1643,13 @@ class SPIRVAssembler(ast.NodeVisitor):
             return f"{node.id}", self.get_symbol_type(node.id)
 
         elif isinstance(node, ast.Constant):
+
             # TODO: maybe use titan_types instead of python types?
+            # BUG: if using DataType, _eval_line will fail with type mismatch error
+            #      but if left alone, it sometimes creates duplicate constant lines?
+            #      reproduce with simple_neuron -> duplicate "%const_integer_0"
+            #      may be worth switching over to using bidicts?
+            # c_ctx = self.ConstContext(DataType(type(node.value)), node.value)
             c_ctx = self.ConstContext(type(node.value), node.value)
 
             if not self.const_exists(c_ctx):
@@ -1510,12 +1670,120 @@ class SPIRVAssembler(ast.NodeVisitor):
             ctx = self.get_type_of_intermediate_id(self._latest_compare_id[1:])
             return self._latest_ifexp_selector_id, ctx
 
-        
         elif isinstance(node, ast.Compare):
             self.visit_Compare(node)
 
             ctx = self.get_type_of_intermediate_id(self._latest_compare_id[1:])
             return self._latest_compare_id, ctx
+        
+        elif isinstance(node, ast.Call):
+
+            module_name = node.func.value.id
+            function_name = node.func.attr
+
+            exists_in_normal_mapping = module_name in self._import_mapping
+            exists_in_inverse_mapping = module_name in self._import_mapping.inverse
+
+            # check if explicitly using numpy for arrays etc
+            module_is_numpy = False
+            if exists_in_normal_mapping:
+                module_is_numpy = True if self._import_mapping[module_name] == "numpy" else False
+            elif exists_in_inverse_mapping:
+                module_is_numpy = True if self._import_mapping.inverse[module_name] == "numpy" else False
+
+            if not module_is_numpy:
+                raise Exception(f"unhandled call object for {module_name}, probably incompatible")
+
+            if not function_name == ("empty" or "zeroes" or "ones"):
+                raise Exception(f"unhandled/unimplemented numpy function being accessed: {function_name}")
+
+            logging.warn("initialisation of arrays with a specific value/values is not supported, do not rely on this behaviour")
+
+            # TODO:
+            # 1. create OpTypeArray with type and length
+            #   - %a = OpTypeArray <type> <length>
+            #       - check if type exists
+
+            type_as_str = None
+            for keyword in node.keywords:
+                if keyword.arg is "dtype":
+                    type_as_str = keyword.value.id
+
+            if type_as_str is None:
+                raise Exception("was unable to set type for array")
+
+
+            # add just in case
+            type_as_datatype = DataType(self._get_python_type_from_string(type_as_str))
+            primative_type_id = self.add_type_if_nonexistant(
+                self.TypeContext(type_as_datatype),
+                f"%type_{type_as_datatype.name.lower()}"
+            )
+
+            array_size = node.args[0]
+
+            # TODO
+            if isinstance(array_size, tuple):
+                raise Exception("tuples not yet supported for defining array shapes")
+            
+            array_size_id, array_size_ctx = self._eval_line(array_size)
+        
+            if not array_size_ctx.value > 0:
+                raise Exception(f"array size cannot be less than or equal to 0, got {array_size_ctx.value} instead")
+
+            t_ctx_array = self.TypeContext(
+                primative_type=DataType(self._get_python_type_from_string(type_as_str)),
+                is_array=True,
+                is_pointer=False,
+                array_size=array_size_ctx.value
+            )
+
+            t_id_array = self.add_type_if_nonexistant(t_ctx_array, f"%array_{type_as_str}_{array_size_ctx.value}")
+
+
+            # self.add_line(
+                # self.Sections.VAR_CONST_DECLARATIONS,
+                # f"{t_id_array} = OpTypeArray {primative_type_id} {array_size_ctx.value}"
+            # )            
+
+            # 2. create OpTypePointer with storage location and optypearray arg
+            #   - %b = OpTypePointer Function %a
+        
+            # making the assumtion that any arrays being defined in here will defined inside the function
+            # and therefore will have the Function storage location
+
+            t_ctx_array_ptr = self.TypeContext(
+                primative_type= DataType(self._get_python_type_from_string(type_as_str)),
+                storage_type= StorageType.FUNCTION_VAR,
+                is_pointer= True,
+                is_array= True,
+                array_size= array_size_ctx.value
+            )
+
+            t_id_array_ptr = self.add_type_if_nonexistant(t_ctx_array_ptr, f"%array_ptr_{type_as_str}_{array_size_ctx.value}_{StorageType.FUNCTION_VAR.name.lower()}")
+
+            # NOTE: need to handle different storage locations? or will that be done somewhere else?
+
+            # self.add_line(
+            #     self.Sections.VAR_CONST_DECLARATIONS,
+            #     f"{t_id_array_ptr} = OpTypePointer Function {t_id_array}"
+            # )
+
+            return t_id_array_ptr, t_ctx_array_ptr
+
+        elif isinstance(node, ast.Assign):
+            type_id, type_ctx = self._eval_line(node.value)
+
+            # 3. create OpVariable with type and storage location
+            #   - %c = OpVariable %b Function
+        
+            symbol_name = node.targets[0].id
+
+            # if the symbol doesn't already exist, we can be confident that it hasn't been declared yet
+            self.add_symbol_if_nonexistant(symbol_name, type_ctx.primative_type, StorageType.FUNCTION_VAR, type_id, type_ctx.array_size)
+
+            return "%" + symbol_name, type_ctx
+
 
         else:
             logging.exception(f"unexpected {type(node)} to parse in eval_line, probably not implemented yet", exc_info=False)
@@ -1532,6 +1800,12 @@ class SPIRVAssembler(ast.NodeVisitor):
             if len(node.targets) > 1:
                 logging.exception(f"multiple assignments not supported", exc_info=False)
                 raise Exception("multiple assignments not supported")
+
+            # if we're assinging via a call specifically
+            if isinstance(node.value, ast.Call):
+                evaluated = self._eval_line(node)
+                logging.debug(f" = {evaluated}")
+                return evaluated
 
             # for target in node.targets:
             target = node.targets[0]
