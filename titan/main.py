@@ -9,15 +9,6 @@ def main():
     
         Calls to handle CLI options, parsing, generating and writing.
     """
-    logging.basicConfig(
-        level=logging.DEBUG,
-        handlers=[
-            logging.FileHandler("compiler_log.txt"),
-            logging.StreamHandler()
-        ],
-        format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"
-    )
-
 
     parser = argparse.ArgumentParser(
         description = "Compile a subset of Python into SystemVerilog. Visit https://titan-compiler-project.github.io/titan for more info."
@@ -27,14 +18,23 @@ def main():
     parser.add_argument("-t", "--top", help="specify the top function")
     parser.add_argument("-asm", help="output the SPIR-V assembly code", action="store_true")
     parser.add_argument("-s", help="only run the SPIR-V generation", action="store_true")
+    parser.add_argument("-v", "--verbose", help="output debug messages", action="store_true")
 
     args = parser.parse_args()
+    compiler_ctx = CompilerContext(args)
+
+
+    logging.basicConfig(
+        level=logging.DEBUG if compiler_ctx.user_wants_verbose_info() else logging.INFO,
+        handlers=[
+            logging.FileHandler("compiler_log.txt"),
+            logging.StreamHandler()
+        ],
+        format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"
+    )
 
     logging.info(f"--- New run, time is: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')} ---")
     logging.info(f"arguments: {args}")
-
-
-    compiler_ctx = CompilerContext(args)
 
 
     logging.info(f"Generating SPIR-V from {compiler_ctx.files[0]} ...")
