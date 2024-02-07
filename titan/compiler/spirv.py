@@ -52,9 +52,11 @@ class SPIRVAssembler(ast.NodeVisitor):
             Attributes:
                 primative_type (titan.common.type.DataType): Base/primative (python) type.
                 value: Value of the constant. Can be int, float, bool or None.
+                declared_id: SPIR-V ID associated to the particular constant.
         """
         primative_type: DataType
         value: Union[int, float, bool, None]
+        declared_id: str = None
 
     class SymbolInfo(NamedTuple):
         """ Tuple that associates a primative type with a storage location.
@@ -63,10 +65,12 @@ class SPIRVAssembler(ast.NodeVisitor):
                 type (titan.common.type.DataType): Base/primative (python) type.
                 location (titan.common.type.StorageType): Storage type in SPIR-V.
                 is_array (bool): Is the symbol an array type?
+                declared_type_id (str): SPIR-V type ID associated to the particular symbol.
         """
         type: DataType
         location: StorageType
         is_array: bool = False
+        declared_type_id: str = None
 
 
     class symbol_info_hint(TypedDict):
@@ -229,14 +233,14 @@ class SPIRVAssembler(ast.NodeVisitor):
         """ Check if a symbol exists.
         
             Args:
-                symbol (str): Given symbol name, with the SPIR-V "%" prefix.
+                symbol (str): Given symbol name, without the SPIR-V "%" prefix.
 
             Returns:
                 symbol_exists: True if symbol exists, else False.
         """
         return True if symbol in self.symbol_info else False
     
-    def add_symbol(self, symbol_id: str, type, location: StorageType, is_array: bool = False):
+    def add_symbol(self, symbol_id: str, type, location: StorageType, is_array: bool = False, declared_type_id:str = None):
         """ Add a symbol.
 
             The value ``type`` arg will be automatically converted into a valid ``titan.common.type.DataType`` value.
@@ -245,11 +249,13 @@ class SPIRVAssembler(ast.NodeVisitor):
                 symbol_id: ID given to the symbol.
                 type: Python type of the symbol.
                 location: Given storage location for the symbol. Required for SPIR-V.
+                is_array: Is the symbol an array?
+                declared_id: SPIR-V ID of the type associated with the particular symbol.
 
             TODO:
                 Need to determine whether the symbol ID contains the "%" prefix or not.
         """
-        self.symbol_info[symbol_id] = self.SymbolInfo(DataType(type), location, is_array)
+        self.symbol_info[symbol_id] = self.SymbolInfo(DataType(type), location, is_array, declared_type_id)
 
     def get_symbol_info(self, symbol_id: str) -> SymbolInfo:
         """ Get information regarding a given symbol via ID.
@@ -297,10 +303,13 @@ class SPIRVAssembler(ast.NodeVisitor):
 
         if symbol not in self.symbol_info:
             
-            if symbol_is_array:
-                self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location, is_array=True)
-            else:
-                self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location)
+            # if symbol_is_array:
+                # self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location, is_array=True)
+            # else:
+                # self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location)
+            
+            # keeping track of which id is used to create the symbol
+            final_type_id = None
             
             self.add_line(
                 self.Sections.DEBUG_STATEMENTS,
@@ -339,11 +348,14 @@ class SPIRVAssembler(ast.NodeVisitor):
                             self.Sections.VAR_CONST_DECLARATIONS,
                             f"%{symbol} = OpVariable {array_type_id} Input"
                         )
+                        final_type_id = array_type_id
+
                     else:
                         self.add_line(
                             self.Sections.VAR_CONST_DECLARATIONS,
                             f"%{symbol} = OpVariable {ptr_id} Input"
                         )
+                        final_type_id = ptr_id
 
 
                 elif location is StorageType.OUT:
@@ -360,11 +372,13 @@ class SPIRVAssembler(ast.NodeVisitor):
                             self.Sections.VAR_CONST_DECLARATIONS,
                             f"%{symbol} = OpVariable {array_type_id} Output"
                         )
+                        final_type_id = array_type_id
                     else:
                         self.add_line(
                             self.Sections.VAR_CONST_DECLARATIONS,
                             f"%{symbol} = OpVariable {ptr_id} Output"
                         )
+                        final_type_id = ptr_id
                         
 
                     
@@ -383,14 +397,18 @@ class SPIRVAssembler(ast.NodeVisitor):
                         self.Sections.FUNCTIONS,
                         f"%{symbol} = OpVariable {array_type_id} Function"
                     )
+                    final_type_id = array_type_id
                 else:
                     self.add_line(
                         self.Sections.FUNCTIONS,
                         f"%{symbol} = OpVariable {ptr_id} Function"
                     )
+                    final_type_id = ptr_id
 
             # increment by 1 for regular variables, or by element count for arrays
             self.location_id += 1 if not symbol_is_array else array_size
+
+            self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location, is_array=symbol_is_array, declared_type_id=final_type_id)
 
             return True
         else:
@@ -407,6 +425,18 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         # symbol_info[symbol] -> info (SymbolInfo).type
         return self.symbol_info[symbol].type
+
+
+    def get_symbol_declared_type_id(self, symbol: str) -> str:
+        """ Get the ID of the type that was used to declare the symbol with.
+        
+            Args:
+                symbol: Symbol ID
+
+            Returns:
+                Type ID
+        """
+        return self.symbol_info[symbol].declared_type_id
 
     def intermediate_id_exists(self, intermediate_id: str) -> bool:
         """ Check if an intermediate ID already exists.
@@ -620,7 +650,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         self.declared_constants[c_ctx] = spirv_id
 
-    def add_const_if_nonexistant(self, const: ConstContext, negative_val:bool = False) -> str:
+    def add_const_if_nonexistant(self, const: ConstContext, negative_val: bool = False) -> str:
         """ Add a constant, only if it does not exist already.
         
             Checks if the constant exists, and if not, the method will generate the corresponding SPIR-V.
@@ -1149,6 +1179,11 @@ class SPIRVAssembler(ast.NodeVisitor):
         if isinstance(node.value, ast.Call):
             eval_id, eval_ctx = self._eval_line_wrap(node)
             return
+        
+        # if array indexing we also want to just return when done
+        elif isinstance(node.value, ast.Subscript):
+            eval_id, eval_ctx = self._eval_line_wrap(node)
+            raise Exception("TODO array assignment")
         
 
         try:
@@ -1776,14 +1811,53 @@ class SPIRVAssembler(ast.NodeVisitor):
 
             # 3. create OpVariable with type and storage location
             #   - %c = OpVariable %b Function
-        
-            symbol_name = node.targets[0].id
 
-            # if the symbol doesn't already exist, we can be confident that it hasn't been declared yet
-            self.add_symbol_if_nonexistant(symbol_name, type_ctx.primative_type, StorageType.FUNCTION_VAR, type_id, type_ctx.array_size)
+            if isinstance(node.value, ast.Call):
+                symbol_name = node.targets[0].id
 
-            return "%" + symbol_name, type_ctx
+                # if the symbol doesn't already exist, we can be confident that it hasn't been declared yet
+                # can define as StorageType.FUNCTION_VAR because arrays in parameters will be handled differently
+                self.add_symbol_if_nonexistant(symbol_name, type_ctx.primative_type, StorageType.FUNCTION_VAR, type_id, type_ctx.array_size)
 
+                return "%" + symbol_name, type_ctx
+            
+            elif isinstance(node.value, ast.Subscript):
+                raise Exception("array read/write not implemented yet")
+            else:
+                raise Exception(f"unexpected node: {type(node.value)}")
+
+
+        elif isinstance(node, ast.Subscript):
+            """ this stage will return a temporary ID related to the OpAccessChain operand"""
+
+            if not self.symbol_exists(node.value.id):
+                raise Exception(f"symbol {node.value.id} doesnt exist")
+
+            index_id, _ = self._eval_line(node.slice)
+            array_ctx = self.get_symbol_info(node.value.id)
+
+            element_ctx = self.TypeContext(
+                array_ctx.type,
+                array_ctx.location,
+                is_pointer=True
+            )
+            element_type_id = self.get_type_id(element_ctx)
+
+            temp_id = f"titan_id_{self.intermediate_id}"
+            self.intermediate_id += 1
+
+            self.add_line(
+                self.Sections.FUNCTIONS,
+                f"%{temp_id} = OpAccessChain {element_type_id} {index_id}"
+            )
+
+            # function does not account for pointer, potential fix needed?
+            self.add_intermediate_id(temp_id, DataType(array_ctx.type))
+
+            return temp_id, element_ctx
+
+        elif isinstance(node, ast.Slice):
+            raise Exception(f"slicing not implemented: {node}")
 
         else:
             logging.exception(f"unexpected {type(node)} to parse in eval_line, probably not implemented yet", exc_info=False)
@@ -1804,20 +1878,20 @@ class SPIRVAssembler(ast.NodeVisitor):
             # if we're assinging via a call specifically
             if isinstance(node.value, ast.Call):
                 evaluated = self._eval_line(node)
-                logging.debug(f" = {evaluated}")
+                # logging.debug(f" = {evaluated}")
                 return evaluated
 
             # for target in node.targets:
             target = node.targets[0]
-            logging.debug(f"{target.id}")
+            # logging.debug(f"{target.id}")
 
             evaluated = self._eval_line(node.value)
-            logging.debug(f" = {evaluated}")
+            # logging.debug(f" = {evaluated}")
             return evaluated
 
         elif isinstance(node, ast.AnnAssign):
-            logging.debug(f"{node.target.id}")
+            # logging.debug(f"{node.target.id}")
             
             evaluated = self._eval_line(node.value)
-            logging.debug(f" = {evaluated}")
+            # logging.debug(f" = {evaluated}")
             return evaluated
