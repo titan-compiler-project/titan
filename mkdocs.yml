@@ -87,9 +87,9 @@ nav:
         - "spirv.py": "reference-docs/compiler/compiler/spirv.md"
         - "verilog.py": "reference-docs/compiler/compiler/verilog.md"
       - "main.py" : "reference-docs/compiler/main.md"
-
     - "Comms Library":
       - "TitanComms.cpp" : "reference-docs/library/TitanComms.cpp.md"
     - "FPGA Shield": "reference-docs/pcb.md"
+    - "Potential Improvements": "reference-docs/potential-improvements.md"
   - About: "about.md"
   - License: "license.md"

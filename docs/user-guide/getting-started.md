@@ -29,12 +29,6 @@ Please ensure that your code fits within the defined subset so that it can be co
 - Arithmetic operations
 - Comparison operations
 
-#### To-do
-- [ ] Maps
-- [ ] Delayed inputs
-- [ ] Limited recursion
-- [ ] Automatic interface generation from template
-- [ ] Arrays
 
 ### Example of a valid program
 
