@@ -73,6 +73,16 @@ class SPIRVAssembler(ast.NodeVisitor):
         declared_type_id: str = None
 
 
+    class IntermediateIDContext(NamedTuple):
+        """ Tuple to store information about an intermediate ID. 
+        
+            Attributes:
+                type: Base/primative type.
+                is_accessing_array: Whether the ID is accessing an array or not (i.e represents OpAccessChain).
+        """
+        type: DataType
+        is_accessing_array: bool = False
+
     class symbol_info_hint(TypedDict):
         symbol_id: str
         info: SPIRVAssembler.SymbolInfo
@@ -80,6 +90,10 @@ class SPIRVAssembler(ast.NodeVisitor):
     class constant_context_and_id(TypedDict):
         type: SPIRVAssembler.ConstContext
         spirv_id: str
+
+    class intermediate_id_and_ctx(TypedDict):
+        intermediate_id: str
+        id_ctx: SPIRVAssembler.IntermediateIDContext
 
     # attributes
     entry_point = ""
@@ -107,7 +121,7 @@ class SPIRVAssembler(ast.NodeVisitor):
     location_id = 0
     intermediate_id = 0
     return_id = 0
-    intermediate_ids: hinting.intermediate_id_type = {}
+    intermediate_ids: intermediate_id_and_ctx = {}
 
     _target_file = None
     _tree = None
@@ -449,14 +463,15 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         return True if intermediate_id in self.intermediate_ids else False
     
-    def add_intermediate_id(self, intermediate_id: str, type: DataType):
+    def add_intermediate_id(self, intermediate_id: str, type: DataType, is_accessing_array: bool = False):
         """ Add an intermediate ID.
 
             Args:
                 intermediate_id: Intermediate ID to add.
                 type: Type to associate with the intermediate ID.
         """
-        self.intermediate_ids[intermediate_id] = type
+        # self.intermediate_ids[intermediate_id] = type
+        self.intermediate_ids[intermediate_id] = self.IntermediateIDContext(type, is_accessing_array)
 
     def get_type_of_intermediate_id(self, intermediate_id: str) -> DataType:
         """ Returns the type of an intermediate ID, _not_ the type ID.
@@ -467,7 +482,18 @@ class SPIRVAssembler(ast.NodeVisitor):
             Returns:
                 Primative intermediate ID type.
         """
-        return self.intermediate_ids[intermediate_id]
+        return self.intermediate_ids[intermediate_id].type
+
+    def get_is_intermediate_id_accessing_array(self, intermediate_id: str) -> bool:
+        """ Returns true/false if intermediate ID is accessing an array.
+        
+            Args:
+                intermediate_id: Intermediate ID to check
+
+            Returns:
+                True if accessing array, else False
+        """
+        return self.intermediate_ids[intermediate_id].is_accessing_array
     
     # type helpers
     def type_exists(self, type: TypeContext) -> bool:
@@ -714,6 +740,52 @@ class SPIRVAssembler(ast.NodeVisitor):
                 ID of the constant.
         """
         return self.declared_constants[context]
+
+    def get_new_intermediate_id(self) -> str:
+        """ Gets intermediate ID string and increments the counter.
+        
+            Returns:
+                A (hopefully) unused intermediate ID value.
+        """
+        new_id = f"titan_id_{self.intermediate_id}"
+        self.intermediate_id += 1
+        return new_id
+
+    def add_temp_load_op_if_needed(self, id: str, type_id: str) -> str:
+        """ Add an OpLoad into a temporary ID if the symbol already exists, or if dealing with arrays (TODO).
+        
+            Required by SPIR-V syntax.
+
+            Args:
+                id: ID of the symbol.
+                type_id: ID of the type of the symbol.
+
+            Returns:
+                Returns the new temporary ID if the symbol exists, otherwise returns provided symbol_id.
+        """
+
+        if self.symbol_exists(id):
+            temp_id = f"temp_{id}"
+
+            self.add_line(
+                self.Sections.FUNCTIONS,
+                f"%{temp_id} = OpLoad {type_id} %{id}"
+            )
+
+            return temp_id
+        
+        elif not self.symbol_exists(id) and self.intermediate_id_exists(id):
+
+            temp_id = self.get_new_intermediate_id()
+            self.add_line(
+                self.Sections.FUNCTIONS,
+                f"%{temp_id} = OpLoad {type_id} %{id}"
+            )
+
+            return temp_id
+        else:
+            return id
+        
 
     ### ast related stuff here
     
@@ -1174,16 +1246,19 @@ class SPIRVAssembler(ast.NodeVisitor):
             logging.exception(f"multiple assignments not supported", exc_info=False)
             raise Exception("multiple assignments not supported")
 
-        # if assigning, but using a function call, deal with that within the _eval_line function instead
-        # assuming that the function call for now is only for numpy & its arrays
+
+        # special case: array initialisation
+        # will deal within _eval_line() instead
         if isinstance(node.value, ast.Call):
             eval_id, eval_ctx = self._eval_line_wrap(node)
             return
         
-        # if array indexing we also want to just return when done
+        # special case: array indexing
+        # just evaluate line to generate OpAccessChain
+        # and then handle store/load here
         elif isinstance(node.value, ast.Subscript):
-            eval_id, eval_ctx = self._eval_line_wrap(node)
-            raise Exception("TODO array assignment")
+            access_id, access_ctx = self._eval_line_wrap(node)
+            raise Exception(f"TODO array assignment: {access_id} {access_ctx}")
         
 
         try:
@@ -1395,16 +1470,17 @@ class SPIRVAssembler(ast.NodeVisitor):
         body_id = self._get_id_of_node(node.body)
         orelse_id = self._get_id_of_node(node.orelse)
 
+        intermediate_id = self.get_new_intermediate_id()
+
         self.add_line(
             self.Sections.FUNCTIONS,
-            #TODO:                                                        vvv should this just be always -1 of the current id?
-            f"%titan_id_{self.intermediate_id} = OpSelect {t_id} {self._latest_compare_id} %{body_id} %{orelse_id}"
+            #TODO:                                                              vvv should this just be always -1 of the current id?
+            f"%{intermediate_id} = OpSelect {t_id} {self._latest_compare_id} %{body_id} %{orelse_id}"
         )
 
-        # add id, set it as latest, increment by 1
-        self.add_intermediate_id(f"titan_id_{self.intermediate_id}", bool)
-        self._latest_ifexp_selector_id = f"titan_id_{self.intermediate_id}"
-        self.intermediate_id += 1
+        # add id and set it as latest
+        self.add_intermediate_id(f"{intermediate_id}", DataType.BOOLEAN)
+        self._latest_ifexp_selector_id = intermediate_id
 
     # comparison only, do not need to worry about the "orelse" value
     def visit_Compare(self, node):
@@ -1473,14 +1549,14 @@ class SPIRVAssembler(ast.NodeVisitor):
         # node.ops contains a list of operators (as ast.LtE, ast.Gt etc etc), we take the zeroth one since atm we can only do 1 comparison
         opcode = self.__return_correct_opcode(target_type, node.ops[0])
 
-        self.add_intermediate_id(f"titan_id_{self.intermediate_id}", target_type)
+        intermediate_id = self.get_new_intermediate_id()
+        self.add_intermediate_id(f"{intermediate_id}", target_type)
         self.add_line(
             self.Sections.FUNCTIONS,
-            f"%titan_id_{self.intermediate_id} = {opcode} {t_id} %{eval_left_id.strip('%')} %{eval_right_id.strip('%')}"
+            f"%{intermediate_id} = {opcode} {t_id} %{eval_left_id.strip('%')} %{eval_right_id.strip('%')}"
         )
 
-        self._latest_compare_id = f"%titan_id_{self.intermediate_id}"
-        self.intermediate_id += 1
+        self._latest_compare_id = f"%{intermediate_id}"
 
     # TODO: figure out exactly what info is needed from here, if any
     def visit_arguments(self, node): pass
@@ -1519,7 +1595,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         elif isinstance(context, self.ConstContext):
             return context.primative_type
         elif isinstance(context, DataType):
-            return context.value
+            return DataType(context.value)
         elif context is bool or int:
             return context
         else:
@@ -1528,6 +1604,9 @@ class SPIRVAssembler(ast.NodeVisitor):
         
     def __return_correct_opcode(self, chosen_type, operation):
         logging.debug(f"determining opcode for {operation} (type: {chosen_type})")
+
+        if isinstance(chosen_type, DataType):
+            chosen_type = chosen_type.value
 
         opcode_dict = {
             (ast.Add, int) : "OpIAdd",
@@ -1581,7 +1660,6 @@ class SPIRVAssembler(ast.NodeVisitor):
 
             return_ctx = None
             chosen_type = None
-            spirv_line_str = f"titan_id_{self.intermediate_id}"
 
             left_type = self._extract_type(left_ctx)
             left_type_id = self.get_primative_type_id(left_type)
@@ -1607,25 +1685,9 @@ class SPIRVAssembler(ast.NodeVisitor):
                 logging.exception(f"unable to determine return type (L: {left_type} , R: {right_type})", exc_info=False)
                 raise Exception(f"unable to determine return type (L: {left_type} , R: {right_type})")
 
-            if self.symbol_exists(left_id):
-                temp_left_id = f"temp_{left_id}"
-                self.add_line(
-                    self.Sections.FUNCTIONS,
-                    f"%{temp_left_id} = OpLoad {left_type_id} %{left_id}"
-                )
+            left_id = self.add_temp_load_op_if_needed(left_id, left_type_id)
+            right_id = self.add_temp_load_op_if_needed(right_id, right_type_id)
 
-                left_id = temp_left_id
-
-            if self.symbol_exists(right_id):
-                temp_right_id = f"temp_{right_id}"
-                self.add_line(
-                    self.Sections.FUNCTIONS,
-                    f"%{temp_right_id} = OpLoad {right_type_id} %{right_id}"
-                )
-
-                right_id = temp_right_id
-
-            self.add_intermediate_id(f"{spirv_line_str}", chosen_type)
             chosen_type_id = self.get_primative_type_id(DataType(chosen_type))
 
             # set the appropriate opcode
@@ -1636,14 +1698,16 @@ class SPIRVAssembler(ast.NodeVisitor):
                 logging.exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id} {left_type} {right_type}", exc_info=False)
                 raise Exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id} {left_type} {right_type}")
 
+            # spirv_line_str = f"titan_id_{self.get_and_increment_intermediate_id()}"
+            spirv_line_str = self.get_new_intermediate_id()
             self.add_line(
                 self.Sections.FUNCTIONS,
                 f"%{spirv_line_str} = {opcode} {chosen_type_id} %{left_id.strip('%')} %{right_id.strip('%')}"
             )
+            self.add_intermediate_id(f"{spirv_line_str}", chosen_type)
 
             # TODO: check which type is not None, and propagate that back up
             # TODO: should we change the type for a symbol?
-            self.intermediate_id += 1
             return spirv_line_str, return_ctx
         
         elif isinstance(node, ast.UnaryOp):
@@ -1684,8 +1748,8 @@ class SPIRVAssembler(ast.NodeVisitor):
             #      but if left alone, it sometimes creates duplicate constant lines?
             #      reproduce with simple_neuron -> duplicate "%const_integer_0"
             #      may be worth switching over to using bidicts?
-            # c_ctx = self.ConstContext(DataType(type(node.value)), node.value)
-            c_ctx = self.ConstContext(type(node.value), node.value)
+            c_ctx = self.ConstContext(DataType(type(node.value)), node.value)
+            # c_ctx = self.ConstContext(type(node.value), node.value)
 
             if not self.const_exists(c_ctx):
                 # TODO: check if type also exists?
@@ -1695,7 +1759,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 self.add_const_if_nonexistant(c_ctx)
                 return id, c_ctx
             else:
-                return self.get_const_id(node.value, type(node.value)), c_ctx
+                return self.get_const_id(node.value, DataType(type(node.value))), c_ctx
         
         elif isinstance(node, ast.IfExp):
             self.visit_IfExp(node)
@@ -1809,9 +1873,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         elif isinstance(node, ast.Assign):
             type_id, type_ctx = self._eval_line(node.value)
 
-            # 3. create OpVariable with type and storage location
-            #   - %c = OpVariable %b Function
-
+            # special case: array definition
             if isinstance(node.value, ast.Call):
                 symbol_name = node.targets[0].id
 
@@ -1821,8 +1883,6 @@ class SPIRVAssembler(ast.NodeVisitor):
 
                 return "%" + symbol_name, type_ctx
             
-            elif isinstance(node.value, ast.Subscript):
-                raise Exception("array read/write not implemented yet")
             else:
                 raise Exception(f"unexpected node: {type(node.value)}")
 
@@ -1843,8 +1903,7 @@ class SPIRVAssembler(ast.NodeVisitor):
             )
             element_type_id = self.get_type_id(element_ctx)
 
-            temp_id = f"titan_id_{self.intermediate_id}"
-            self.intermediate_id += 1
+            temp_id = self.get_new_intermediate_id()
 
             self.add_line(
                 self.Sections.FUNCTIONS,
@@ -1852,7 +1911,7 @@ class SPIRVAssembler(ast.NodeVisitor):
             )
 
             # function does not account for pointer, potential fix needed?
-            self.add_intermediate_id(temp_id, DataType(array_ctx.type))
+            self.add_intermediate_id(temp_id, DataType(array_ctx.type), is_accessing_array=True)
 
             return temp_id, element_ctx
 
