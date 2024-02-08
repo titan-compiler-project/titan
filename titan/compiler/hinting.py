@@ -26,8 +26,3 @@ class symbol_and_type(TypedDict):
 class declared_types(TypedDict):
     type: DataType
     spirv_id: str
-
-
-class intermediate_id_type(TypedDict):
-    intermediate_id: str
-    type: DataType
