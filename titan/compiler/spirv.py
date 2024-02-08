@@ -1907,7 +1907,7 @@ class SPIRVAssembler(ast.NodeVisitor):
 
             self.add_line(
                 self.Sections.FUNCTIONS,
-                f"%{temp_id} = OpAccessChain {element_type_id} {index_id}"
+                f"%{temp_id} = OpAccessChain {element_type_id} %{node.value.id} {index_id}"
             )
 
             # function does not account for pointer, potential fix needed?
