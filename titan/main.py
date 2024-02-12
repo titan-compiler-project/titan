@@ -4,12 +4,7 @@ from compiler.helper import CompilerContext
 from compiler.spirv import SPIRVAssembler
 from compiler.verilog import VerilogAssember
 
-def main():
-    """ Entry point for the program.
-    
-        Calls to handle CLI options, parsing, generating and writing.
-    """
-
+def run_argparse() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description = "Compile a subset of Python into SystemVerilog. Visit https://titan-compiler-project.github.io/titan for more info."
     )
@@ -20,7 +15,17 @@ def main():
     parser.add_argument("-s", help="only run the SPIR-V generation", action="store_true")
     parser.add_argument("-v", "--verbose", help="output debug messages", action="store_true")
 
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    """ Entry point for the program.
+    
+        Calls to handle CLI options, parsing, generating and writing.
+
+    """
+    
+    args = run_argparse()
     compiler_ctx = CompilerContext(args)
 
 
@@ -34,7 +39,7 @@ def main():
     )
 
     logging.info(f"--- New run, time is: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')} ---")
-    logging.info(f"arguments: {args}")
+    logging.debug(f"arguments: {args}")
 
 
     logging.info(f"Generating SPIR-V from {compiler_ctx.files[0]} ...")
