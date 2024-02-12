@@ -774,7 +774,7 @@ class SPIRVAssembler(ast.NodeVisitor):
 
             return temp_id
         
-        elif not self.symbol_exists(id) and self.intermediate_id_exists(id):
+        elif not self.symbol_exists(id) and not self.intermediate_id_exists(id):
 
             temp_id = self.get_new_intermediate_id()
             self.add_line(
