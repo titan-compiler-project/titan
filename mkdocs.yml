@@ -74,6 +74,8 @@ nav:
     - "Synthesised Modules": "user-guide/synthesised-modules.md"
   - Reference Docs:
     - "Compiler":
+      - "tests":
+        - "test_helper.py": "reference-docs/compiler/tests/test_helper.md"
       - "common":
         - "errors.py": "reference-docs/compiler/common/errors.md"
         - "grammar.py": "reference-docs/compiler/common/grammar.md"

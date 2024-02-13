@@ -22,7 +22,3 @@
 ::: titan.compiler.hinting.declared_types
     options:
         show_root_heading: true
-
-::: titan.compiler.hinting.intermediate_id_type
-    options:
-        show_root_heading: true

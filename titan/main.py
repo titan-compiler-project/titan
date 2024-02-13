@@ -5,6 +5,11 @@ from compiler.spirv import SPIRVAssembler
 from compiler.verilog import VerilogAssember
 
 def run_argparse() -> argparse.Namespace:
+    """ Handles setting up and executing `argparse.ArgumentParser`.
+
+        Returns:
+            Parsed arguments
+    """
     parser = argparse.ArgumentParser(
         description = "Compile a subset of Python into SystemVerilog. Visit https://titan-compiler-project.github.io/titan for more info."
     )
