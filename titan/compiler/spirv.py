@@ -656,16 +656,16 @@ class SPIRVAssembler(ast.NodeVisitor):
             return self.get_type_id(type)
         
     # const helpers
-    def const_exists(self, const: ConstContext) -> bool:
+    def const_exists(self, const: ConstContext | str) -> bool:
         """ Check if a constant exists.
 
             Args:
-                const: Constant to check.
+                const: Constant to check, either with ConstContext or ID (without '%')
 
             Returns:
                 True if constant exists, else False.
         """
-        return True if const in self.declared_constants else False
+        return const in self.declared_constants.keys() or const in self.declared_constants.values()
     
     def add_const(self, c_ctx: ConstContext, spirv_id: str):
         """ Add a constant.
@@ -764,6 +764,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 Returns the new temporary ID if the symbol exists, otherwise returns provided symbol_id.
         """
 
+        # if id is a symbol
         if self.symbol_exists(id):
             temp_id = f"temp_{id}"
 
@@ -774,6 +775,11 @@ class SPIRVAssembler(ast.NodeVisitor):
 
             return temp_id
         
+        # if constant -- no need to load anything, can use directly
+        elif self.const_exists(id.strip("%")):
+            return id
+
+        # if not a symbol and not an existing intermediate id
         elif not self.symbol_exists(id) and not self.intermediate_id_exists(id):
 
             temp_id = self.get_new_intermediate_id()
