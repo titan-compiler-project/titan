@@ -1811,7 +1811,7 @@ class SPIRVAssembler(ast.NodeVisitor):
 
             type_as_str = None
             for keyword in node.keywords:
-                if keyword.arg is "dtype":
+                if keyword.arg == "dtype":
                     type_as_str = keyword.value.id
 
             if type_as_str is None:
