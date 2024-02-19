@@ -779,8 +779,8 @@ class SPIRVAssembler(ast.NodeVisitor):
         elif self.const_exists(id.strip("%")):
             return id
 
-        # if not a symbol and not an existing intermediate id
-        elif not self.symbol_exists(id) and not self.intermediate_id_exists(id):
+        # not a symbol, and not an intermediate id..? what does this line do?
+        elif (not self.symbol_exists(id) and not self.intermediate_id_exists(id)) or self.get_is_intermediate_id_accessing_array(id):
 
             temp_id = self.get_new_intermediate_id()
             self.add_line(
@@ -1259,39 +1259,65 @@ class SPIRVAssembler(ast.NodeVisitor):
             eval_id, eval_ctx = self._eval_line_wrap(node)
             return
         
-        # special case: array indexing
-        # just evaluate line to generate OpAccessChain
-        # and then handle store/load here
+        # special case: array indexing, if the target is array then we are doing "x[1] = b"
+        elif isinstance(node.targets[0], ast.Subscript):
+            index_id, index_ctx = self._eval_line(node.value)
+            access_id, access_ctx = self._eval_line(node.targets[0])
+            value_temp_load_id = self.add_temp_load_op_if_needed(index_id, index_ctx.primative_type)
+
+            self.add_line(
+                self.Sections.FUNCTIONS,
+                f"OpStore %{access_id.strip('%')} %{value_temp_load_id.strip('%')}"
+            )
+            return        
+
+        # if node.value contains a subscript object, it means we're doing something like "b = x[1]"
         elif isinstance(node.value, ast.Subscript):
-            access_id, access_ctx = self._eval_line_wrap(node)
-            raise Exception(f"TODO array assignment: {access_id} {access_ctx}")
+
+            # evaluate array access
+            access_id, access_ctx = self._eval_line(node.value)
+
+            # make symbol if non-existant
+            self.add_symbol_if_nonexistant(node.targets[0].id, access_ctx.primative_type.value, StorageType.FUNCTION_VAR)
+
+            # add opload for array
+            temp_load_id = self.add_temp_load_op_if_needed(access_id, self.get_primative_type_id(self.get_type_of_intermediate_id(access_id)))
+
+            # store
+            self.add_line(
+                self.Sections.FUNCTIONS,
+                f"OpStore %{node.targets[0].id} %{temp_load_id}"
+            )
+
+            return
         
+        # for all other things
+        else:
+            try:
+                eval_id, eval_ctx = self._eval_line_wrap(node)
+            except Exception as e:
+                logging.exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
+                raise Exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
 
-        try:
-            eval_id, eval_ctx = self._eval_line_wrap(node)
-        except Exception as e:
-            logging.exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
-            raise Exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
+            type_class = self._extract_type(eval_ctx)
 
-        type_class = self._extract_type(eval_ctx)
+            if type_class is None:
+                logging.exception(f"evaluated type as None for variable with no type declaration", exc_info=False)
+                raise Exception("evaluated type as None for variable with no type declaration")
+            
+            t_id = self.add_type_if_nonexistant(
+                self.TypeContext(
+                    DataType(type_class)
+                ),
+                f"%type_{DataType(type_class).name.lower()}"
+            )
 
-        if type_class is None:
-            logging.exception(f"evaluated type as None for variable with no type declaration", exc_info=False)
-            raise Exception("evaluated type as None for variable with no type declaration")
-        
-        t_id = self.add_type_if_nonexistant(
-            self.TypeContext(
-                DataType(type_class)
-            ),
-            f"%type_{DataType(type_class).name.lower()}"
-        )
+            self.add_symbol_if_nonexistant(node.targets[0].id, type_class, StorageType.FUNCTION_VAR)
 
-        self.add_symbol_if_nonexistant(node.targets[0].id, type_class, StorageType.FUNCTION_VAR)
-
-        self.add_line(
-            self.Sections.FUNCTIONS,
-            f"OpStore %{node.targets[0].id} %{eval_id.strip('%')}"
-        )
+            self.add_line(
+                self.Sections.FUNCTIONS,
+                f"OpStore %{node.targets[0].id} %{eval_id.strip('%')}"
+            )
 
     def visit_AnnAssign(self, node):
         # print(f"{node.annotation.id} {node.target.id} = {node.value.value}")
@@ -1803,11 +1829,6 @@ class SPIRVAssembler(ast.NodeVisitor):
                 raise Exception(f"unhandled/unimplemented numpy function being accessed: {function_name}")
 
             logging.warn("initialisation of arrays with a specific value/values is not supported, do not rely on this behaviour")
-
-            # TODO:
-            # 1. create OpTypeArray with type and length
-            #   - %a = OpTypeArray <type> <length>
-            #       - check if type exists
 
             type_as_str = None
             for keyword in node.keywords:
