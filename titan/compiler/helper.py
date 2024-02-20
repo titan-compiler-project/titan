@@ -79,7 +79,7 @@ class CompilerContext():
             Returns:
                 True if user wants only SPIR-V, otherwise False.
         """
-        return self.compiler_args.s
+        return self.compiler_args.run_spirv_only
     
     def user_wants_verbose_info(self) -> bool:
         """ Getter function to see if user wants verbose debugging information.

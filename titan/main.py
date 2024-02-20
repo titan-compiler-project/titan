@@ -19,7 +19,7 @@ def run_argparse() -> argparse.Namespace:
     parser.add_argument("source_file", help="python source file to compile")
     parser.add_argument("-t", "--top", help="specify the top function")
     parser.add_argument("-asm", help="output the SPIR-V assembly code", action="store_true")
-    parser.add_argument("-s", help="only run the SPIR-V generation", action="store_true")
+    parser.add_argument("-s", help="only run the SPIR-V generation", action="store_true", dest="run_spirv_only")
     parser.add_argument("-v", "--verbose", help="output debug messages", action="store_true")
 
     return parser.parse_args()
@@ -61,7 +61,7 @@ def main():
     if compiler_ctx.user_only_wants_spirv():
         return
 
-    logging.info(f"Generating RTL...")
+    logging.info(f"Generating RTL ...")
     verilog_assembler = VerilogAssember(spirv_assembler.create_file_as_string())
     verilog_assembler.compile(os.path.basename(compiler_ctx.files[0])[:-3])
 
