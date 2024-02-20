@@ -1,5 +1,7 @@
 import io, logging, datetime, argparse, os
 
+from rich.logging import RichHandler
+
 from compiler.helper import CompilerContext
 from compiler.spirv import SPIRVAssembler
 from compiler.verilog import VerilogAssember
@@ -38,9 +40,11 @@ def main():
         level=logging.DEBUG if compiler_ctx.user_wants_verbose_info() else logging.INFO,
         handlers=[
             logging.FileHandler("compiler_log.txt"),
-            logging.StreamHandler()
+            # logging.StreamHandler()
+            RichHandler(show_time=False, markup=True)
         ],
-        format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"
+        # format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"
+        format=f"%(message)s"
     )
 
     logging.info(f"--- New run, time is: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')} ---")
