@@ -83,11 +83,8 @@ class VerilogAssember():
 
             line_no += 1
 
-        if (_marked_start and _marked_end):
-            return fn_locations
-        else:
-            logging.exception(f"failed to determine start/end point of function (start: {_marked_start}, end: {_marked_end})", exc_info=False)
-            raise Exception(f"failed to determine start/end point of function (start: {_marked_start}, end: {_marked_end})")
+        assert _marked_start and _marked_end, f"failed to determine start/end point of function: start? {_marked_start}, end? {_marked_end}"
+        return fn_locations
 
     def append_code(self, section: Sections, code: str):
         """ Add code.
@@ -121,7 +118,6 @@ class VerilogAssember():
                 gen_yosys_script: Create a Yosys script to visualise the verilog.
         """
         node_assember = self.compile_nodes()
-        # node_assember = self.compile_nodes_copied()
         self.node_assembler = node_assember
 
         self.node_assembler.generate_dot_graph()
@@ -482,11 +478,8 @@ class VerilogAssember():
 
                     case _:
                         # TODO: make this less ugly
-                        if line.opcode == "Function" or line.opcode == "Label" or line.opcode == "Return" or line.opcode == "FunctionEnd":
-                            continue
-                        else:
-                            logging.exception(f"{TitanErrors.UNKNOWN_SPIRV_OPCODE.value} ({line.opcode}) ({TitanErrors.UNKNOWN_SPIRV_OPCODE.name})", exc_info=False)
-                            raise Exception(f"{TitanErrors.UNKNOWN_SPIRV_OPCODE.value} ({line.opcode})", TitanErrors.UNKNOWN_SPIRV_OPCODE.name) 
+                        assert line.opcode in ["Function", "Label", "Return", "FunctionEnd"], f"unknown spirv opcode: {line.opcode}"
+                        continue
                         
         return node_assembler
     
@@ -538,7 +531,6 @@ class VerilogAssember():
 
             module_data = self.node_assembler.content[module]
             sorted_nodes = self.node_assembler._sort_body_nodes_by_tick(module)
-            # logging.debug(f"sorted nodes ({len(sorted_nodes)}):\n{sorted_nodes}")
 
             for tick in range(len(sorted_nodes.keys())):
                 logging.debug(f"tick {tick} has {len(sorted_nodes[tick])} nodes")
@@ -549,16 +541,12 @@ class VerilogAssember():
                     logging.debug(f"NODE: {node.spirv_id} {node}")
 
                     if node.operation is Operation.GLOBAL_VAR_DECLARATION:
-                        if tick != 0:
-                            logging.exception(f"variable declaration outside of tick 0 ({TitanErrors.UNEXPECTED.name})", exc_info=False)
-                            raise Exception("variable declaration outside of tick 0", TitanErrors.UNEXPECTED.name)
+                        assert tick == 0, f"variable declaration outside of tick 0"
 
                         type_ctx = self.node_assembler.get_type_context_from_module(module, node.type_id)
                         width = int(type_ctx.data[0])
 
                         ender = "\n);" if io_length_tracker == (len(module_data.inputs) + len(module_data.outputs)) - 1 else ","
-                        # logging.debug(f"{len(module_data.inputs)} + {(len(module_data.outputs))} = {len(module_data.inputs) + len(module_data.outputs)}")
-                        # logging.debug(f"{(len(module_data.inputs) + len(module_data.outputs))} == {io_length_tracker}")
 
                         match node.data[0]:
                             case Operation.FUNCTION_IN_VAR_PARAM:

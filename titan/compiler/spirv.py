@@ -179,7 +179,6 @@ class SPIRVAssembler(ast.NodeVisitor):
         """ Output debug info if debug flag has been set. Uses the logging library."""
         if not self._disable_debug:
 
-            logging.debug(f"[debug info _SPIRVHelperGenerator]")
             logging.debug(f"entry point: {self.entry_point}")
             logging.debug(f"input port list: {self.input_port_list}")
             logging.debug(f"output port list: {self.output_port_list}")
@@ -209,7 +208,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 for value in self.generated_spirv[section]:
                     logging.debug(f"\t{value}")
 
-    def add_line(self, section: Sections, line:str):
+    def add_line(self, section: Sections, line: str):
         """ Add a generated line of SPIR-V to a given section.
         
             Args:
@@ -231,7 +230,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         self.output_type_list.append(type)
 
-    def add_output_symbol(self, symbol:str):
+    def add_output_symbol(self, symbol: str):
         """ Add an output symbol to the output_port_list.
 
             Also increments an internal counter.
@@ -254,7 +253,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         return True if symbol in self.symbol_info else False
     
-    def add_symbol(self, symbol_id: str, type, location: StorageType, is_array: bool = False, declared_type_id:str = None):
+    def add_symbol(self, symbol_id: str, type, location: StorageType, is_array: bool = False, declared_type_id: str = None):
         """ Add a symbol.
 
             The value ``type`` arg will be automatically converted into a valid ``titan.common.type.DataType`` value.
@@ -283,11 +282,11 @@ class SPIRVAssembler(ast.NodeVisitor):
         return self.symbol_info[symbol_id]
     
     # basically works the same as add_symbol
-    def update_symbol_info(self, symbol_id:str, info: SymbolInfo):
+    def update_symbol_info(self, symbol_id: str, info: SymbolInfo):
         """ Update the information currently stored of a given symbol.
 
             Warning:
-                Simply overwrites an existing entry. The symbol _must_ have be declared before using this,
+                Simply overwrites an existing entry. The symbol _must_ have been declared before using this,
                 otherwise you may run into a KeyError exception.
 
             Args:
@@ -316,11 +315,6 @@ class SPIRVAssembler(ast.NodeVisitor):
         symbol_is_array = False if array_type_id is None else True
 
         if symbol not in self.symbol_info:
-            
-            # if symbol_is_array:
-                # self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location, is_array=True)
-            # else:
-                # self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location)
             
             # keeping track of which id is used to create the symbol
             final_type_id = None
@@ -428,7 +422,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         else:
             return False
         
-    def get_symbol_type(self, symbol:str) -> DataType:
+    def get_symbol_type(self, symbol: str) -> DataType:
         """ Get symbol type, using symbol ID.
 
             Args:
@@ -439,7 +433,6 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         # symbol_info[symbol] -> info (SymbolInfo).type
         return self.symbol_info[symbol].type
-
 
     def get_symbol_declared_type_id(self, symbol: str) -> str:
         """ Get the ID of the type that was used to declare the symbol with.
@@ -716,7 +709,6 @@ class SPIRVAssembler(ast.NodeVisitor):
         else:
             return self.declared_constants[const]
         
-    # TODO: add one that uses the ConstContext thing directly?
     def get_const_id(self, value, type) -> str:
         """ Get the ID of a constant.
         
@@ -848,55 +840,6 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         # returns python type from <class 'x'> string
         return eval(type.split("'")[0])
-    
-    # TODO: can these be turned into enums instead?
-    def _get_string_from_type(self, type) -> str:
-        """ Returns a string depending on the type() of a variable. 
-
-            Works on int, float and bool. 
-
-            Args:
-                type: Returned value of ``type()``.
-
-            Returns:
-                Type as a string.
-
-            Raises:
-                Exception: Unknown type.
-        """
-
-        if (type is int):
-            return "int"
-        elif (type is float):
-            return "float"
-        elif (type is bool):
-            return "bool"
-        else:
-            logging.exception(f"unexpected type {type}", exc_info=False)
-            raise Exception(f"unexpected type {type}")
-        
-    def _get_type_from_string(self, type_as_string: str):
-        """ Returns the type object when given a string.
-        
-            Args:
-                type_as_string: Type, given as a string.
-
-            Returns:
-                Type, as an object.
-
-            Raises:
-                Exception: Unknown string.
-        """
-
-        if type_as_string == "int":
-            return int
-        elif type_as_string == "float":
-            return float
-        elif type_as_string == "bool":
-            return bool
-        else:
-            logging.exception(f"unexpected type as string {type_as_string}", exc_info=False)
-            raise Exception(f"unexpected type as string {type_as_string}")
         
     # ---------- start of AST functions ----------
     # see: https://docs.python.org/3/library/ast.html
@@ -928,10 +871,10 @@ class SPIRVAssembler(ast.NodeVisitor):
             # skip over imports in module definition
             if node is ast.Import or ast.ImportFrom:
                 continue
-            else:
-                if node.body[i].name == "step":
-                    _module_contains_step_function = True
-                    self.entry_point = "step"
+
+            if node.body[i].name == "step":
+                _module_contains_step_function = True
+                self.entry_point = "step"
 
         if not _module_contains_step_function:
             total_func_defs = 0
@@ -944,13 +887,12 @@ class SPIRVAssembler(ast.NodeVisitor):
                     total_func_defs += 1
                     func_def_pos = i
             
-            if total_func_defs == 0:
-                raise Exception(f"no function definitions found")
-            elif total_func_defs == 1:
-                self.entry_point = node.body[func_def_pos].name
-                logging.debug(f"setting entry point as '{self.entry_point}'")
-            elif total_func_defs > 1:
-                raise Exception(f"multiple function defintions found, please specify top")
+
+            assert total_func_defs != 0, "no function defintions found"
+            assert not total_func_defs > 1, "multiple function defintions found, please specify top"
+            
+            self.entry_point = node.body[func_def_pos].name
+            logging.debug(f"setting entry point as '{self.entry_point}'")
 
         # spirv boilerplate
         self.add_line(
@@ -981,8 +923,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 logging.debug(f"not processing {type(fn)}")
                 continue
 
-            # if type(fn) is ast.Import or ast.ImportFrom:
-                # raise Exception("")
+            # evaluate function signature
             self.visit_FunctionDef(fn)
 
             # if the function is our entry point, we want to capture its params
@@ -992,9 +933,8 @@ class SPIRVAssembler(ast.NodeVisitor):
                 # take contents of input/output ports and convert them into ids
                 ports_str = ""
 
-                for symbol, s_ctx in self.symbol_info.items():
-                    # print(s_ctx.location)
-                    if (s_ctx.location is StorageType.IN) or (s_ctx.location is StorageType.OUT):
+                for symbol, symbol_ctx in self.symbol_info.items():
+                    if (symbol_ctx.location is StorageType.IN) or (symbol_ctx.location is StorageType.OUT):
                         ports_str += f"%{symbol} "
 
                 self.add_line(
@@ -1024,15 +964,13 @@ class SPIRVAssembler(ast.NodeVisitor):
                 self._import_mapping[imported_module.name] = imported_module.name
             else:
                 self._import_mapping[imported_module.name] = imported_module.asname
-    
-    
+       
     def visit_ImportFrom(self, node):
         """ Function called when visiting import from 'x' nodes. 
 
             Does not implement any functionality.
         """
         logging.error(f"importing directly from modules not supported: {ast.dump(node)}")
-
 
     def visit_FunctionDef(self, node):
         """ Function called when visiting a function definition.
@@ -1096,8 +1034,6 @@ class SPIRVAssembler(ast.NodeVisitor):
             # TODO: remove/fix/rework this try-except block
             # may have to use __attrs__ or something to check if args contains annotation
             try:
-                # print(f"arg: {args.annotation.id}", end=" ")
-
                 # TODO: not a fan of using "eval" to determine type, is there a better way?
                 type_class = eval(args.annotation.id.split("'")[0])
 
@@ -1136,10 +1072,9 @@ class SPIRVAssembler(ast.NodeVisitor):
 
         # TODO: needs implementation for multiple returns
         # handle returns (types for now)
-        if isinstance(node.returns, ast.Call):
-            logging.exception(f"multiple returns/function calls no handled yet", exc_info=False)
-            raise Exception(f"multiple returns/function calls not handled yet")
-        elif isinstance(node.returns, ast.Name):
+        assert not isinstance(node.returns, ast.Call), "multiple returns/function calls not handled"
+
+        if isinstance(node.returns, ast.Name):
             type_class = self._get_python_type_from_string(node.returns.id)
             self.add_output_type(type_class)
 
@@ -1168,8 +1103,6 @@ class SPIRVAssembler(ast.NodeVisitor):
         super().generic_visit(node)
         logging.debug(f"body end {node.name}")
 
-        # TODO: add function that lets me add lists of strings instead of having to
-        #       write this every time
         # spirv boilerplate for end of function
         self.add_line(
             self.Sections.FUNCTIONS,
@@ -1205,8 +1138,7 @@ class SPIRVAssembler(ast.NodeVisitor):
 
                     decorator_args = node.args[0] # there should only be one entry, and this should be a list
 
-                    if not isinstance(decorator_args, ast.List):
-                        raise Exception(f"expecting list for decorator, got {type(decorator_args)} instead")
+                    assert isinstance(decorator_args, ast.List), f"expecting list for decorator, got {type(decorator_args)} instead"
                     
                     list_of_inputs_and_lags = decorator_args.elts
 
@@ -1220,8 +1152,7 @@ class SPIRVAssembler(ast.NodeVisitor):
 
                     for element in list_of_inputs_and_lags:
                         # still working with ast.Lists here
-                        if len(element.elts) != 2:
-                            raise Exception(f"unexpected amount of elements, wanted 2 got {len(element.elts)}")
+                        assert len(element.elts) == 2, f"unexpected amount for elements, wanted 2 but got {len(element.elts)} instead"
                         
                         target_input = self._extract_content(element.elts[0])
                         target_lag_depth = self._extract_content(element.elts[1])
@@ -1248,9 +1179,8 @@ class SPIRVAssembler(ast.NodeVisitor):
             Args:
                 node: The current node.
         """
-        if len(node.targets) > 1:
-            logging.exception(f"multiple assignments not supported", exc_info=False)
-            raise Exception("multiple assignments not supported")
+
+        assert len(node.targets) == 1, "multiple assignments not supported"
 
 
         # special case: array initialisation
@@ -1300,10 +1230,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 raise Exception(f"failed to unpack evaluation, usually a sign that the operation was not handled properly... exception: {e}")
 
             type_class = self._extract_type(eval_ctx)
-
-            if type_class is None:
-                logging.exception(f"evaluated type as None for variable with no type declaration", exc_info=False)
-                raise Exception("evaluated type as None for variable with no type declaration")
+            assert not type_class is None, f"evaluated type as None for variable with no type declaration"
             
             t_id = self.add_type_if_nonexistant(
                 self.TypeContext(
@@ -1327,6 +1254,7 @@ class SPIRVAssembler(ast.NodeVisitor):
             self.TypeContext(DataType(type_class)),
             f"%type_{DataType(type_class).name.lower()}"
         )
+
         try:
             eval_id, eval_ctx = self._eval_line_wrap(node)
         except Exception as e:
@@ -1351,12 +1279,15 @@ class SPIRVAssembler(ast.NodeVisitor):
         """ Handle return nodes. """
 
         # TODO: add calls to _eval_line to get proper id for node
-        if isinstance(node.value, ast.Constant):
-            logging.debug(f"returning const: {node.value.value}")
-            logging.exception(f"TODO: return constant value", exc_info=False)
-            raise Exception("TODO: return constant value")
+        # if isinstance(node.value, ast.Constant):
+            # logging.debug(f"returning const: {node.value.value}")
+            # logging.exception(f"TODO: return constant value", exc_info=False)
+            # raise Exception("TODO: return constant value")
         
-        elif isinstance(node.value, ast.Name):
+        assert not isinstance(node.value, ast.Constant), f"TODO: return constant values (returning {node.value.value})"
+        assert not isinstance(node.value, ast.BinOp), f"TODO: return binops"
+
+        if isinstance(node.value, ast.Name):
             logging.debug(f"returning name: {node.value.id}")
             id, ctx = self._eval_line(node.value)
 
@@ -1444,19 +1375,19 @@ class SPIRVAssembler(ast.NodeVisitor):
             
 
             # print(f"return {node.value.body.id} if {node.value.test.left.id} {node.value.test.ops[0].__class__.__name__} {self._extract_content(node.value.test.comparators[0])} else {self._extract_content(node.value.orelse)}")
-        elif isinstance(node.value, ast.BinOp):
-            logging.exception(f"TODO implement handling binops for return values", exc_info=False)
-            raise Exception("TODO implement handling binops for return values")
+        # elif isinstance(node.value, ast.BinOp):
+            # logging.exception(f"TODO implement handling binops for return values", exc_info=False)
+            # raise Exception("TODO implement handling binops for return values")
 
-            id, ctx = self._eval_line(node.value)
-            print(f"returning binop val ({id})")
+            # id, ctx = self._eval_line(node.value)
+            # print(f"returning binop val ({id})")
 
-            if self.symbol_exists(id):
-                print("this was a symbol")
-            elif self.intermediate_id_exists(id):
-                print("this was a temp id")
-            else:
-                raise Exception("idk")
+            # if self.symbol_exists(id):
+            #     print("this was a symbol")
+            # elif self.intermediate_id_exists(id):
+            #     print("this was a temp id")
+            # else:
+            #     raise Exception("idk")
 
         else:
             logging.exception(f"unhandled type during return node evaluation {node}", exc_info=False)
@@ -1489,7 +1420,7 @@ class SPIRVAssembler(ast.NodeVisitor):
             raise Exception(f"unhandled node {node} {type(node)}")
 
     def visit_IfExp(self, node):
-        logging.debug(f"[visit_IfExp] {node} {node._fields}")
+        logging.debug(f"{node} {node._fields}")
 
 
         # this should take care of the comparison node
@@ -1518,10 +1449,12 @@ class SPIRVAssembler(ast.NodeVisitor):
     def visit_Compare(self, node):
         # also fails to do a > b -- "failed to unpack evaluation, unhandled instance when checking Name object"
 
-        if len(node.ops) > 1:
+        # if len(node.ops) > 1:
             # TODO: will probably need recursive function to evaluate all comparisons?
-            logging.exception(f"TODO: cannot handle multiple comparisons yet", exc_info=False)
-            raise Exception("TODO: cannot handle multiple comparisons yet")
+            # logging.exception(f"TODO: cannot handle multiple comparisons yet", exc_info=False)
+            # raise Exception("TODO: cannot handle multiple comparisons yet")
+
+        assert len(node.ops) == 1, "TODO: cannot handle multiple comparisons"
 
         t_id = self.add_type_if_nonexistant(
             self.TypeContext(
@@ -1540,13 +1473,16 @@ class SPIRVAssembler(ast.NodeVisitor):
         left_type = self._extract_type(left_ctx)
         right_type = self._extract_type(right_ctx)
 
+        assert left_type is right_type, f"type mismatch, left is {left_type}, right is {right_type}"
+
         # big chance that this will have to get changed since it may cause issues if you're not super specific with types
-        if left_type is not right_type:
-            logging.exception(f"{errors.TitanErrors.TYPE_MISMATCH.value}, L: {left_type} R: {right_type} ({errors.TitanErrors.TYPE_MISMATCH.name})")
-            raise Exception(f"{errors.TitanErrors.TYPE_MISMATCH.value}, L: {left_type} R: {right_type} ({errors.TitanErrors.TYPE_MISMATCH.name})")
-        else:
-            target_type = left_type
-            target_type_id = self.get_primative_type_id(target_type)
+        # if left_type is not right_type:
+            # logging.exception(f"{errors.TitanErrors.TYPE_MISMATCH.value}, L: {left_type} R: {right_type} ({errors.TitanErrors.TYPE_MISMATCH.name})")
+            # raise Exception(f"{errors.TitanErrors.TYPE_MISMATCH.value}, L: {left_type} R: {right_type} ({errors.TitanErrors.TYPE_MISMATCH.name})")
+        # else:
+
+        target_type = left_type
+        target_type_id = self.get_primative_type_id(target_type)
 
 
         # handle left node
@@ -1700,9 +1636,11 @@ class SPIRVAssembler(ast.NodeVisitor):
             right_type_id = self.get_primative_type_id(right_type)
 
 
-            if left_type is not right_type:
-                logging.exception(f"mismatched types l: {left_type} r: {right_type}", exc_info=False)
-                raise Exception(f"mismatched types l: {left_type}  r: {right_type}")
+            assert left_type is right_type, f"type mismatch, left is {left_type}, right is {right_type}"
+
+            # if left_type is not right_type:
+                # logging.exception(f"mismatched types l: {left_type} r: {right_type}", exc_info=False)
+                # raise Exception(f"mismatched types l: {left_type}  r: {right_type}")
 
             if left_type is None:
                 return_ctx = right_ctx
@@ -1726,9 +1664,11 @@ class SPIRVAssembler(ast.NodeVisitor):
             opcode = None
             opcode = self.__return_correct_opcode(chosen_type, node.op)
             
-            if opcode is None:
-                logging.exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id} {left_type} {right_type}", exc_info=False)
-                raise Exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id} {left_type} {right_type}")
+            assert not opcode is None, f"opcode is still none after attempting to determine it, why?"
+
+            # if opcode is None:
+                # logging.exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id} {left_type} {right_type}", exc_info=False)
+                # raise Exception(f"opcode was not updated, why? {node.op} {chosen_type} {left_id} {right_id} {left_type} {right_type}")
 
             # spirv_line_str = f"titan_id_{self.get_and_increment_intermediate_id()}"
             spirv_line_str = self.get_new_intermediate_id()
@@ -1747,29 +1687,33 @@ class SPIRVAssembler(ast.NodeVisitor):
             if isinstance(node.op, ast.USub):
                 value = node.operand.value
 
-                if type(value) not in [int, float, bool]:
-                    logging.exception(f"got unexpected constant value type {type(value)}", exc_info=False)
-                    raise Exception(f"got unexpected constant value type {type(value)}")
+                # if type(value) not in [int, float, bool]:
+                    # logging.exception(f"got unexpected constant value type {type(value)}", exc_info=False)
+                    # raise Exception(f"got unexpected constant value type {type(value)}")
+                
+                assert type(value) in [int, float, bool], f"got unexpected constant value type: {type(value)}"
 
                 c_ctx = self.ConstContext(type(value), value * -1)
 
                 if not self.const_exists(c_ctx):
                     # id = f"%const_{self._return_string_from_type(type(value))}_n{str(value).replace('.', '_')}"
                     id = f"%const_{DataType(type(value)).name.lower()}_n{str(value).replace('.', '_')}"
-                    # self.spirv_helper.add_const(c_ctx, id)
                     self.add_const_if_nonexistant(c_ctx, True)
                     return id, c_ctx
                 else:
                     return self.get_const_id(value*-1, type(value)), c_ctx
-
-            logging.exception(f"unhandled additional operator in unaryop class {node.op}", exc_info=False)
-            raise Exception(f"unhandled additional operator in unaryop class {node.op}")
-            # return f"{node.op.__class__.__name__} {node.operand.value} {type(node.operand.value)} ({isinstance(node.op,ast.USub)})"
+                
+            else:
+                logging.exception(f"unhandled additional operator in unaryop class {node.op}", exc_info=False)
+                raise Exception(f"unhandled additional operator in unaryop class {node.op}")
+                # return f"{node.op.__class__.__name__} {node.operand.value} {type(node.operand.value)} ({isinstance(node.op,ast.USub)})"
 
         elif isinstance(node, ast.Name):
-            if not self.symbol_exists(node.id):
-                logging.exception(f"symbol '{node.id}' does not exist", exc_info=False)
-                raise Exception(f"symbol '{node.id}' does not exist")
+            # if not self.symbol_exists(node.id):
+                # logging.exception(f"symbol '{node.id}' does not exist", exc_info=False)
+                # raise Exception(f"symbol '{node.id}' does not exist")
+            
+            assert self.symbol_exists(node.id), f"symbol '{node.id}' does not exist"
 
             return f"{node.id}", self.get_symbol_type(node.id)
 
@@ -1822,11 +1766,9 @@ class SPIRVAssembler(ast.NodeVisitor):
             elif exists_in_inverse_mapping:
                 module_is_numpy = True if self._import_mapping.inverse[module_name] == "numpy" else False
 
-            if not module_is_numpy:
-                raise Exception(f"unhandled call object for {module_name}, probably incompatible")
 
-            if not function_name == ("empty" or "zeroes" or "ones"):
-                raise Exception(f"unhandled/unimplemented numpy function being accessed: {function_name}")
+            assert module_is_numpy, f"unhandled call object for {module_name}, probably incompatible"
+            assert function_name in ["empty", "zeroes", "ones"], f"unhandled/unimplemented numpy function being accessed: {function_name}"
 
             logging.warn("initialisation of arrays with a specific value/values is not supported, do not rely on this behaviour")
 
@@ -1834,10 +1776,8 @@ class SPIRVAssembler(ast.NodeVisitor):
             for keyword in node.keywords:
                 if keyword.arg == "dtype":
                     type_as_str = keyword.value.id
-
-            if type_as_str is None:
-                raise Exception("was unable to set type for array")
-
+            
+            assert not type_as_str is None, f"unable to set type for array"
 
             # add just in case
             type_as_datatype = DataType(self._get_python_type_from_string(type_as_str))
@@ -1846,16 +1786,11 @@ class SPIRVAssembler(ast.NodeVisitor):
                 f"%type_{type_as_datatype.name.lower()}"
             )
 
-            array_size = node.args[0]
-
-            # TODO
-            if isinstance(array_size, tuple):
-                raise Exception("tuples not yet supported for defining array shapes")
+            array_size = node.args[0]            
+            assert not isinstance(array_size, tuple), f"TODO: tuples not supported for defining array shapes"
             
             array_size_id, array_size_ctx = self._eval_line(array_size)
-        
-            if not array_size_ctx.value > 0:
-                raise Exception(f"array size cannot be less than or equal to 0, got {array_size_ctx.value} instead")
+            assert array_size_ctx.value > 0, f"array size cannot be less than or equal to 0, got {array_size_ctx.value} instead"
 
             t_ctx_array = self.TypeContext(
                 primative_type=DataType(self._get_python_type_from_string(type_as_str)),
@@ -1865,15 +1800,6 @@ class SPIRVAssembler(ast.NodeVisitor):
             )
 
             t_id_array = self.add_type_if_nonexistant(t_ctx_array, f"%array_{type_as_str}_{array_size_ctx.value}")
-
-
-            # self.add_line(
-                # self.Sections.VAR_CONST_DECLARATIONS,
-                # f"{t_id_array} = OpTypeArray {primative_type_id} {array_size_ctx.value}"
-            # )            
-
-            # 2. create OpTypePointer with storage location and optypearray arg
-            #   - %b = OpTypePointer Function %a
         
             # making the assumtion that any arrays being defined in here will defined inside the function
             # and therefore will have the Function storage location
@@ -1886,14 +1812,8 @@ class SPIRVAssembler(ast.NodeVisitor):
                 array_size= array_size_ctx.value
             )
 
-            t_id_array_ptr = self.add_type_if_nonexistant(t_ctx_array_ptr, f"%array_ptr_{type_as_str}_{array_size_ctx.value}_{StorageType.FUNCTION_VAR.name.lower()}")
-
             # NOTE: need to handle different storage locations? or will that be done somewhere else?
-
-            # self.add_line(
-            #     self.Sections.VAR_CONST_DECLARATIONS,
-            #     f"{t_id_array_ptr} = OpTypePointer Function {t_id_array}"
-            # )
+            t_id_array_ptr = self.add_type_if_nonexistant(t_ctx_array_ptr, f"%array_ptr_{type_as_str}_{array_size_ctx.value}_{StorageType.FUNCTION_VAR.name.lower()}")
 
             return t_id_array_ptr, t_ctx_array_ptr
 
@@ -1916,9 +1836,8 @@ class SPIRVAssembler(ast.NodeVisitor):
 
         elif isinstance(node, ast.Subscript):
             """ this stage will return a temporary ID related to the OpAccessChain operand"""
-
-            if not self.symbol_exists(node.value.id):
-                raise Exception(f"symbol {node.value.id} doesnt exist")
+            
+            assert self.symbol_exists(node.value.id), f"symbol '{node.value.id}' doesn't exist"
 
             index_id, _ = self._eval_line(node.slice)
             array_ctx = self.get_symbol_info(node.value.id)
@@ -1957,10 +1876,8 @@ class SPIRVAssembler(ast.NodeVisitor):
         # is this going to be an issue?
 
         if isinstance(node, ast.Assign):
-            if len(node.targets) > 1:
-                logging.exception(f"multiple assignments not supported", exc_info=False)
-                raise Exception("multiple assignments not supported")
-
+            assert len(node.targets) == 1, f"multiple assignments not supported"
+            
             # if we're assinging via a call specifically
             if isinstance(node.value, ast.Call):
                 evaluated = self._eval_line(node)

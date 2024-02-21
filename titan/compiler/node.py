@@ -29,7 +29,7 @@ class NodeContext(NamedTuple):
     input_left: Node = None
     input_right: Node = None
     operation: Operation = None
-    data: List() = []
+    data: list = []
     is_comparison: bool = False # hack because i didn't realise that OpSelect had so many parameters
 
 
@@ -49,7 +49,7 @@ class Node:
     """
 
     @staticmethod
-    def _calculate_tick(left_node: Node, right_node: Node, comparison_node: Node = None) -> int:
+    def _calculate_tick(left_node: int, right_node: int, comparison_node: int = None) -> int:
         """ Calculate the correct tick for the node.
         
             Ticks can be set to zero if the node has no parents, or to the highest tick of the parents + 1.
@@ -63,24 +63,14 @@ class Node:
                 Maximum calculated tick, based on the nodes provided.
         """
         
-        if comparison_node is None:
-            if left_node is None and right_node is None:
-                return 0
-            elif left_node is None:
-                return right_node + 1
-            elif right_node is None:
-                return left_node + 1
-            else:
-                return max(left_node, right_node) + 1
-        else:
-            if left_node is None and right_node is None:
-                return comparison_node + 1
-            elif left_node is None:
-                return max(right_node, comparison_node) + 1
-            elif right_node is None:
-                return max(left_node, comparison_node) + 1
-            else:
-                return max(left_node, right_node, comparison_node) + 1
+        # add values to list? if they're not None
+        comparison_generator = (value for value in [left_node, right_node, comparison_node] if value is not None)
+
+        try:
+            return max(comparison_generator) + 1
+        except ValueError:
+            # should only be the case where left_node = None, right_node = None and comparison_node = None
+            return 0
 
     @staticmethod
     def _set_tick_during_init(context: NodeContext):
@@ -136,15 +126,6 @@ class Node:
         else:
             return Node._calculate_tick(l_node_val, r_node_val)
 
-        # if left_node_is_none and right_node_is_none:
-        #     return 0
-        # elif left_node_is_none:
-        #     return self.input_right.tick + 1
-        # elif right_node_is_none:
-        #     return self.input_left.tick + 1
-        # else:
-        #     return max(self.input_left.tick, self.input_right.tick) + 1
-
 
     def update_input(self, pos: int, new_node: Node):
         """ Update a parent node.
@@ -183,7 +164,7 @@ class NodeTypeContext(NamedTuple):
             alias: If ``is_pointer`` is true, this attribute will store the original type id.
     """
     type: DataType = None
-    data: List() = []
+    data: list = []
     is_pointer: bool = False
     alias: str = "" # alias is used to store the original type id when is_pointer is set to True
 
@@ -326,10 +307,7 @@ class NodeAssembler():
                 Primative type ID.
         """
         x = self.content[module_name].types[id]
-        if x.is_pointer:
-            return x.alias
-        else:
-            return id
+        return x.alias if x.is_pointer else id
         
     # renamed from does_node_exist
     def node_exists(self, module_name: str, node_id: str) -> bool:
@@ -366,13 +344,13 @@ class NodeAssembler():
             Returns:
                 Latest node for the given node ID.
         """
-        # TODO: why the -1?
+        # -1 for the very latest node
         return self.content[module_name].body_nodes[node_id][-1]
     
 
     # default arg_pos is [1, 2] since its commonly used
     # however different values needed for other nodes
-    def get_left_and_right_nodes(self, module_name: str, line, arg_pos: List(int) = [1, 2]) -> Tuple[Node, Node]:
+    def get_left_and_right_nodes(self, module_name: str, line, arg_pos: list[int] = [1, 2]) -> Tuple[Node, Node]:
         left = self.get_node(module_name, line.opcode_args[arg_pos[0]])
         right = self.get_node(module_name, line.opcode_args[arg_pos[1]])
         return (left, right)
@@ -466,7 +444,7 @@ class NodeAssembler():
 
         return count
     
-    def generate_dot_graph(self, file_name_suffix: str = "", clean_nodes = None):
+    def generate_dot_graph(self, file_name_suffix: str = "", clean_nodes = None, dark_mode: bool = True):
         """ Generates Graphviz dot graphs of the dataflow of a function. Requires the ``graphviz`` package.
         
             Args:
@@ -477,9 +455,10 @@ class NodeAssembler():
             dot = graphviz.Digraph(comment=f"digraph for {module}", filename=f"digraph_{module}{file_name_suffix}.dot", directory="dots") 
             
             # dark mode
-            dot.attr(bgcolor="gray10")
-            dot.attr(color="white")
-            dot.attr(fontcolor="white")
+            if dark_mode:
+                dot.attr(bgcolor="gray10")
+                dot.attr(color="white")
+                dot.attr(fontcolor="white")
 
             if clean_nodes is None:
                 x = self._sort_body_nodes_by_tick(module)
@@ -539,7 +518,7 @@ class NodeAssembler():
 
             dot.render(view=False, overwrite_source=True)
 
-    def _find_best_parents(self, subject_node: Node) -> Union(Node, Tuple(Node, Node)):
+    def _find_best_parents(self, subject_node: Node) -> Node | tuple[Node, Node]:
         """ Attempt to find the best parents.
 
             Args:
