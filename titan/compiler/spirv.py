@@ -37,6 +37,7 @@ class SPIRVAssembler(ast.NodeVisitor):
                 is_pointer (bool): Type describes a pointer.
                 is_function_typedef (bool): Type describes a function definition. 
                 is_array (bool): Type describes array.
+                array_size (int): Stores size of array.
         """
         primative_type: DataType
         storage_type: StorageType = StorageType.NONE
