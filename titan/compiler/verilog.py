@@ -145,6 +145,7 @@ class VerilogAssember():
         node_assembler = NodeAssembler()
 
         # deal with headers
+        logging.debug(f"processing SPIR-V headers...")
         for line_no in range(0, spirv_fn_locations[0].start_position):
             line = self.parsed_spirv[line_no]
             logging.debug(line)
@@ -159,16 +160,21 @@ class VerilogAssember():
                         node_assembler.declared_symbols.append(line.id)
 
                     if node_assembler.type_exists_in_module(spirv_fn_name, line.opcode_args[0]):
+
+                        node_type_context = node_assembler.get_type_context_from_module(spirv_fn_name, line.opcode_args[0])
+
+                        assert node_type_context.type != (DataType.VOID or DataType.NONE), f"got invalid type for constant"
+
                         node_assembler.add_body_node_to_module(
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    line_no,
-                                    line.id,
-                                    line.opcode_args[0],
-                                    None, None,
-                                    Operation.GLOBAL_CONST_DECLARATION,
-                                    [line.opcode_args[1]]
+                                    line_no=line_no, id=line.id, type_id=line.opcode_args[0],
+                                    operation=Operation.GLOBAL_CONST_DECLARATION,
+
+                                    # this calls the correct conversion function to have literal value stored in data, instead of string
+                                    # node_type_context.type.value == Datatype.INTEGER/FLOAT/BOOL.value == int()/float()/bool()
+                                    data=[node_type_context.type.value(line.opcode_args[1])]
                                 )
                             )
                         )
@@ -187,11 +193,10 @@ class VerilogAssember():
                                 spirv_fn_name,
                                 Node(
                                     NodeContext(
-                                        line_no, line.id,
-                                        node_assembler.get_primative_type_id_from_id(spirv_fn_name, line.opcode_args[0]),
-                                        None, None,
-                                        Operation.GLOBAL_VAR_DECLARATION,
-                                        [Operation.FUNCTION_OUT_VAR_PARAM]
+                                        line_no=line_no, id=line.id,
+                                        type_id=node_assembler.get_primative_type_id_from_id(spirv_fn_name, line.opcode_args[0]),
+                                        operation=Operation.GLOBAL_VAR_DECLARATION,
+                                        data=[Operation.FUNCTION_OUT_VAR_PARAM]
                                     )
                                 )
                             )
@@ -202,11 +207,10 @@ class VerilogAssember():
                                 spirv_fn_name,
                                 Node(
                                     NodeContext(
-                                        line_no, line.id,
-                                        node_assembler.get_primative_type_id_from_id(spirv_fn_name, line.opcode_args[0]),
-                                        None, None,
-                                        Operation.GLOBAL_VAR_DECLARATION,
-                                        [Operation.FUNCTION_IN_VAR_PARAM]
+                                        line_no=line_no, id=line.id,
+                                        type_id=node_assembler.get_primative_type_id_from_id(spirv_fn_name, line.opcode_args[0]),
+                                        operation=Operation.GLOBAL_VAR_DECLARATION,
+                                        data=[Operation.FUNCTION_IN_VAR_PARAM]
                                     )
                                 )
                             )
@@ -216,8 +220,8 @@ class VerilogAssember():
                         spirv_fn_name,
                         line.id,
                         NodeTypeContext(
-                            node_assembler.get_datatype_from_id(spirv_fn_name, line.opcode_args[1]), # returns types.DataType
-                            [], True, line.opcode_args[1]
+                            type=node_assembler.get_datatype_from_id(spirv_fn_name, line.opcode_args[1]), # returns types.DataType
+                            is_pointer=True, alias=line.opcode_args[1]
                         )
                     )
 
@@ -225,7 +229,7 @@ class VerilogAssember():
                     node_assembler.add_type_context_to_module(
                         spirv_fn_name, line.id,
                         NodeTypeContext(
-                            DataType.INTEGER, line.opcode_args.as_list()
+                            type=DataType.INTEGER, data=line.opcode_args.as_list()
                         )
                     )
 
@@ -237,12 +241,31 @@ class VerilogAssember():
                 case "TypeBool":
                     node_assembler.add_type_context_to_module(
                         spirv_fn_name, line.id,
+                        NodeTypeContext(type=DataType.BOOLEAN)
+                    )
+
+                case "TypeArray":
+                    node_assembler.add_type_context_to_module(
+                        spirv_fn_name, line.id,
                         NodeTypeContext(
-                            DataType.BOOLEAN, [], False, ""
+                            type=node_assembler.get_datatype_from_id(spirv_fn_name, line.opcode_args[0]),
+                            is_array=True, array_dimension_id=line.opcode_args[1]
                         )
                     )
 
+                # dont do anything for these
+                case "TypeVoid": pass
+                case "TypeFunction": pass
+                case "Capability": pass
+                case "MemoryModel": pass
+                case "ExecutionMode": pass
+                case "Name": pass
 
+                case _:
+                    raise Exception(f"unhandled header opcode: {line.opcode}")
+
+
+        logging.debug(f"processing SPIR-V function(s)...")
         # handle body
         #                            v total spirv functions
         for counter in range(0, len(spirv_fn_locations)):
@@ -250,7 +273,7 @@ class VerilogAssember():
 
             for position in range(spirv_fn.start_position, spirv_fn.end_position+1):
                 line = self.parsed_spirv[position]
-                logging.debug(f"current SPIRV line is: {line}")
+                logging.debug(f"{line}")
 
                 match line.opcode:
                     case "Variable":
@@ -261,32 +284,35 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id,
-                                    node_assembler.get_primative_type_id_from_id(spirv_fn_name, line.opcode_args[0]),
-                                    None, None,
-                                    Operation.VARIABLE_DECLARATION
+                                    line_no=position, id=line.id,
+                                    type_id=node_assembler.get_primative_type_id_from_id(spirv_fn_name, line.opcode_args[0]),
+                                    operation=Operation.VARIABLE_DECLARATION
                                 )
                             )
                         )
 
                     case "Store":
-                        if node_assembler.node_exists(spirv_fn_name, line.opcode_args[1]):
-                            logging.debug(f"{line.opcode_args[1]} is to be STOREd in {line.opcode_args[0]}")
-                            value_node = node_assembler.get_node(spirv_fn_name, line.opcode_args[1])
-                            node_assembler.modify_node(spirv_fn_name, line.opcode_args[0], 0, value_node, Operation.STORE)
-                        else:
-                            logging.exception(f"node does not exist {spirv_fn_name} {line.opcode_args[1]}", exc_info=False)
-                            raise Exception(f"node does not exist {spirv_fn_name} {line.opcode_args[1]}")
+
+                        assert node_assembler.node_exists(spirv_fn_name, line.opcode_args[1]), f"node does not exist: {spirv_fn_name} {line.opcode_args[0]} {line.opcode_args[1]}"
+                        logging.debug(f"'{line.opcode_args[1]}' is being stored in '{line.opcode_args[0]}'")
+
+                        value_node = node_assembler.get_node(spirv_fn_name, line.opcode_args[1])
+                        operation = Operation.ARRAY_STORE if value_node.operation is Operation.ARRAY_INDEX else Operation.STORE
+
+                        node_assembler.modify_node(spirv_fn_name, line.opcode_args[0], 0, value_node, operation)
+
                         
                     case "Load":
                         value_node = node_assembler.get_node(spirv_fn_name, line.opcode_args[1])
+
+                        operation = Operation.ARRAY_LOAD if value_node.operation is Operation.ARRAY_INDEX else Operation.LOAD
 
                         node_assembler.add_body_node_to_module(
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0], value_node, None,
-                                    Operation.LOAD
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0], 
+                                    input_left=value_node, operation=operation
                                 )
                             )
                         )
@@ -298,8 +324,8 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node, Operation.ADD
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node, operation=Operation.ADD
                                 )
                             )
                         )
@@ -311,8 +337,8 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node, Operation.SUB
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node, operation=Operation.SUB
                                 )
                             )
                         )
@@ -324,8 +350,8 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node, Operation.MULT
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node, operation=Operation.MULT
                                 )
                             )
                         )
@@ -337,8 +363,8 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node, Operation.DIV
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node, operation=Operation.DIV
                                 )
                             )
                         )
@@ -354,8 +380,11 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node, Operation.DECISION, [compare_node], True
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node, 
+                                    operation=Operation.DECISION, 
+                                    data=[compare_node], 
+                                    is_comparison=True
                                 )
                             )
                         )
@@ -367,9 +396,9 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node,
-                                    Operation.EQUAL_TO
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node,
+                                    operation=Operation.EQUAL_TO
                                 )
                             )
                         )
@@ -381,9 +410,9 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node,
-                                    Operation.NOT_EQUAL_TO
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node,
+                                    operation=Operation.NOT_EQUAL_TO
                                 )
                             )
                         )
@@ -395,9 +424,9 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node,
-                                    Operation.LESS_THAN
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node,
+                                    operation=Operation.LESS_THAN
                                 )
                             )
                         )
@@ -409,9 +438,9 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node,
-                                    Operation.LESS_OR_EQ
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node,
+                                    operation=Operation.LESS_OR_EQ
                                 )
                             )
                         )
@@ -423,9 +452,9 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node,
-                                    Operation.GREATER_THAN
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node,
+                                    operation=Operation.GREATER_THAN
                                 )
                             )
                         )
@@ -437,9 +466,9 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node,
-                                    Operation.GREATER_OR_EQ
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node,
+                                    operation=Operation.GREATER_OR_EQ
                                 )
                             )
                         )
@@ -453,9 +482,9 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node,
-                                    Operation.SHIFT_LEFT
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node,
+                                    operation=Operation.SHIFT_LEFT
                                 )
                             )
                         )
@@ -469,21 +498,216 @@ class VerilogAssember():
                             spirv_fn_name,
                             Node(
                                 NodeContext(
-                                    position, line.id, line.opcode_args[0],
-                                    left_node, right_node,
-                                    Operation.SHIFT_RIGHT
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    input_left=left_node, input_right=right_node,
+                                    operation=Operation.SHIFT_RIGHT
                                 )
                             )
                         )
 
+                    case "AccessChain":
+                        array_node = node_assembler.get_node(spirv_fn_name, line.opcode_args[1])
+                        node_assembler.add_body_node_to_module(
+                            spirv_fn_name,
+                            Node(
+                                NodeContext(
+                                    line_no=position, id=line.id, type_id=line.opcode_args[0],
+                                    operation=Operation.ARRAY_INDEX, input_left=array_node,
+                                    array_id=line.opcode_args[1], array_index_id=line.opcode_args[2]
+                                )
+                            )
+                        )
+
+                    # dont do anything with these
+                    case "Function": pass
+                    case "Label": pass
+                    case "Return": pass
+                    case "FunctionEnd": pass
+
                     case _:
-                        # TODO: make this less ugly
-                        assert line.opcode in ["Function", "Label", "Return", "FunctionEnd"], f"unknown spirv opcode: {line.opcode}"
-                        continue
-                        
+                        raise Exception(f"unknown SPIR-V opcode: '{line.opcode}' -- {line}")
+                    
         return node_assembler
     
     def compile_text(self):
+        """ Generate SystemVerilog source code based on Nodes. """
+
+        def _get_correct_id(node: Node):
+            """ Determine the correct ID/value to return.
+            
+                Needed because literal constant values need to be returned
+                instead of the ID for them.
+
+                Args:
+                    node: Node to determine ID for.
+
+                TODO:
+                    Rename the function to something that describes it better.
+            """
+            if node.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
+                return node.data[0]
+            
+            # added for handling comparison node
+            if node.operation is Operation.STORE:
+                return node.input_left.spirv_id[1:]
+            else:
+                return node.spirv_id[1:]
+        
+
+        self.append_code(
+            self.Sections.MODULE_AND_PORTS,
+            f"// automatically generated, dont modify otherwise it might break =)"
+        )
+
+
+        for module in self.node_assembler.content.keys():
+            self.append_code(self.Sections.MODULE_AND_PORTS, f"module {module} (")
+            self.append_code(self.Sections.MODULE_AND_PORTS, f"\tinput logic clock_i,")
+            self.append_code(self.Sections.ALWAYS_BLOCK, f"\talways_ff @ (posedge clock_i) begin")
+            
+            module_data = self.node_assembler.content[module]
+            sorted_nodes = self.node_assembler._sort_body_nodes_by_tick(module)
+
+            for tick in range(len(sorted_nodes.keys())):
+                logging.debug(f"tick {tick} has {len(sorted_nodes[tick])} nodes")
+
+                io_length_tracker = 0
+
+                for node_index in range(len(sorted_nodes[tick])):
+                    node = sorted_nodes[tick][node_index]
+
+                    logging.debug(f"node: {node.spirv_id} {node}")
+
+                    match node.operation:
+
+                        case Operation.GLOBAL_VAR_DECLARATION:
+                            assert tick == 0, f"variable declaration outside of tick 0"
+
+                            type_ctx = self.node_assembler.get_type_context_from_module(module, node.type_id)
+                            width = int(type_ctx.data[0])
+
+                            ender = "\n);" if io_length_tracker == (len(module_data.inputs) + len(module_data.outputs)) - 1 else ","
+
+                            match node.data[0]:
+                                case Operation.FUNCTION_IN_VAR_PARAM:
+                                    self.append_code(
+                                        self.Sections.MODULE_AND_PORTS,
+                                        f"\tinput logic [{width-1}:0] {node.spirv_id[1:]}{ender}"
+                                    )
+                                
+                                case Operation.FUNCTION_OUT_VAR_PARAM:
+                                    self.append_code(
+                                        self.Sections.MODULE_AND_PORTS,
+                                        f"\toutput logic [{width-1}:0] {node.spirv_id[1:]}{ender}"
+                                    )
+                            
+                            io_length_tracker += 1
+
+
+                        case Operation.VARIABLE_DECLARATION:
+                            node_type_id = self.node_assembler.get_primative_type_id_from_id(module, node.type_id)
+                            type_context = self.node_assembler.get_type_context_from_module(module, node_type_id)
+
+                            if type_context.is_array:
+                                # define array in sv
+                                array_shape_node = self.node_assembler.get_node(module, type_context.array_dimension_id)
+                                array_shape = array_shape_node.data[0]
+                                assert type(array_shape) is int, f"unexpected type for array shape, expected int but got {type(array_shape)}. (only 1d arrays supported currently)"
+
+                                assert array_shape >= 1, f"array shape must define array of 2 or more elements"
+                                width = int(self.node_assembler.get_primative_type_context_from_datatype(module, type_context.type).data[0])
+
+                                self.append_code(self.Sections.INTERNAL, f"\tlogic [{width-1}:0] {node.spirv_id[1:]} [0:{array_shape-1}];")
+
+                            else:
+                                width = int(type_context.data[0])
+                                self.append_code(self.Sections.INTERNAL, f"\tlogic [{width-1}:0] {node.spirv_id[1:]};")
+
+
+                        case Operation.STORE:
+                            if len(node.data) != 1:
+                                continue
+
+                            assert node.data[0] != Operation.FUNCTION_IN_VAR_PARAM, f"cannot store value in an input parameter/port"
+                            assert node.data[0] == Operation.FUNCTION_OUT_VAR_PARAM, f"storing in unexpected node type: {node.data[0]}"
+
+                            self.append_code(self.Sections.ASSIGNMENTS, f"\tassign {node.spirv_id[1:]} = {node.input_left.spirv_id[1:]}")
+
+                        case _ if node.operation in Operation_Type.ARITHMETIC:
+                            if node.spirv_id not in self.node_assembler.declared_symbols:
+                                width = int(self.node_assembler.get_type_context_from_module(module, node.type_id).data[0])
+
+                                self.append_code(self.Sections.INTERNAL, f"\tlogic [{width-1}:0] {node.spirv_id[1:]};")
+
+                            assert type(node.operation.value) is str, f"didn't get a string for operator, is it set correctly? {node.operation}"
+                            line = f"\t\t{node.spirv_id[1:]} <= {_get_correct_id(node.input_left)} {node.operation.value} {_get_correct_id(node.input_right)};"
+
+                            self.append_code(self.Sections.ALWAYS_BLOCK, line)
+
+                        case _ if node.operation in Operation_Type.COMPARISON:
+                            defer_node_creation = False
+                            
+                            logging.debug(f"checking 1 tick ahead..({tick} + 1 = {tick+1})")
+                            for future_node in sorted_nodes[tick+1]:
+                                if defer_node_creation: break
+
+                                if future_node.operation == Operation.DECISION:
+                                    if future_node.data[0].spirv_id == node.spirv_id:
+                                        logging.debug(f"found a reference")
+                                        defer_node_creation = True
+                                    else:
+                                        logging.debug("no reference found")
+
+                            logging.debug("stoped checking 1 tick ahead")
+
+                            if not defer_node_creation:
+                                self.append_code(self.Sections.INTERNAL, f"\tlogic {node.spirv_id[1:]};")
+
+                            assert type(node.operation.value) is str, f"didn't get a string for operator, is it set correctly? {node.operation}"
+
+                            line = f"\t\t{node.spirv_id[1:]} <= {_get_correct_id(node.input_left)} {node.operation.value} {_get_correct_id(node.input_right)};"
+                            self.append_code(self.Sections.ALWAYS_BLOCK, line)
+
+                        case Operation.DECISION:
+                            logging.debug(f"in decision: {node}")
+                            comparison_node = node.data[0]
+
+                            # comparison node holds the comparison operator, and the comparison itself
+                            # the paried decision node holds the expected results
+
+                            # so i.e. c = a >= 10 ? 5 : 0 would require the comparison node to construct a >= 10
+                            # and the paried decision node for the ? 5 : 0 section
+
+                            # we dont want to create a logic value for the comparison node because that can just be abstracted away
+                            # so instead we will create the logic value for the decision node
+
+                            width = int(self.node_assembler.get_type_context_from_module(module, node.type_id).data[0])
+
+                            self.append_code(self.Sections.INTERNAL, f"\tlogic [{width-1}:0] {node.spirv_id[1:]};")
+
+                            assert type(node.operation.value) is str, f"didn't get a string for operator, is it set correctly? {node.operation}"
+                            
+                            # TODO: __get_correct_id(node) was returning the string representation of the node instead, why?
+                            line = f"\t\t{node.spirv_id[1:]} <= {_get_correct_id(comparison_node.input_left)} {node.operation.value} {_get_correct_id(comparison_node.input_right)} ? {_get_correct_id(node.input_left)} : {_get_correct_id(node.input_right)};"
+                            self.append_code(self.Sections.ALWAYS_BLOCK, line)
+
+                        case _ if node.operation in Operation_Type.BITWISE:
+                            width = int(self.node_assembler.get_type_context_from_module(module, node.type_id).data[0])
+                            
+                            self.append_code(self.Sections.INTERNAL, f"\tlogic [{width-1}:0] {node.spirv_id[1:]}")
+
+                            line = f"\t\t{_get_correct_id(node)} <= {_get_correct_id(node.input_left)} {Operation(node.operation).value} {_get_correct_id(node.input_right)};"
+                            self.append_code(self.Sections.ALWAYS_BLOCK, line)
+
+                        case Operation.GLOBAL_CONST_DECLARATION: pass # dont need to generate any text
+
+                        case _:
+                            raise Exception(f"unhandled node during systemverilog generation: {node}")
+
+            self.append_code(self.Sections.ALWAYS_BLOCK, f"\tend")
+            self.append_code(self.Sections.ASSIGNMENTS, "endmodule")
+
+    def compile_text_old(self):
         """ Generate Verilog source code from Nodes. """
 
 
