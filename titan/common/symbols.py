@@ -46,6 +46,11 @@ class Operation(Enum):
     # misc
     NOP = auto()
 
+    # array ops
+    ARRAY_INDEX = auto()
+    ARRAY_LOAD = auto()
+    ARRAY_STORE = auto()
+
 # https://stackoverflow.com/questions/58492047/how-to-add-member-subsets-to-a-python-enum
 class Operation_Type(set, Enum):
     """ Enum containing sets of ``titan.common.symbols.Operation``, bundled into common groups.
@@ -66,6 +71,7 @@ class Operation_Type(set, Enum):
                   Operation.GREATER_THAN, Operation.GREATER_OR_EQ, 
                   Operation.EQUAL_TO, Operation.NOT_EQUAL_TO}
     BITWISE = {Operation.SHIFT_LEFT, Operation.SHIFT_RIGHT}
+    ARRAY_OPERATIONS = {Operation.ARRAY_INDEX, Operation.ARRAY_LOAD, Operation.ARRAY_STORE}
 
 class LiteralSymbolGroup(set, Enum):
     """ Enum containing symbols corresponding to operations."""
