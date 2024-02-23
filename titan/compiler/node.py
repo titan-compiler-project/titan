@@ -30,8 +30,9 @@ class NodeContext(NamedTuple):
     input_right: Node = None
     operation: Operation = None
     data: list = []
-    is_comparison: bool = False # hack because i didn't realise that OpSelect had so many parameters
-
+    is_comparison: bool = False # OpSelect -- why not use the operation to determine this?
+    array_id: str = ""
+    array_index_id: int = 0
 
 class Node:
     """ Node class. 
@@ -107,6 +108,8 @@ class Node:
         self.data = context.data
         self.is_comparison = context.is_comparison
         self.tick = self._set_tick_during_init(context)
+        self.array_id = context.array_id
+        self.array_index_id = context.array_index_id
 
 
     def _update_tick(self) -> int:
@@ -146,7 +149,17 @@ class Node:
 
     # TODO: make this look better
     def __str__(self):
-        return f"({self.__class__.__name__}: [{self.spirv_line_no}:{self.spirv_id}], type_id: [{self.type_id}], left: [{None if self.input_left is None else self.input_left.spirv_id}], right: [{None if self.input_right is None else self.input_right.spirv_id}], op: {self.operation}, data: {self.data},  is_comparison: {self.is_comparison}, tick: {self.tick})"
+        # return f"({self.__class__.__name__}: {self.spirv_line_no}:{self.spirv_id}, type_id: {self.type_id}, left: [{None if self.input_left is None else self.input_left.spirv_id}], right: [{None if self.input_right is None else self.input_right.spirv_id}], op: {self.operation}, data: {self.data},  is_comparison: {self.is_comparison}, tick: {self.tick})"
+        # return f"line # {self.spirv_line_no}: '{self.spirv_id}' @ tick {self.tick}: type_id: <'{self.type_id}'>, input_left: <'{None if self.input_left is None else self.input_left.spirv_id}'>, input_right: <'{None if self.input_right is None else self.input_right.spirv_id}'>, operation: <{self.operation.name}>, data: <{self.data}>, is_comparison: <{self.is_comparison}>, array_id: <'{self.array_id}'>, array_index_id: <'{self.array_index_id}'>"
+    
+        base_info = f"line # {self.spirv_line_no+1}: '{self.spirv_id}' @ tick {self.tick}: type_id: <'{self.type_id}'>, operation: <{self.operation.name}>, input_left: <'{None if self.input_left is None else self.input_left.spirv_id}'>, input_right: <'{None if self.input_right is None else self.input_right.spirv_id}'>"
+
+        if self.operation in Operation_Type.COMPARISON:
+            base_info += f", data: <{self.data}>, is_comparison: {self.is_comparison}"
+        elif self.operation in Operation_Type.ARRAY_OPERATIONS:
+            base_info += f", array_id: <'{self.array_id}'>, array_index_id: <'{self.array_index_id}'>"
+
+        return base_info
 
 
     def __repr__(self):
@@ -167,6 +180,8 @@ class NodeTypeContext(NamedTuple):
     data: list = []
     is_pointer: bool = False
     alias: str = "" # alias is used to store the original type id when is_pointer is set to True
+    is_array: bool = False
+    array_dimension_id: str = ""
 
 class NodeModuleData():
     """ Class encapsulating information required for a module.
@@ -309,6 +324,16 @@ class NodeAssembler():
         x = self.content[module_name].types[id]
         return x.alias if x.is_pointer else id
         
+    def get_primative_type_context_from_datatype(self, module_name: str, datatype: DataType) -> NodeTypeContext:
+    
+        best_type = None
+        for type in self.content[module_name].types.values():
+            if type.type == datatype and type.is_pointer == False and type.is_array is False:
+                best_type = type
+
+        assert best_type != None, f"unable to find primative type from datatype"
+        return best_type
+
     # renamed from does_node_exist
     def node_exists(self, module_name: str, node_id: str) -> bool:
         """ Checks if a node exists in a given module.
@@ -550,8 +575,16 @@ class NodeAssembler():
         
         if subject_node.operation is Operation.STORE:
             return subject_node.input_left
-
         
+        if subject_node.operation is Operation.ARRAY_INDEX:
+            return subject_node
+        
+        if subject_node.operation is Operation.ARRAY_LOAD:
+            return subject_node
+        
+        if subject_node.operation is Operation.ARRAY_STORE:
+            return subject_node
+
         # a non existant id means that it was created for either loading or arithmetic
         if subject_node.spirv_id not in self.declared_symbols:
 
@@ -590,6 +623,8 @@ class NodeAssembler():
             
             elif subject_node.operation in Operation_Type.BITWISE:
                 return (self._find_best_parents(subject_node.input_left), self._find_best_parents(subject_node.input_right))
+            
+            raise Exception(f"was unable to determine anything for node: {subject_node} -- missing case?")
        
     def _evaluate_parents_for_non_temp_id(self, current_node: Node) -> list:
         """ Method to evaluate the parents of a node for non-temporary IDs.
@@ -623,6 +658,7 @@ class NodeAssembler():
         
             Does not return anything, overwrites the existing node list.
         """
+        logging.debug(f"attempting to clean/remove temporary/unnecessary nodes...")
 
         def _fetch_last_node(node_dict, node_name: str):
             if node_name in node_dict:
@@ -642,12 +678,13 @@ class NodeAssembler():
             clean_nodes: hinting.spirv_id_and_node = {}
             tick_ordered_nodes = self._sort_body_nodes_by_tick(function)
 
+            logging.debug(f"tick: 0")
             for node in tick_ordered_nodes[0]:
                 if node.spirv_id not in clean_nodes:
-                    logging.debug(f"{node.spirv_id} did not exist in clean nodes and was added")
+                    logging.debug(f"{node.spirv_id} did not exist in clean nodes and was added: {node}")
                     clean_nodes[node.spirv_id] = [node]
                 else:
-                    logging.debug(f"{node.spirv_id} was appended to clean nodes list")
+                    logging.debug(f"{node.spirv_id} was appended to clean nodes list: {node}")
                     clean_nodes[node.spirv_id].append(node)
 
             for tick in range(1, len(tick_ordered_nodes.keys())): #TODO: remove .keys() call
@@ -664,13 +701,13 @@ class NodeAssembler():
                     # if _eval_parents_for_non_temp_id(node) returns a spirv id
                     # we should just try and reference the latest one in the clean
                     # nodes dict
-                    logging.debug(f"current node: {node}")
+                    logging.debug(f"{node}")
                     best_node_names = self._evaluate_parents_for_non_temp_id(node)
                     logging.debug(f"returned with {best_node_names}")
 
                     if len(best_node_names) == 1:
                         # print(f"returned with one node: {best_node_names[0]}")
-                        logging.debug(f"returned with one node: {best_node_names[0]}")
+                        # logging.debug(f"returned with one node: {best_node_names[0]}")
 
                         if self.does_node_exist_in_dict(clean_nodes, node.spirv_id):
                             n = _fetch_last_node(clean_nodes, best_node_names[0])
