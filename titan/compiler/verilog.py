@@ -297,9 +297,17 @@ class VerilogAssember():
                         logging.debug(f"'{line.opcode_args[1]}' is being stored in '{line.opcode_args[0]}'")
 
                         value_node = node_assembler.get_node(spirv_fn_name, line.opcode_args[1])
-                        operation = Operation.ARRAY_STORE if value_node.operation is Operation.ARRAY_INDEX else Operation.STORE
 
-                        node_assembler.modify_node(spirv_fn_name, line.opcode_args[0], 0, value_node, operation)
+                        match value_node.operation:
+
+                            case Operation.STORE:
+                                node_assembler.modify_node(spirv_fn_name, line.opcode_args[0], 0, value_node, Operation.STORE)
+
+                            case Operation.ARRAY_INDEX:
+                                raise Exception("TODO")
+
+                        # operation = Operation.ARRAY_STORE if value_node.operation is Operation.ARRAY_INDEX else Operation.STORE
+
 
                         
                     case "Load":
@@ -700,6 +708,52 @@ class VerilogAssember():
                             self.append_code(self.Sections.ALWAYS_BLOCK, line)
 
                         case Operation.GLOBAL_CONST_DECLARATION: pass # dont need to generate any text
+
+                        case Operation.ARRAY_INDEX:
+                            
+                            load_store_node = None
+
+                            for future_node in sorted_nodes[tick+1]:
+                                if future_node.operation == (Operation.ARRAY_LOAD or Operation.ARRAY_STORE) and future_node.input_left.spirv_id == node.spirv_id:
+                                    load_store_node = future_node
+                            
+
+                            assert load_store_node != None, f"failed to find a corresponding array load/store node in one tick ahead {tick} + 1 = {tick+1}"
+
+                            # generate sv text based whether node is load/store
+
+                            match load_store_node.operation:
+                                case Operation.ARRAY_LOAD:
+                                    assert not self.node_assembler.is_symbol_an_output(module, load_store_node.input_left.spirv_id), f"cannot load value from output port"
+
+                                    # TODO: get width for int type, hardcoded for now
+                                    self.append_code(self.Sections.INTERNAL, f"\tlogic [31:0] {load_store_node.spirv_id[1:]};")
+
+                                    array_type_id = self.node_assembler.get_type_context_from_module(
+                                        module,
+                                        self.node_assembler.get_node(module, node.array_id).type_id # get array  node
+                                    )
+
+                                    array_max_size = self.node_assembler.get_node(module, array_type_id.array_dimension_id).data[0]
+                                    array_index = self.node_assembler.get_node(module, node.array_index_id).data[0]
+
+                                    # TODO: tuples
+                                    assert type(array_max_size) is int, f"array_max_size should have been int but got {type(array_max_size)} instead"
+
+                                    assert array_index < array_max_size, f"array_index was not less than array_max_size: {array_index} < {array_max_size}"
+
+                                    # assign in body
+                                    self.append_code(self.Sections.ALWAYS_BLOCK, f"\t\t{load_store_node.spirv_id[1:]} <= {node.array_id[1:]}[{array_index}];")
+
+                                    
+
+                                    # raise Exception("TODO")
+
+                                case Operation.ARRAY_STORE:
+                                    raise Exception("TODO")
+                                
+                        case Operation.ARRAY_LOAD: pass
+                            
 
                         case _:
                             raise Exception(f"unhandled node during systemverilog generation: {node}")
