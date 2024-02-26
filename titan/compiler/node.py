@@ -32,7 +32,7 @@ class NodeContext(NamedTuple):
     data: list = []
     is_comparison: bool = False # OpSelect -- why not use the operation to determine this?
     array_id: str = ""
-    array_index_id: int = 0
+    array_index_id: str = ""
 
 class Node:
     """ Node class. 
@@ -158,12 +158,17 @@ class Node:
             base_info += f", data: <{self.data}>, is_comparison: {self.is_comparison}"
         elif self.operation in Operation_Type.ARRAY_OPERATIONS:
             base_info += f", array_id: <'{self.array_id}'>, array_index_id: <'{self.array_index_id}'>"
+        elif self.operation in Operation_Type.GENERIC_CONSTANT_DECLARATION:
+            base_info += f", data: <{self.data}>"
+
 
         return base_info
 
 
     def __repr__(self):
-        return f"({self.__class__.__name__}: [{self.spirv_line_no}:{self.spirv_id}], type_id: [{self.type_id}], left: [{None if self.input_left is None else self.input_left.spirv_id}], right: [{None if self.input_right is None else self.input_right.spirv_id}], op: {self.operation}, data: {self.data},  is_comparison: {self.is_comparison}, tick: {self.tick})"
+        return self.__str__()
+
+        # return f"({self.__class__.__name__}: [{self.spirv_line_no}:{self.spirv_id}], type_id: [{self.type_id}], left: [{None if self.input_left is None else self.input_left.spirv_id}], right: [{None if self.input_right is None else self.input_right.spirv_id}], op: {self.operation}, data: {self.data},  is_comparison: {self.is_comparison}, tick: {self.tick})"
         # return f"({self.__class__.__name__}: [{self.spirv_line_no}:{self.spirv_id}], type_id: [{self.type_id}], left: [{self.input_left}], right: [{self.input_right}], op: {self.operation}, data: {self.data},  is_comparison: {self.is_comparison}, tick: {self.tick})"
 
 
@@ -296,6 +301,12 @@ class NodeAssembler():
                 symbol: Symbol to add as an input.
         """
         self.content[module_name].inputs.append(symbol)
+
+    def is_symbol_an_input(self, module_name: str, symbol: str) -> bool:
+        return symbol in self.content[module_name].inputs
+    
+    def is_symbol_an_output(self, module_name: str, symbol: str) -> bool:
+        return symbol in self.content[module_name].outputs
 
     def get_datatype_from_id(self, module_name: str, id: str) -> DataType:
         """ Return primative type from ID.
@@ -713,11 +724,14 @@ class NodeAssembler():
                             n = _fetch_last_node(clean_nodes, best_node_names[0])
 
                             new_ctx = NodeContext(
-                                node.spirv_line_no, node.spirv_id, node.type_id,
-                                n, None, node.operation, node.data
+                                line_no=node.spirv_line_no, id=node.spirv_id, type_id=node.type_id,
+                                input_left=n, input_right=None, operation=node.operation, data=node.data,
+                                is_comparison=node.is_comparison, array_id=node.array_id, array_index_id=node.array_index_id
                             )
 
+                            logging.debug(f"updating with the following context: {new_ctx}")
                             _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
+
                         else:
 
                             # print(f"-[Verilog_ASM.clean_graph] node {node} does not exist in clean dict")
@@ -728,18 +742,22 @@ class NodeAssembler():
                                 n = _fetch_last_node(clean_nodes, node.data[0].spirv_id)
 
                                 new_ctx = NodeContext(
-                                    node.spirv_line_no, node.spirv_id, node.type_id,
-                                    node.input_left, node.input_right,
-                                    node.operation, [n], node.is_comparison
+                                    line_no=node.spirv_line_no, id=node.spirv_id, type_id=node.type_id,
+                                    input_left=node.input_left, input_right=node.input_right,
+                                    operation=node.operation, data=[n], is_comparison=node.is_comparison,
+                                    array_id=node.array_id, array_index_id=node.array_index_id
                                 )
+                                
                             else:
-                                # TODO: does this every actually get hit? may be something redundant
+                                # TODO: is there a way to get the current context of the node without recreating it?
                                 new_ctx = NodeContext(
-                                    node.spirv_line_no, node.spirv_id, node.type_id,
-                                    node.input_left, node.input_right, 
-                                    node.operation, node.data, node.is_comparison
+                                    line_no=node.spirv_line_no, id=node.spirv_id, type_id=node.type_id,
+                                    input_left=node.input_left, input_right=node.input_right, 
+                                    operation=node.operation, data=node.data, is_comparison=node.is_comparison,
+                                    array_id=node.array_id, array_index_id=node.array_index_id
                                 )
 
+                            logging.debug(f"updating with the following context: {new_ctx}")
                             _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
 
 
@@ -755,8 +773,9 @@ class NodeAssembler():
                         logging.debug(f"\tnode 2: {n2}")
 
                         new_ctx = NodeContext(
-                            node.spirv_line_no, node.spirv_id, node.type_id,
-                            n1, n2, node.operation, node.data
+                            line_no=node.spirv_line_no, id=node.spirv_id, type_id=node.type_id,
+                            input_left=n1, input_right=n2, operation=node.operation, data=node.data,
+                            is_comparison=node.is_comparison, array_id=node.array_id, array_index_id=node.array_index_id
                         )
 
                         _update_node_dict(clean_nodes, node.spirv_id, new_ctx)
