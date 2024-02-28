@@ -260,6 +260,7 @@ class VerilogAssember():
                 case "MemoryModel": pass
                 case "ExecutionMode": pass
                 case "Name": pass
+                case "Decorate": pass
 
                 case _:
                     raise Exception(f"unhandled header opcode: {line.opcode}")
@@ -293,20 +294,20 @@ class VerilogAssember():
 
                     case "Store":
 
-                        assert node_assembler.node_exists(spirv_fn_name, line.opcode_args[1]), f"node does not exist: {spirv_fn_name} {line.opcode_args[0]} {line.opcode_args[1]}"
+                        assert node_assembler.node_exists(spirv_fn_name, line.opcode_args[0]), f"node does not exist: {line.opcode_args[0]}"
+                        assert node_assembler.node_exists(spirv_fn_name, line.opcode_args[1]), f"node does not exist: {line.opcode_args[1]}"
+                        assert not node_assembler.is_symbol_an_input(spirv_fn_name, line.opcode_args[0]), f"cannot assign value to input variable"
                         logging.debug(f"'{line.opcode_args[1]}' is being stored in '{line.opcode_args[0]}'")
 
+                        target_node = node_assembler.get_node(spirv_fn_name, line.opcode_args[0])
                         value_node = node_assembler.get_node(spirv_fn_name, line.opcode_args[1])
 
-                        match value_node.operation:
+                        store_node_ctx = NodeContext(
+                            line_no=position, id=line.opcode_args[0], 
+                            type_id=target_node.type_id, input_left=value_node, operation=Operation.STORE
+                        )
 
-                            case Operation.STORE:
-                                node_assembler.modify_node(spirv_fn_name, line.opcode_args[0], 0, value_node, Operation.STORE)
-
-                            case Operation.ARRAY_INDEX:
-                                raise Exception("TODO")
-
-                        # operation = Operation.ARRAY_STORE if value_node.operation is Operation.ARRAY_INDEX else Operation.STORE
+                        node_assembler.add_body_node_to_module(spirv_fn_name, Node(store_node_ctx))
 
 
                         
@@ -628,18 +629,14 @@ class VerilogAssember():
                                 self.append_code(self.Sections.INTERNAL, f"\tlogic [{width-1}:0] {node.spirv_id[1:]} [0:{array_shape-1}];")
 
                             else:
-                                width = int(type_context.data[0])
-                                self.append_code(self.Sections.INTERNAL, f"\tlogic [{width-1}:0] {node.spirv_id[1:]};")
+                                logging.debug(f"not generating logic/reg for {node.spirv_id[1:]}: {node}")
 
 
                         case Operation.STORE:
-                            if len(node.data) != 1:
-                                continue
-
-                            assert node.data[0] != Operation.FUNCTION_IN_VAR_PARAM, f"cannot store value in an input parameter/port"
-                            assert node.data[0] == Operation.FUNCTION_OUT_VAR_PARAM, f"storing in unexpected node type: {node.data[0]}"
-
-                            self.append_code(self.Sections.ASSIGNMENTS, f"\tassign {node.spirv_id[1:]} = {node.input_left.spirv_id[1:]}")
+                            if self.node_assembler.is_symbol_an_output(module, node.spirv_id[1:]):
+                                self.append_code(self.Sections.ASSIGNMENTS, f"\tassign {node.spirv_id[1:]} = {node.input_left.spirv_id[1:]};")
+                            else:
+                                logging.debug(f"not creating assign statement for {node.spirv_id}: {node}")
 
                         case _ if node.operation in Operation_Type.ARITHMETIC:
                             if node.spirv_id not in self.node_assembler.declared_symbols:
@@ -666,15 +663,18 @@ class VerilogAssember():
                                     else:
                                         logging.debug("no reference found")
 
-                            logging.debug("stoped checking 1 tick ahead")
+                            logging.debug("stopped checking 1 tick ahead")
 
+                            # TODO: better variable name
                             if not defer_node_creation:
                                 self.append_code(self.Sections.INTERNAL, f"\tlogic {node.spirv_id[1:]};")
 
-                            assert type(node.operation.value) is str, f"didn't get a string for operator, is it set correctly? {node.operation}"
+                                assert type(node.operation.value) is str, f"didn't get a string for operator, is it set correctly? {node.operation}"
 
-                            line = f"\t\t{node.spirv_id[1:]} <= {_get_correct_id(node.input_left)} {node.operation.value} {_get_correct_id(node.input_right)};"
-                            self.append_code(self.Sections.ALWAYS_BLOCK, line)
+                                line = f"\t\t{node.spirv_id[1:]} <= {_get_correct_id(node.input_left)} {node.operation.value} {_get_correct_id(node.input_right)};"
+                                self.append_code(self.Sections.ALWAYS_BLOCK, line)
+                            else:
+                                continue
 
                         case Operation.DECISION:
                             logging.debug(f"in decision: {node}")
@@ -693,10 +693,11 @@ class VerilogAssember():
 
                             self.append_code(self.Sections.INTERNAL, f"\tlogic [{width-1}:0] {node.spirv_id[1:]};")
 
-                            assert type(node.operation.value) is str, f"didn't get a string for operator, is it set correctly? {node.operation}"
+                            comparison_symbol = comparison_node.operation.value
+                            assert type(comparison_node.operation.value) is str, f"didn't get a string for operator, is it set correctly? {comparison_node.operation} {comparison_node.operation.value}"
                             
                             # TODO: __get_correct_id(node) was returning the string representation of the node instead, why?
-                            line = f"\t\t{node.spirv_id[1:]} <= {_get_correct_id(comparison_node.input_left)} {node.operation.value} {_get_correct_id(comparison_node.input_right)} ? {_get_correct_id(node.input_left)} : {_get_correct_id(node.input_right)};"
+                            line = f"\t\t{node.spirv_id[1:]} <= {_get_correct_id(comparison_node.input_left)} {comparison_symbol} {_get_correct_id(comparison_node.input_right)} ? {_get_correct_id(node.input_left)} : {_get_correct_id(node.input_right)};"
                             self.append_code(self.Sections.ALWAYS_BLOCK, line)
 
                         case _ if node.operation in Operation_Type.BITWISE:
