@@ -635,7 +635,7 @@ class NodeAssembler():
             elif subject_node.operation in Operation_Type.BITWISE:
                 return (self._find_best_parents(subject_node.input_left), self._find_best_parents(subject_node.input_right))
             
-            raise Exception(f"was unable to determine anything for node: {subject_node} -- missing case?")
+        raise Exception(f"was unable to determine anything for node: {subject_node} -- missing case?")
        
     def _evaluate_parents_for_non_temp_id(self, current_node: Node) -> list:
         """ Method to evaluate the parents of a node for non-temporary IDs.
