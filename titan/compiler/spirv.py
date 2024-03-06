@@ -255,23 +255,24 @@ class SPIRVAssembler(ast.NodeVisitor):
                 symbol_exists: True if symbol exists, else False.
         """
         return True if symbol in self.symbol_info else False
-    
-    def add_symbol(self, symbol_id: str, type, location: StorageType, is_array: bool = False, declared_type_id: str = None):
-        """ Add a symbol.
 
-            The value ``type`` arg will be automatically converted into a valid ``titan.common.type.DataType`` value.
+    # NOTE: unused, no references    
+    # def add_symbol(self, symbol_id: str, type, location: StorageType, is_array: bool = False, declared_type_id: str = None):
+    #     """ Add a symbol.
+
+    #         The value ``type`` arg will be automatically converted into a valid ``titan.common.type.DataType`` value.
         
-            Args:
-                symbol_id: ID given to the symbol.
-                type: Python type of the symbol.
-                location: Given storage location for the symbol. Required for SPIR-V.
-                is_array: Is the symbol an array?
-                declared_id: SPIR-V ID of the type associated with the particular symbol.
+    #         Args:
+    #             symbol_id: ID given to the symbol.
+    #             type: Python type of the symbol.
+    #             location: Given storage location for the symbol. Required for SPIR-V.
+    #             is_array: Is the symbol an array?
+    #             declared_id: SPIR-V ID of the type associated with the particular symbol.
 
-            TODO:
-                Need to determine whether the symbol ID contains the "%" prefix or not.
-        """
-        self.symbol_info[symbol_id] = self.SymbolInfo(DataType(type), location, is_array, declared_type_id)
+    #         TODO:
+    #             Need to determine whether the symbol ID contains the "%" prefix or not.
+    #     """
+    #     self.symbol_info[symbol_id] = self.SymbolInfo(DataType(type), location, is_array, declared_type_id)
 
     def get_symbol_info(self, symbol_id: str) -> SymbolInfo:
         """ Get information regarding a given symbol via ID.
@@ -323,73 +324,45 @@ class SPIRVAssembler(ast.NodeVisitor):
             # keeping track of which id is used to create the symbol
             final_type_id = None
             
-            self.add_line(
-                self.Sections.DEBUG_STATEMENTS,
-                f"OpName %{symbol} \"{symbol}\""
-            )
+            self.add_line(self.Sections.DEBUG_STATEMENTS, f"OpName %{symbol} \"{symbol}\"")
 
-            # TODO: more elegant solution?
             # if i/o
             if location is (StorageType.IN or StorageType.OUT):
                 # add location (glsl specific i think)
-                self.add_line(
-                    self.Sections.ANNOTATIONS,
-                    f"OpDecorate %{symbol} Location {self.location_id}"
-                )
+                self.add_line(self.Sections.ANNOTATIONS, f"OpDecorate %{symbol} Location {self.location_id}")
 
                 if location is StorageType.IN:
-                    self.add_line(
-                        self.Sections.ANNOTATIONS,
-                        # more glsl specific stuff
-                        f"OpDecorate %{symbol} Flat"
-                    )
+                    # more glsl specific stuff
+                    self.add_line(self.Sections.ANNOTATIONS, f"OpDecorate %{symbol} Flat")
 
                     # input variable pointer type
                     ptr_id = self.add_type_if_nonexistant(
-                        # ptr_ctx,
-                        self.TypeContext(
-                            DataType(type), StorageType.IN,
-                            is_pointer=True
-                        ),
+                        self.TypeContext(primative_type=DataType(type), storage_type=StorageType.IN, is_pointer=True),
                         f"%pointer_input_{DataType(type).name.lower()}"
                     )
 
 
                     if symbol_is_array:
-                        self.add_line(
-                            self.Sections.VAR_CONST_DECLARATIONS,
-                            f"%{symbol} = OpVariable {array_type_id} Input"
-                        )
+                        self.add_line(self.Sections.VAR_CONST_DECLARATIONS, f"%{symbol} = OpVariable {array_type_id} Input")
                         final_type_id = array_type_id
 
                     else:
-                        self.add_line(
-                            self.Sections.VAR_CONST_DECLARATIONS,
-                            f"%{symbol} = OpVariable {ptr_id} Input"
-                        )
+                        self.add_line(self.Sections.VAR_CONST_DECLARATIONS, f"%{symbol} = OpVariable {ptr_id} Input")
                         final_type_id = ptr_id
 
 
                 elif location is StorageType.OUT:
 
                     ptr_id = self.add_type_if_nonexistant(
-                        self.TypeContext(
-                            DataType(type), StorageType.IN, is_pointer=True
-                        ),
+                        self.TypeContext(primative_type=DataType(type), storage_type=StorageType.IN, is_pointer=True),
                         f"%pointer_output_{DataType(type).name.lower()}"
                     )
 
                     if symbol_is_array:
-                        self.add_line(
-                            self.Sections.VAR_CONST_DECLARATIONS,
-                            f"%{symbol} = OpVariable {array_type_id} Output"
-                        )
+                        self.add_line(self.Sections.VAR_CONST_DECLARATIONS, f"%{symbol} = OpVariable {array_type_id} Output")
                         final_type_id = array_type_id
                     else:
-                        self.add_line(
-                            self.Sections.VAR_CONST_DECLARATIONS,
-                            f"%{symbol} = OpVariable {ptr_id} Output"
-                        )
+                        self.add_line(self.Sections.VAR_CONST_DECLARATIONS, f"%{symbol} = OpVariable {ptr_id} Output")
                         final_type_id = ptr_id
                         
 
@@ -398,23 +371,15 @@ class SPIRVAssembler(ast.NodeVisitor):
             
                 ptr_id = self.add_type_if_nonexistant(
                     self.TypeContext(
-                        DataType(type), StorageType.FUNCTION_VAR,
-                        False, True, False
-                    ),
+                        primative_type=DataType(type), storage_type=StorageType.FUNCTION_VAR, is_pointer=True),
                     f"%pointer_funcvar_{DataType(type).name.lower()}"
                 )
                 
                 if symbol_is_array:
-                    self.add_line(
-                        self.Sections.FUNCTIONS,
-                        f"%{symbol} = OpVariable {array_type_id} Function"
-                    )
+                    self.add_line(self.Sections.FUNCTIONS, f"%{symbol} = OpVariable {array_type_id} Function")
                     final_type_id = array_type_id
                 else:
-                    self.add_line(
-                        self.Sections.FUNCTIONS,
-                        f"%{symbol} = OpVariable {ptr_id} Function"
-                    )
+                    self.add_line(self.Sections.FUNCTIONS, f"%{symbol} = OpVariable {ptr_id} Function")
                     final_type_id = ptr_id
 
             # increment by 1 for regular variables, or by element count for arrays
@@ -423,8 +388,6 @@ class SPIRVAssembler(ast.NodeVisitor):
             symbol_info = self.SymbolInfo(DataType(type), location, is_array=symbol_is_array, declared_type_id=final_type_id)
             logging.debug(f"{symbol} : {symbol_info}")
             self.symbol_info[symbol] = symbol_info
-            # self.symbol_info[symbol] = self.SymbolInfo(DataType(type), location, is_array=symbol_is_array, declared_type_id=final_type_id)
-
             return True
         else:
             return False
@@ -441,16 +404,17 @@ class SPIRVAssembler(ast.NodeVisitor):
         # symbol_info[symbol] -> info (SymbolInfo).type
         return self.symbol_info[symbol].type
 
-    def get_symbol_declared_type_id(self, symbol: str) -> str:
-        """ Get the ID of the type that was used to declare the symbol with.
+    # NOTE: unused, no references
+    # def get_symbol_declared_type_id(self, symbol: str) -> str:
+    #     """ Get the ID of the type that was used to declare the symbol with.
         
-            Args:
-                symbol: Symbol ID
+    #         Args:
+    #             symbol: Symbol ID
 
-            Returns:
-                Type ID
-        """
-        return self.symbol_info[symbol].declared_type_id
+    #         Returns:
+    #             Type ID
+    #     """
+    #     return self.symbol_info[symbol].declared_type_id
 
     def intermediate_id_exists(self, intermediate_id: str) -> bool:
         """ Check if an intermediate ID already exists.
@@ -657,15 +621,16 @@ class SPIRVAssembler(ast.NodeVisitor):
                 True if constant exists, else False.
         """
         return const in self.declared_constants.keys() or const in self.declared_constants.values()
-    
-    def add_const(self, c_ctx: ConstContext, spirv_id: str):
-        """ Add a constant.
 
-            Args:
-                c_ctx: Constant to add.
-                spirv_id: The ID to associate with the constant.
-        """
-        self.declared_constants[c_ctx] = spirv_id
+    # NOTE: unused, no references    
+    # def add_const(self, c_ctx: ConstContext, spirv_id: str):
+    #     """ Add a constant.
+
+    #         Args:
+    #             c_ctx: Constant to add.
+    #             spirv_id: The ID to associate with the constant.
+    #     """
+    #     self.declared_constants[c_ctx] = spirv_id
 
     def add_const_if_nonexistant(self, const: ConstContext, negative_val: bool = False) -> str:
         """ Add a constant, only if it does not exist already.
@@ -1004,35 +969,16 @@ class SPIRVAssembler(ast.NodeVisitor):
         self.add_line(self.Sections.FUNCTIONS, f"%label_{node.name} = OpLabel")
 
         # process decorators - this should handle array defs etc
+        # TODO: can this be replaced with a specialised function, as to free up the visit_Call function?
         for decorator in node.decorator_list:
             self.visit_Call(decorator)
 
         # iterate through each arg, make type & pointer type
         for args in node.args.args:
-            # TODO: remove/fix/rework this try-except block
-            # may have to use __attrs__ or something to check if args contains annotation
-            # try:
-            #     # TODO: not a fan of using "eval" to determine type, is there a better way?
-            #     type_class = eval(args.annotation.id.split("'")[0])
 
-
-            #     # TODO: update true/false for arrays?
-            #     # check if generic type exists
-            #     t_ctx = self.TypeContext(DataType(type_class), StorageType.NONE, False, False)
-            #     self.add_type_if_nonexistant(t_ctx, f"%type_{(DataType(type_class).name).lower()}")
-
-            #     # dealing with args means that a special type needs to be made
-            #     ptr_t_ctx = self.TypeContext(DataType(type_class), StorageType.IN, False, True)
-            #     self.add_type_if_nonexistant(ptr_t_ctx, f"%pointer_input_{(DataType(type_class).name).lower()}")
-
-            #     self.add_symbol_if_nonexistant(args.arg, type_class, StorageType.IN)
-
-            # # TODO: explain?
-            # except AttributeError:
-            #     continue
-            #     raise Exception("failed here")
-            #     self.add_symbol(args.arg, None, StorageType.IN)
-
+            # args.arg == argument name
+            # args.annotation == type annotation
+            #   - seems like python types are recognised as "ast.Name"
 
             if type(args.annotation) is ast.Name:
                 # potentially bad
