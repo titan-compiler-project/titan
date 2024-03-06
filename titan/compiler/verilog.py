@@ -634,7 +634,9 @@ class VerilogAssember():
 
                         case Operation.STORE:
                             if self.node_assembler.is_symbol_an_output(module, node.spirv_id[1:]):
-                                self.append_code(self.Sections.ASSIGNMENTS, f"\tassign {node.spirv_id[1:]} = {node.input_left.spirv_id[1:]};")
+                                # if the node is a constant declaration, convert the value it stores into a string, otherwise just use the SPIR-V ID
+                                rhs_text = str(node.input_left.data[0]) if node.input_left.operation is Operation.GLOBAL_CONST_DECLARATION else node.input_left.spirv_id[1:]
+                                self.append_code(self.Sections.ASSIGNMENTS, f"\tassign {node.spirv_id[1:]} = {rhs_text};")
                             else:
                                 logging.debug(f"not creating assign statement for {node.spirv_id}: {node}")
 
@@ -714,12 +716,30 @@ class VerilogAssember():
                             
                             load_store_node = None
 
-                            for future_node in sorted_nodes[tick+1]:
-                                if future_node.operation == (Operation.ARRAY_LOAD or Operation.ARRAY_STORE) and future_node.input_left.spirv_id == node.spirv_id:
-                                    load_store_node = future_node
+                            # look through all nodes trying to find an associated load/store node
+                            # cant only peek one tick ahead because it may not be there 
+                            #   -> x[1] = 1 + 2 / b is two steps, so the load/store node is actually located at tick+2 not tick+1
+                            for i in range(tick, len(sorted_nodes)):
+                                for j in range(len(sorted_nodes[i])):
+                                    future_node = sorted_nodes[i][j]
+
+                                    logging.debug(f"checking: {future_node}")
+
+                                    if future_node.operation == Operation.ARRAY_LOAD:
+                                        if future_node.input_left.spirv_id == node.spirv_id:
+                                            logging.debug(f"array load, id of left input matches current node: {future_node.input_left.spirv_id} == {node.spirv_id}")
+                                            load_store_node = future_node
+                                            break
+
+                                    # NOTE: future_node.operation == (Operation.ARRAY_STORE or Operation.STORE) doesn't work?
+                                    elif future_node.operation in [Operation.ARRAY_STORE, Operation.STORE]:
+                                        if future_node.spirv_id == node.spirv_id:
+                                            logging.debug(f"array store, id of store node matches current node: {future_node.spirv_id} == {node.spirv_id}")
+                                            load_store_node = future_node
+                                            break
                             
 
-                            assert load_store_node != None, f"failed to find a corresponding array load/store node in one tick ahead {tick} + 1 = {tick+1}"
+                            assert load_store_node != None, f"failed to find a corresponding array load/store node"
 
                             # generate sv text based whether node is load/store
 
@@ -730,24 +750,30 @@ class VerilogAssember():
                                     # TODO: get width for int type, hardcoded for now
                                     self.append_code(self.Sections.INTERNAL, f"\tlogic [31:0] {load_store_node.spirv_id[1:]};")
 
-                                    array_type_id = self.node_assembler.get_type_context_from_module(
-                                        module,
-                                        self.node_assembler.get_node(module, node.array_id).type_id # get array  node
-                                    )
-
-                                    array_max_size = self.node_assembler.get_node(module, array_type_id.array_dimension_id).data[0]
+                                    array_max_size = self.node_assembler.get_array_node_dimensions(module, node.array_id)
                                     array_index = self.node_assembler.get_node(module, node.array_index_id).data[0]
 
                                     # TODO: tuples
                                     assert type(array_max_size) is int, f"array_max_size should have been int but got {type(array_max_size)} instead"
-
                                     assert array_index < array_max_size, f"array_index was not less than array_max_size: {array_index} < {array_max_size}"
 
                                     # assign in body
                                     self.append_code(self.Sections.ALWAYS_BLOCK, f"\t\t{load_store_node.spirv_id[1:]} <= {node.array_id[1:]}[{array_index}];")
 
-                                case Operation.ARRAY_STORE:
-                                    raise Exception("TODO")
+                                case _ if load_store_node.operation in [Operation.ARRAY_STORE, Operation.STORE]:
+                                    array_index = self.node_assembler.get_node(module, node.array_index_id).data[0]
+                                    array_max_size = self.node_assembler.get_array_node_dimensions(module, node.array_id)
+
+                                    # TODO: tuples (as above)
+                                    assert type(array_max_size) is int, f"array_max_size should have been int but got {type(array_max_size)} instead"
+
+                                    # will need to change comparison so that it works with tuples
+                                    assert array_index < array_max_size, f"array_index was not less than array_max_size: {array_index} < {array_max_size}"
+
+                                    self.append_code(self.Sections.ALWAYS_BLOCK, f"\t\t{node.input_left.spirv_id[1:]}[{array_index}] <= {load_store_node.input_left.spirv_id[1:]};")
+
+                                case _:
+                                    raise Exception(f"unexpected operation: {load_store_node.operation}")
                                 
                         case Operation.ARRAY_LOAD: pass
                             
