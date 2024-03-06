@@ -345,6 +345,23 @@ class NodeAssembler():
         assert best_type != None, f"unable to find primative type from datatype"
         return best_type
 
+    def get_array_node_dimensions(self, module_name: str, node_id: str) -> int | tuple[int]:
+        """ Get the array dimensions using the ID of the array.
+        
+            Args:
+                module_name: Module to get from.
+                node_id: ID of array.
+
+            Returns:
+                array_dimensions: Defined array dimensions.
+        """
+
+        array_node = self.get_node(module_name, node_id)
+        array_type_id = self.get_type_context_from_module(module_name, array_node.type_id)
+        array_max_size = self.get_node(module_name, array_type_id.array_dimension_id).data[0]
+
+        return array_max_size
+
     # renamed from does_node_exist
     def node_exists(self, module_name: str, node_id: str) -> bool:
         """ Checks if a node exists in a given module.
