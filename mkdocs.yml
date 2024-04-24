@@ -1,6 +1,6 @@
 site_name: Titan Compiler Project
-repo_url: https://github.com/titan-compiler-project/titan
-repo_name: titan-compiler-project/titan
+repo_url: https://github.com/titan-compiler-project/
+repo_name: titan-compiler-project
 
 theme:
   name: "material"
@@ -15,6 +15,8 @@ theme:
         name: Switch to light mode
   icon:
     repo: fontawesome/brands/github
+  features:
+    - content.code.copy
 
 plugins:
 - mkdocstrings:
