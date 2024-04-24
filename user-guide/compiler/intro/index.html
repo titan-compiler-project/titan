@@ -1174,22 +1174,19 @@
   <h1>Introduction</h1>
 
 <p>The compiler is split into two sections: the "frontend" which takes the Python source file and converts it into SPIR-V, and the "backend" which takes the SPIR-V and converts it into SystemVerilog.</p>
-<p>The "frontend" makes use of Python's AST class, in order to parse the syntax into something meaningful. Using AST and its calls to relevant functions, we are able to construct the SPIR-V assembly. These functions can be seen in <code>titan/ast_crawl.py</code>.</p>
+<p>The "frontend" makes use of Python's AST class, in order to parse the syntax into something meaningful. Using AST and its calls to relevant functions, we are able to construct the SPIR-V assembly. These functions can be seen in <code>titan/spirv.py</code>.</p>
 <p>The "backend" uses Pyparsing to parse the SPIR-V assembly file, as no existing module exists for this function. The grammar is rough, but suitable for this usecase.</p>
-<p>The project structure is a little bit scattered, but slowly everything is getting moved into respective folders so that it is easier to follow.</p>
-<ul>
-<li><code>titan/common/</code>  holds files relevant for common tasks, and which are not directly related to compilation</li>
-<li><code>titan/frontend/</code> will hold files relating to the Python → SPIR-V compiler</li>
-<li><code>titan/backend/</code> will hold files relating to the SPIR-V → SystemVerilog compiler</li>
-</ul>
-<p>These are explained more thoroughly in the next chapters.</p>
+<p>Rough intro to the project structure:
+- <code>titan/common/</code>  holds files relevant for common tasks, and which are not directly related to compilation
+- <code>titan/compiler/</code> holds files relating to the Python → SPIR-V compiler, and the SPIR-V → SystemVerilog compiler
+- <code>titan/comms/</code> holds files relating to the communication, such as SystemVerilog RTL and the Arduino communications library</p>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2023-12-04T21:35:45+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-04</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-04-24T20:38:35+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-04-24</span>
       
     
   </small>

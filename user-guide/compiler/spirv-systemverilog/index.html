@@ -1232,11 +1232,11 @@
 
   <h1>SPIR-V to SystemVerilog</h1>
 
-<p>The compiled SPIR-V assembly from the previous stage is passed directly to this stage, without reading or writing to an external file first. To prase the SPIR-V assembly, the compiler makes use of PyParsing. Grammar is defined in <code>titan.grammar.TitanSPIRVGrammar</code>.</p>
+<p>The compiled SPIR-V assembly from the previous stage is passed directly to this stage, without reading or writing to an external file first. To prase the SPIR-V assembly, the compiler makes use of PyParsing. Grammar is defined in <code>titan.common.grammar.TitanSPIRVGrammar</code>.</p>
 <p>SPIR-V is returned as a PyParsing object, where each line is then indexed to create a node graph, before generating the SystemVerilog. The graph step is necessary in order to coordinate everything into the correct tick.</p>
-<p>Within <code>titan.generate.generate_verilog</code> the parsed SPIR-V is handled, and the nodes are constructed using the classes within <code>titan.dataflow</code>.</p>
+<p>Within <code>titan.compiler.verilog.compile_nodes</code> the parsed SPIR-V is handled, and the nodes are constructed using the classes within <code>titan.compiler.node</code>.</p>
 <h2 id="anatomy-of-the-node">Anatomy of the Node</h2>
-<p>The Node (found in <code>titan.dataflow</code>) is a class that contains information about the node itself, and left/right inputs. These inputs help to link the node with other operations, and will allow us to traverse the node tree once all of the SPIR-V is processed.</p>
+<p>The Node (found in <code>titan.compiler.node</code>) is a class that contains information about the node itself, and left/right inputs. These inputs help to link the node with other operations, and will allow us to traverse the node tree once all of the SPIR-V is processed.</p>
 <p>The node accepts the <code>NodeContext</code> class upon construction, and this sets up all the relevant information. The tick of the node is automatically calculated by evaluating the ticks of the left and right input node, if present. If not, it is set to 0.</p>
 
   <hr>
@@ -1244,7 +1244,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2023-12-04T21:35:45+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-04</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-04-24T20:38:35+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-04-24</span>
       
     
   </small>
