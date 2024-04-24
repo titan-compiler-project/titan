@@ -1,15 +1,18 @@
 ## Available Options
 
-- ``oSA`` - Output SPIR-V assembly
-- ``oPP`` - Output pre-processed python file
-- ``t`` - Define a top module
+| Option | Function |
+| :- | :- |
+| ``-t`` | Specify top function if there are multiple functions in the same source file |
+| ``-asm`` | Output SPIR-V assembly code |
+| ``-s`` | Only run the SPIR-V generation |
+| ``-v`` | Verbose, output debug information to console |
 
-To use an option simply do ``python3 titan/main.py -oSA my_cool_file.py``
+To use an option simply pass it as an argument to the program: ``python3 titan/main.py -asm my_file.py``
 
-!!! note
-    These options may not be fully implemented, take care!
-
+---
 
 ## Source Code
-
-::: titan.common.options.Options
+::: titan.main.run_argparse
+    options:
+        show_root_heading: true
+        heading_level: 3
