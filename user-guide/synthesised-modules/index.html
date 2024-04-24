@@ -12,7 +12,7 @@
         <link rel="prev" href="../comms/">
       
       
-        <link rel="next" href="../../reference-docs/compiler/common/errors/">
+        <link rel="next" href="../../reference-docs/compiler/tests/test_helper/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -191,13 +191,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/titan-compiler-project/titan" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/titan-compiler-project/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
   </div>
   <div class="md-source__repository">
-    titan-compiler-project/titan
+    titan-compiler-project
   </div>
 </a>
       </div>
@@ -237,13 +237,13 @@
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/titan-compiler-project/titan" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/titan-compiler-project/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
   </div>
   <div class="md-source__repository">
-    titan-compiler-project/titan
+    titan-compiler-project
   </div>
 </a>
     </div>
@@ -692,7 +692,7 @@
             
   
   <span class="md-ellipsis">
-    common
+    tests
   </span>
   
 
@@ -701,6 +701,72 @@
         
         <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            tests
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference-docs/compiler/tests/test_helper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    test_helper.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1_2" id="__nav_3_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    common
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_2">
             <span class="md-nav__icon md-icon"></span>
             common
           </label>
@@ -825,12 +891,49 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1_3" id="__nav_3_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    compiler
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            compiler
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../reference-docs/compiler/ast_crawl/" class="md-nav__link">
+      <a href="../../reference-docs/compiler/compiler/helper/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    ast_crawl.py
+    helper.py
   </span>
   
 
@@ -847,11 +950,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference-docs/compiler/dataflow/" class="md-nav__link">
+      <a href="../../reference-docs/compiler/compiler/hinting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    dataflow.py
+    hinting.py
   </span>
   
 
@@ -868,11 +971,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference-docs/compiler/generate/" class="md-nav__link">
+      <a href="../../reference-docs/compiler/compiler/node/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    generate.py
+    node.py
   </span>
   
 
@@ -889,15 +992,44 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference-docs/compiler/machine/" class="md-nav__link">
+      <a href="../../reference-docs/compiler/compiler/spirv/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    machine.py
+    spirv.py
   </span>
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference-docs/compiler/compiler/verilog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    verilog.py
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -915,27 +1047,6 @@
   
   <span class="md-ellipsis">
     main.py
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference-docs/compiler/parse/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    parse.py
   </span>
   
 
@@ -1031,6 +1142,27 @@
   
   <span class="md-ellipsis">
     FPGA Shield
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference-docs/potential-improvements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Potential Improvements
   </span>
   
 
@@ -1193,73 +1325,15 @@
 </code></pre></div></p>
 <h2 id="core-modules">Core Modules</h2>
 <h3 id="spi-interface">SPI Interface</h3>
-<p>The SPI interface is provided by <a href="http://coertvonk.com/hw/math-talk/introduction-13067">Coert Vonk</a>, and is available on <a href="https://github.com/cvonk/FPGA_SPI">GitHub</a>. This module exposes 4 wires to the user (CLK, CS, COPI, PICO) which is the only way of getting data in and out of the system. </p>
+<p>The SPI interface is provided by <a href="http://coertvonk.com/hw/math-talk/introduction-13067">Coert Vonk</a>, and is available on <a href="https://github.com/cvonk/FPGA_SPI">GitHub</a>. This module exposes 4 wires to the user (<abbr title="Clock">CLK</abbr>, <abbr title="Chip Select">CS</abbr>, <abbr title="Peripheral Out, Controller In">POCI</abbr>, <abbr title="Peripheral In, Controller Out">PICO</abbr>) which is the only way of getting data in and out of the system. </p>
 <h3 id="instruction-handler">Instruction Handler</h3>
-<!-- The instruction handler module is responsible for recieving bytes from the SPI interface, and interpreting them. If there is no instruction currently active, and the received byte fits  -->
-
 <p>The instruction handler module is responsible for receiving bytes from the SPI interface, and interpreting them. For example, if there is no instruction currently active, then the next byte from the SPI interface must be a valid instruction for the module to perform any action. If a valid instruction byte is received, then the module will wait to receive the remaining bytes before setting any internal buses.</p>
-<p>Once all of the bytes have been received, internal buses will be set to appropriate values. For example, if we are attemping to write the value <code>0xDE</code> to the address <code>0x04</code> then the instruction handler will wait until the write opcode has been issued (<code>0x01</code>), then wait to receive an additional 7 bytes - 3 for the address, 4 for the value.</p>
-<p>The instruction bus will be set to <code>0x01</code>, address bus to <code>0x04</code> and the value bus to <code>0xDE</code>. </p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">Instruction</th>
-<th style="text-align: center;">Opcode</th>
-<th style="text-align: center;">Total bytes to send</th>
-<th style="text-align: center;">Operation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><code>WRITE</code></td>
-<td style="text-align: center;"><code>0x01</code></td>
-<td style="text-align: center;">8</td>
-<td style="text-align: center;">Write a value to a given address.</td>
-</tr>
-<tr>
-<td style="text-align: center;"><code>READ</code></td>
-<td style="text-align: center;"><code>0x02</code></td>
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">Read a value from the core, onto an internal bus. This is not the same as transferring it across the SPI bus.</td>
-</tr>
-<tr>
-<td style="text-align: center;"><code>STREAM</code></td>
-<td style="text-align: center;"><code>0x03</code></td>
-<td style="text-align: center;">5</td>
-<td style="text-align: center;">Send a value to a predetermined address, and receive one from another. <code>BIND_READ</code> and <code>BIND_WRITE</code> must be issued first, otherwise the data is not valid.</td>
-</tr>
-<tr>
-<td style="text-align: center;"><code>BIND_INTERRUPT</code></td>
-<td style="text-align: center;"><code>0x04</code></td>
-<td style="text-align: center;">N/A</td>
-<td style="text-align: center;">Not implemented.</td>
-</tr>
-<tr>
-<td style="text-align: center;"><code>BIND_READ</code></td>
-<td style="text-align: center;"><code>0x05</code></td>
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">Set an address which to read from whilst streaming.</td>
-</tr>
-<tr>
-<td style="text-align: center;"><code>BIND_WRITE</code></td>
-<td style="text-align: center;"><code>0x06</code></td>
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">Set an address which to write to whilst streaming.</td>
-</tr>
-<tr>
-<td style="text-align: center;"><code>TRANSFER</code></td>
-<td style="text-align: center;"><code>0x07</code></td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">Issue as many times as needed to read a value. Internally increments a pointer that selects a portion of the value to send, due to the 1-byte window of SPI. For a 32-bit value, issue this instruction 4 times.</td>
-</tr>
-<tr>
-<td style="text-align: center;"><code>REPEAT</code></td>
-<td style="text-align: center;"><code>0x08</code></td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">Reset the internal data pointer to restart the transfer of data.</td>
-</tr>
-</tbody>
-</table>
+<div class="admonition info inline end">
+<p class="admonition-title">Info</p>
+<p>Valid instructions and the SPI protocol can be found <a href="../comms/#protocol-reference">here</a>.</p>
+</div>
+<p>Once all of the required bytes have been received, internal buses will be set to appropriate values. For example, if we are attemping to write the value <code>0xDE</code> to the address <code>0x04</code> then the instruction handler will wait until the write opcode has been issued (<code>0x01</code>), then wait to receive an additional 7 bytes - 3 for the address, 4 for the value.</p>
+<p>The instruction bus will be set to <code>0x01</code>, address bus to <code>0x04</code> and the value bus to <code>0xDE</code>.</p>
 <h3 id="core-interface">Core Interface</h3>
 <p>The core interface is a wrapper around the user module/core that allows it to interface with the rest of the system. It interprets the current instruction on the bus and will act accordingly if it is being indexed, determined by the start and end range of its address. </p>
 <p>The core interface provides a memory array for both the inputs and outputs, which are written to by sending instructions. This memory array is directly connected to the inputs and ouputs of the user module, and therefore act similarly to passing parameters to a function in regular code.</p>
@@ -1273,7 +1347,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2023-12-04T21:35:45+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-04</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-04-24T20:25:27+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-04-24</span>
       
     
   </small>
@@ -1316,7 +1390,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.cd18aaf1.min.js"></script>
