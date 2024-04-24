@@ -1,0 +1,67 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Titan
+message: >-
+  Please cite this software using the metadata from
+  "preferred-citation".
+type: software
+authors:
+  - given-names: Kristaps
+    family-names: Jurkans
+    email: kris.jurkans@gmail.com
+    affiliation: University of Lincoln
+    orcid: 'https://orcid.org/0009-0007-4055-0137'
+  - given-names: Charles
+    family-names: Fox
+    email: chfox@lincoln.ac.uk
+    affiliation: University of Lincoln
+    orcid: 'https://orcid.org/0000-0002-6695-8081'
+identifiers:
+  - type: doi
+    value: 10.1109/TrustCom60117.2023.00257
+    description: >-
+      Paper covering the concept and application of the
+      compiler.
+abstract: >-
+  Robots and IoT devices must process real-time signals
+  using embedded systems with limited power and clock speeds
+  – rather than large CPUs or GPUs. FPGAs offer highly
+  parallel computation, but are difficult to program, both
+  algorithmically and at hardware implementation level.
+  Programmers of digital signal processing (DSP), machine
+  vision, and neural networks typically work in high level,
+  serial languages such as Python, so would benefit from a
+  tool to automatically convert this code to run on FPGA. We
+  present a design for a compiler from a serial Python
+  subset to parallel dataflow FPGA, in which the physical
+  connectivity and dataflow of the digital logic mirrors the
+  logical dataflow of the programs. The subset removes some
+  imperative features from Python and focuses on Python’s
+  functional programming elements, which can be more easily
+  compiled into physical digital logic implementations of
+  dataflows. Some imperative features are retained but
+  interpreted under alternative functional semantics, making
+  them easier to parallelize. These dataflows can then be
+  pipelined for efficient continuous real-time data
+  processing. An open-source partial implementation is
+  provided together with a compilable simple neuron program.
+license: GPL-3.0-or-later
+preferred-citation:
+  type: conference-paper
+  authors:
+  - family-names: "Jurkans"
+    given-names: "Kristaps"
+    orcid: "https://orcid.org/0009-0007-4055-0137"
+  - family-names: "Fox"
+    given-names: "Charles"
+    orcid: "https://orcid.org/0000-0002-6695-8081"
+  doi: "10.1109/TrustCom60117.2023.00257"
+  conference:
+    name: "IEEE Trust, Security and Privacy in Computing and Communications (TrustCom)"
+  month: 11
+  start: 1897 # First page number
+  end: 1903 # Last page number
+  title: "Python Subset to Digital Logic Dataflow Compiler for Robots and IoT"
+  year: 2023
