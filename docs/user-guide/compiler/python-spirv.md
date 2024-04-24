@@ -22,9 +22,9 @@ Multiple returns are not supported currently, however you can have an abritrary 
 Once all the information has been created, the compiler will call ``super().generic_visit(node)`` to procced further.
 
 ### Assignments, Arithmetic & Comparison
-These operations are handled by ``titan.ast_crawl.GenerateSPIRVFromAST._eval_line``. It is a recursive function that will attempt to parse anything related to arithmetic or comparison operations and return the final line ID and context about the line. During its recursion, it will create any necessary types and context structures which are available to access via the SPIR-V helper class.
+These operations are handled a recursive function that will attempt to parse anything related to arithmetic or comparison operations and return the final line ID and context about the line. During its recursion, it will create any necessary types and context structures which are available to access via the SPIR-V helper class.
 
-Nested arithmetic expressions are evaluated with this ``_eval_line`` function. On each call, it'll generate an intermediate ID that will store the value of one operation. A combination of these intermediate IDs will create the final result of the calculation.
+Nested arithmetic expressions are evaluated with the ``_eval_line`` function. On each call, it'll generate an intermediate ID that will store the value of one operation. A combination of these intermediate IDs will create the final result of the calculation.
 
 !!! example
     An expression like ``c = a + (b / 2)`` would first have ``b / 2`` evaluated and the result placed into a temporary ID, and then ``a + temporaryID`` would get evaluated next.
