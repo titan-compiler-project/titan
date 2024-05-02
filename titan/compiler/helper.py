@@ -88,3 +88,11 @@ class CompilerContext():
                 True if user wants debug info, else False.
         """
         return self.compiler_args.verbose
+    
+    def use_dark_theme_for_dots(self) -> bool:
+        """ Getter function to determine if user wants dark mode on dots or not.
+        
+            Returns:
+                True if user wants dark mode, else False.
+        """
+        return self.compiler_args.dark_dots

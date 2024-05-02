@@ -784,7 +784,7 @@ class SPIRVAssembler(ast.NodeVisitor):
         """
         ff = self.create_file_as_string()
 
-        with open(f"{filename}.spvasm", "w") as f:
+        with open(f"output/{filename}.spvasm", "w") as f:
             for line in ff:
                 f.write(line)
 

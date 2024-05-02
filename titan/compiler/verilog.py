@@ -101,8 +101,8 @@ class VerilogAssember():
             Args:
                 filename: Name of file to create/overwrite.
         """
-        logging.info(f"Writing RTL to file ({filename}.sv)")
-        with open(f"{filename}.sv", "w") as f:
+        logging.info(f"Writing RTL to file (output/{filename}.sv)")
+        with open(f"output/{filename}.sv", "w") as f:
             for section, list_of_lines in self.generated_verilog_text.items():
                 logging.debug(f"Writing section {section.name}")
 
@@ -110,19 +110,20 @@ class VerilogAssember():
                     f.write(line)
                     f.write(f"\n")
 
-    def compile(self, filename: str, gen_yosys_script: bool = False):
+    def compile(self, filename: str, gen_yosys_script: bool = False, dark_dots: bool = False):
         """ Function to begin compiling. Calls other relevant functions. 
         
             Args:
                 filename: Name of file to create/overwrite when writing Verilog.
                 gen_yosys_script: Create a Yosys script to visualise the verilog.
+                dark_dots: Use dark theme when creating Graphviz graph.
         """
         node_assember = self.compile_nodes()
         self.node_assembler = node_assember
 
         self.node_assembler.generate_dot_graph()
         self.node_assembler.clean_graph()
-        self.node_assembler.generate_dot_graph("clean_nodes")
+        self.node_assembler.generate_dot_graph("clean_nodes", dark_mode=dark_dots)
 
 
         self.compile_text()

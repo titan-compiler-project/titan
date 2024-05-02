@@ -497,7 +497,7 @@ class NodeAssembler():
 
         return count
     
-    def generate_dot_graph(self, file_name_suffix: str = "", clean_nodes = None, dark_mode: bool = True):
+    def generate_dot_graph(self, file_name_suffix: str = "", clean_nodes = None, dark_mode: bool = False):
         """ Generates Graphviz dot graphs of the dataflow of a function. Requires the ``graphviz`` package.
         
             Args:
@@ -505,13 +505,16 @@ class NodeAssembler():
                 clean_nodes: List of clean/optimised nodes.
         """
         for module in self.content.keys():
-            dot = graphviz.Digraph(comment=f"digraph for {module}", filename=f"digraph_{module}{file_name_suffix}.dot", directory="dots") 
+            dot = graphviz.Digraph(comment=f"digraph for {module}", filename=f"digraph_{module}{file_name_suffix}.dot", directory="output/dots") 
             
             # dark mode
             if dark_mode:
                 dot.attr(bgcolor="gray10")
                 dot.attr(color="white")
                 dot.attr(fontcolor="white")
+                colour = "white"
+            else:
+                colour = "black"
 
             if clean_nodes is None:
                 x = self._sort_body_nodes_by_tick(module)
@@ -526,7 +529,7 @@ class NodeAssembler():
                     try:
                         for v in x[k]:
                             current_node_label = f"{v.spirv_id}_{k}"
-                            ds.node(current_node_label, f"{v.spirv_id} at tick {k} \n({v.operation})", color="white", fontcolor="white")
+                            ds.node(current_node_label, f"{v.spirv_id} at tick {k} \n({v.operation})", color=colour, fontcolor=colour)
 
                             if self._parent_exists(v):
                                 # check which parents exist
@@ -536,11 +539,11 @@ class NodeAssembler():
                                         # ds.edge()
                                         # get parent name/spirv id
                                         parent_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
-                                        ds.edge(parent_id_label, current_node_label, color="white")
+                                        ds.edge(parent_id_label, current_node_label, color=colour)
 
                                     case 2:
                                         parent_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
-                                        ds.edge(parent_id_label, current_node_label, color="white")
+                                        ds.edge(parent_id_label, current_node_label, color=colour)
                                     case 3:
 
                                         # TODO: need a better way to determine correct id & tick to use when dealing with decision nodes
@@ -556,12 +559,12 @@ class NodeAssembler():
                                             parent_l_id_label = f"{v.input_left.spirv_id}_{v.input_left.tick}"
                                             parent_r_id_label = f"{v.input_right.spirv_id}_{v.input_right.tick}"
 
-                                        ds.edge(parent_l_id_label, current_node_label, color="white" if not v.is_comparison else "green")
-                                        ds.edge(parent_r_id_label, current_node_label, color="white" if not v.is_comparison else "red")
+                                        ds.edge(parent_l_id_label, current_node_label, color=colour if not v.is_comparison else "green")
+                                        ds.edge(parent_r_id_label, current_node_label, color=colour if not v.is_comparison else "red")
 
                                         if v.is_comparison:
                                             parent_compare_id_label = f"{v.data[0].spirv_id}_{v.data[0].tick}"
-                                            ds.edge(parent_compare_id_label, current_node_label, color="white")
+                                            ds.edge(parent_compare_id_label, current_node_label, color=colour)
 
                                     case _:
                                         # should be unreachable
