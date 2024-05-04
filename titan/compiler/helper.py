@@ -31,6 +31,13 @@ class CompilerContext():
         self.compiler_args = args
         self._legacy_arg_setter()
 
+        self.user_wants_spirv_asm = self.compiler_args.asm
+        self.has_user_defined_top = self.compiler_args.top is not None
+        self.user_only_wants_spirv = self.compiler_args.run_spirv_only
+        self.user_wants_verbose_info = self.compiler_args.verbose
+        self.use_dark_theme_for_dots = self.compiler_args.dark_dots
+   
+
     def _legacy_arg_setter(self):
         """ Method to set the arguments due to legacy issues.
         
@@ -49,21 +56,6 @@ class CompilerContext():
 
         self.files.append(self.compiler_args.source_file)
 
-    def user_wants_spirv_asm(self) -> bool:
-        """ Getter function to see if user wants compiler to output SPIR-V assembly.
-
-            Returns:
-                True if user wants assembly, otherwise false.
-        """
-        return self.compiler_args.asm
-    
-    def has_user_defined_top(self) -> bool:
-        """ Getter function to see if user defined a name for the top module.
-
-            Returns:
-                True if user defined a name, otherwise false.
-        """
-        return self.compiler_args.top is not None
     
     def get_top_module_name(self) -> str:
         """ Getter function to fetch top module name.
@@ -72,27 +64,3 @@ class CompilerContext():
                 Name of the top module as defined by the user.
         """
         return self.compiler_args.top
-    
-    def user_only_wants_spirv(self) -> bool:
-        """ Getter function to see if user only wants to run the SPIR-V portion of the compiler. 
-        
-            Returns:
-                True if user wants only SPIR-V, otherwise False.
-        """
-        return self.compiler_args.run_spirv_only
-    
-    def user_wants_verbose_info(self) -> bool:
-        """ Getter function to see if user wants verbose debugging information.
-        
-            Returns:
-                True if user wants debug info, else False.
-        """
-        return self.compiler_args.verbose
-    
-    def use_dark_theme_for_dots(self) -> bool:
-        """ Getter function to determine if user wants dark mode on dots or not.
-        
-            Returns:
-                True if user wants dark mode, else False.
-        """
-        return self.compiler_args.dark_dots

@@ -38,7 +38,7 @@ def main():
 
 
     logging.basicConfig(
-        level=logging.DEBUG if compiler_ctx.user_wants_verbose_info() else logging.INFO,
+        level=logging.DEBUG if compiler_ctx.user_wants_verbose_info else logging.INFO,
         handlers=[
             logging.FileHandler("compiler_log.txt"),
             # logging.StreamHandler()
@@ -58,16 +58,16 @@ def main():
     spirv_assembler = SPIRVAssembler(compiler_ctx.files[0], disable_debug=False)
     spirv_assembler.compile()
 
-    if compiler_ctx.user_wants_spirv_asm():
+    if compiler_ctx.user_wants_spirv_asm:
         spirv_assembler.output_to_file(os.path.basename(compiler_ctx.files[0])[:-3])
 
     # early exit, no need for RTL
-    if compiler_ctx.user_only_wants_spirv():
+    if compiler_ctx.user_only_wants_spirv:
         return
 
     logging.info(f"Generating RTL ...")
     verilog_assembler = VerilogAssember(spirv_assembler.create_file_as_string())
-    verilog_assembler.compile(os.path.basename(compiler_ctx.files[0])[:-3], dark_dots=compiler_ctx.use_dark_theme_for_dots())
+    verilog_assembler.compile(os.path.basename(compiler_ctx.files[0])[:-3], dark_dots=compiler_ctx.use_dark_theme_for_dots)
 
 
 if __name__ == "__main__":
