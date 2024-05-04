@@ -22,6 +22,7 @@ def run_argparse() -> argparse.Namespace:
     parser.add_argument("-s", help="only run the SPIR-V generation", action="store_true", dest="run_spirv_only")
     parser.add_argument("-v", "--verbose", help="output debug messages", action="store_true")
     parser.add_argument("-dd", "--dark-dots", help="use dark theme when creating Graphviz dot graphs", action="store_true")
+    parser.add_argument("-y", "--gen-yosys", help="generate simple yosys script to visualise module", action="store_true")
 
     return parser.parse_args()
 
@@ -67,7 +68,10 @@ def main():
 
     logging.info(f"Generating RTL ...")
     verilog_assembler = VerilogAssember(spirv_assembler.create_file_as_string())
-    verilog_assembler.compile(os.path.basename(compiler_ctx.files[0])[:-3], dark_dots=compiler_ctx.use_dark_theme_for_dots)
+    verilog_assembler.compile(os.path.basename(compiler_ctx.files[0])[:-3], 
+                              gen_yosys_script=compiler_ctx.gen_yosys_script,
+                              dark_dots=compiler_ctx.use_dark_theme_for_dots
+                              )
 
 
 if __name__ == "__main__":

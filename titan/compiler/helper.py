@@ -36,7 +36,7 @@ class CompilerContext():
         self.user_only_wants_spirv = self.compiler_args.run_spirv_only
         self.user_wants_verbose_info = self.compiler_args.verbose
         self.use_dark_theme_for_dots = self.compiler_args.dark_dots
-   
+        self.gen_yosys_script = self.compiler_args.gen_yosys
 
     def _legacy_arg_setter(self):
         """ Method to set the arguments due to legacy issues.

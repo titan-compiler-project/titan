@@ -130,7 +130,8 @@ class VerilogAssember():
         self.write_to_file(filename)
 
         if gen_yosys_script:
-            with open(f"yosys_script_{filename}.txt", "w+") as f:
+            logging.info(f"Creating yosys script (output/yosys_script_{filename}.txt)")
+            with open(f"output/yosys_script_{filename}.txt", "w+") as f:
                 f.write(f"read_verilog -sv {filename}.sv; proc; opt; memory; opt; show;")
 
     def compile_nodes(self):
