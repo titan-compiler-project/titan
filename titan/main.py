@@ -1,4 +1,4 @@
-import io, logging, datetime, argparse, os
+import io, logging, datetime, argparse, os, pathlib
 
 from rich.logging import RichHandler
 
@@ -23,6 +23,7 @@ def run_argparse() -> argparse.Namespace:
     parser.add_argument("-v", "--verbose", help="output debug messages", action="store_true")
     parser.add_argument("-dd", "--dark-dots", help="use dark theme when creating Graphviz dot graphs", action="store_true")
     parser.add_argument("-y", "--gen-yosys", help="generate simple yosys script to visualise module", action="store_true")
+    parser.add_argument("-nc", "--no-comms", help="skip generating relevant comms interface files (output module only)", action="store_true")
 
     return parser.parse_args()
 
@@ -55,7 +56,7 @@ def main():
     logging.debug(f"output folder exists? {os.path.exists('output')}")
     os.makedirs("output", exist_ok=True)
 
-    logging.info(f"Generating SPIR-V from {compiler_ctx.files[0]} ...")
+    logging.info(f"Generating SPIR-V from {compiler_ctx.files[0]}")
     spirv_assembler = SPIRVAssembler(compiler_ctx.files[0], disable_debug=False)
     spirv_assembler.compile()
 
@@ -66,11 +67,12 @@ def main():
     if compiler_ctx.user_only_wants_spirv:
         return
 
-    logging.info(f"Generating RTL ...")
+    logging.info(f"Generating HDL")
     verilog_assembler = VerilogAssember(spirv_assembler.create_file_as_string())
     verilog_assembler.compile(os.path.basename(compiler_ctx.files[0])[:-3], 
                               gen_yosys_script=compiler_ctx.gen_yosys_script,
-                              dark_dots=compiler_ctx.use_dark_theme_for_dots
+                              dark_dots=compiler_ctx.use_dark_theme_for_dots,
+                              create_comms=compiler_ctx.gen_comms
                               )
 
 

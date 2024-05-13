@@ -400,6 +400,17 @@ class NodeAssembler():
         # -1 for the very latest node
         return self.content[module_name].body_nodes[node_id][-1]
     
+    def get_number_of_inputs(self, module_name: str) -> int:
+        return len(self.content[module_name].inputs)
+
+    def get_list_of_inputs(self, module_name: str) -> list:
+        return self.content[module_name].inputs
+
+    def get_number_of_outputs(self, module_name: str):
+        return len(self.content[module_name].outputs)
+
+    def get_list_of_outputs(self, module_name: str) -> list:
+        return self.content[module_name].outputs
 
     # default arg_pos is [1, 2] since its commonly used
     # however different values needed for other nodes

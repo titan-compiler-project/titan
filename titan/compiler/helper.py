@@ -37,6 +37,7 @@ class CompilerContext():
         self.user_wants_verbose_info = self.compiler_args.verbose
         self.use_dark_theme_for_dots = self.compiler_args.dark_dots
         self.gen_yosys_script = self.compiler_args.gen_yosys
+        self.gen_comms = not self.compiler_args.no_comms # invert so it make sense
 
     def _legacy_arg_setter(self):
         """ Method to set the arguments due to legacy issues.

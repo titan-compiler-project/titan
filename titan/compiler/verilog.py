@@ -1,4 +1,4 @@
-import logging, io
+import logging, io, pathlib, shutil
 from typing import NamedTuple, List
 from enum import Enum, auto
 
@@ -101,7 +101,7 @@ class VerilogAssember():
             Args:
                 filename: Name of file to create/overwrite.
         """
-        logging.info(f"Writing RTL to file (output/{filename}.sv)")
+        logging.info(f"Writing HDL to file: output/{filename}.sv")
         with open(f"output/{filename}.sv", "w") as f:
             for section, list_of_lines in self.generated_verilog_text.items():
                 logging.debug(f"Writing section {section.name}")
@@ -110,13 +110,14 @@ class VerilogAssember():
                     f.write(line)
                     f.write(f"\n")
 
-    def compile(self, filename: str, gen_yosys_script: bool = False, dark_dots: bool = False):
+    def compile(self, filename: str, gen_yosys_script: bool = False, dark_dots: bool = False, create_comms: bool = True):
         """ Function to begin compiling. Calls other relevant functions. 
         
             Args:
                 filename: Name of file to create/overwrite when writing Verilog.
                 gen_yosys_script: Create a Yosys script to visualise the verilog.
                 dark_dots: Use dark theme when creating Graphviz graph.
+                create_comms: Create the relevant comms files and output to the output folder.
         """
         node_assember = self.compile_nodes()
         self.node_assembler = node_assember
@@ -129,10 +130,213 @@ class VerilogAssember():
         self.compile_text()
         self.write_to_file(filename)
 
+        if create_comms:
+            self.create_comms_files()
+
         if gen_yosys_script:
             logging.info(f"Creating yosys script (output/yosys_script_{filename}.txt)")
             with open(f"output/yosys_script_{filename}.txt", "w+") as f:
                 f.write(f"read_verilog -sv {filename}.sv; proc; opt; memory; opt; show;")
+   
+
+    def _parse_replace_comment_markers(self, file_path: str)-> tuple[list, str]:
+
+        comment_markers = {
+            # valid in core_interface_template.sv
+            "@titan-inputs": 0,
+            "@titan-outputs": 1,
+            "@titan-user-module": 2,
+            "@titan-core-def": 3,
+            "@titan-stream-input": 4,
+            "@titan-stream-output": 5,
+            "@titan-read-input": 6,
+            "@titan-read-output": 7,
+            "@titan-write-input": 8,
+
+            # valid in top_template.sv
+            "@titan-core-instance-top" : 9
+        }
+
+        with open(file_path) as f:
+            file_content = f.readlines()
+
+        # get module name
+        for line in self.parsed_spirv:
+            if line.opcode == "EntryPoint":
+                module_entry_point = line.opcode_args[2].replace("\"", "")
+
+        if module_entry_point == None:
+            raise Exception("failed to find module entry point, is it defined?")
+
+        for file_index in range(0, len(file_content)):
+            line = file_content[file_index]
+
+            # removes whitespace, removes comment // and removes whitespace again
+            stripped_line = line.strip()[2:].strip() 
+            if stripped_line in comment_markers.keys():
+                action = comment_markers[stripped_line]
+                required_leading_spaces = len(line) - len(line.lstrip())
+         
+                total_inputs = self.node_assembler.get_number_of_inputs(module_entry_point)
+                total_outputs = self.node_assembler.get_number_of_outputs(module_entry_point)
+
+                if (total_inputs or total_outputs) == 0:
+                    raise Exception("there are zero inputs or outputs, cannot generate memory")
+
+                match action:
+                    case 0: # @titan-inputs
+                        base_string = f"{' '*required_leading_spaces}logic [VALUE_WIDTH-1:0] input_memory"
+
+                        if total_inputs == 1:
+                            file_content[file_index] = f"{base_string};\n"
+                        elif total_inputs > 1:
+                            file_content[file_index] = f"{base_string} [0:{total_inputs-1}];\n"
+                        else:
+                            raise Exception("unexpected")
+
+                    case 1: # @titan-outputs
+                        base_string = f"{' '*required_leading_spaces}logic [VALUE_WIDTH-1:0] output_memory"
+
+                        if total_outputs == 1:
+                            file_content[file_index] = f"{base_string};\n"
+                        elif total_outputs > 1:
+                            file_content[file_index] = f"{base_string} [0:{total_outputs-1}];\n"
+                        else:
+                            raise Exception("unexpected")
+
+                    case 2: # @titan-user-module
+                        module_instance_str = f"{' '*required_leading_spaces}{module_entry_point} {module_entry_point}_instance (\n"
+                        module_instance_str += f"{' '*(required_leading_spaces+4)}.clock(clk_i), "
+                        
+                        input_name_list = self.node_assembler.get_list_of_inputs(module_entry_point)
+                        output_name_list = self.node_assembler.get_list_of_outputs(module_entry_point)
+
+                        for i in range(0, len(input_name_list)):
+                            input_name = input_name_list[i].replace("%", "").replace("\"", "")
+                            module_instance_str += f".{input_name}(input_memory[{i}]), "
+
+
+                        for i in range(0, len(output_name_list)):
+                            output_name = output_name_list[i].replace("%", "").replace("\"", "")
+                            if i == len(output_name_list)-1:
+                                module_instance_str += f".{output_name}(output_memory[{i}])\n"
+                            else:
+                                module_instance_str += f".{output_name}(output_memory[{i}]), "
+
+                        module_instance_str += f"{' '*required_leading_spaces});"
+                        file_content[file_index] = module_instance_str
+
+
+                    case 3: # @titan-core-def
+                        file_content[file_index] = f"{' '*required_leading_spaces}module core_interface_{module_entry_point} # (\n"
+                    
+                    case 4: # @titan-stream-input
+                        if total_inputs == 1:
+                            file_content[file_index] = f"{' '*required_leading_spaces}input_memory <= value_i;\n"
+                        elif total_inputs > 1:
+                            file_content[file_index] = f"{' '*required_leading_spaces}input_memory[normalised_stream_write_address] <= value_i;\n"
+
+                    case 5: # @titan-stream-output
+                        if total_outputs == 1:
+                            file_content[file_index] = f"{' '*required_leading_spaces}stream_o <= output_memory;\n"
+                        elif total_outputs > 1:
+                            # TODO: test - this was not implemented/tested in the template
+                            file_content[file_index] = f"{' '*required_leading_spaces}stream_o <= output_memory[normalised_stream_write_address];\n"
+
+                    case 6: # @titan-read-input
+                        base_string = f"{' '*required_leading_spaces}output_val_internal <= input_memory"
+
+                        if total_inputs == 1:
+                            file_content[file_index] = f"{base_string};"
+                        elif total_inputs > 1:
+                            file_content[file_index] = f"{base_string}[normalised_input_address];\n"
+
+                    case 7: # @titan-read-output
+                        base_string = f"{' '*required_leading_spaces}output_val_internal <= output_memory"
+
+                        if total_outputs == 1:
+                            file_content[file_index] = f"{base_string};\n"
+                        elif total_outputs > 1:
+                            file_content[file_index] = f"{base_string}[normalised_output_address];\n"
+
+                    case 8: # @titan-write-input
+                        if total_inputs == 1:
+                            file_content[file_index] = f"{' '*required_leading_spaces}input_memory <= value_i;\n"
+                        elif total_inputs > 1:
+                            file_content[file_index] = f"{' '*required_leading_spaces}input_memory[normalised_input_address] <= value_i;\n"
+                        
+                    case 9: # @titan-core-instance-top
+                        # core_interface_{module_name} cif_{module_name}_instance (
+                        #   .clk_i(sys_clock_i), .instruction_i(internal_bus_instruction), .address_i(internal_bus_address), .value_i(internal_bus_value), .result_o(internal_bus_result), .stream_o(internal_bus_stream_w)
+                        #);
+
+                        number_of_inputs = self.node_assembler.get_number_of_inputs(module_entry_point)
+                        number_of_outputs = self.node_assembler.get_number_of_outputs(module_entry_point)
+
+                        module_instance_str = f"\tcore_interface_{module_entry_point} # \n"
+                        #                                                                                   hardwired to start at address zero for now
+                        module_instance_str += f"\t\t(.TOTAL_INPUTS({number_of_inputs}), .TOTAL_OUTPUTS({number_of_outputs}), .START_ADDRESS(0), .END_ADDRESS({(number_of_inputs + number_of_outputs)-1}))\n"
+                        module_instance_str += f"\tcif_{module_entry_point}_instance (\n"
+                        module_instance_str += f"\t\t.clk_i(sys_clock_i), .instruction_i(internal_bus_instruction), .address_i(internal_bus_address), .value_i(internal_bus_value), .result_o(internal_bus_result), .stream_o(internal_bus_stream_w)\n"
+                        module_instance_str += f"\t);"
+
+                        file_content[file_index] = module_instance_str
+
+                    case _:
+                        raise Exception(f"unexpected or not implemented (action {action} {stripped_line})")
+                    
+        return file_content, module_entry_point
+
+
+    def create_comms_files(self):
+
+        required_files = ["core_interface_template", "instruction_handler", "spi_interface", "top_template"]
+        REQUIRED_FILES_COUNT = len(required_files)
+
+        path = pathlib.Path(__file__) # .../titan/titan/compiler/verilog.py
+        path_parts = list(path.parts)
+
+        # need titan/titan/templates/verilog
+        path_parts.pop() # remove verilog.py
+        path_parts.pop() # remove compiler/
+        template_path_parts = path_parts + ["templates", "verilog"]
+
+        # cwd = place where script was run
+        output_folder_path = pathlib.Path.cwd() / "output"
+        
+
+        templates_path = pathlib.Path(*template_path_parts)
+
+        logging.debug(f"looking for templates in {templates_path}")
+        templates_glob = templates_path.glob("*.sv")
+
+        _file_counter = 0
+        for file in templates_glob:
+            if file.stem in required_files: # use .name if we care about the extension
+                logging.debug(f"found {file.stem}")
+                _file_counter += 1
+                required_files.remove(file.stem)
+            
+        if not _file_counter == REQUIRED_FILES_COUNT:
+            raise Exception(f"did not find all required files - expected {len(required_files)} but got {_file_counter}. looking for {required_files}")
+
+        
+        # copy paste spi interface and instruction handler to output folder
+        for file in ["instruction_handler.sv", "spi_interface.sv"]:
+            template_file_path = templates_path / file
+            
+            logging.debug(f"copied {template_file_path} to {output_folder_path}")
+            shutil.copy2(template_file_path, output_folder_path)
+            
+
+        for file in ["core_interface_template.sv", "top_template.sv"]:
+            # content, entry_point = self._parse_replace_comment_markers(pathlib.Path(*(template_path_parts + [file])))
+            content, entry_point = self._parse_replace_comment_markers(templates_path / file)
+            
+            with open(output_folder_path / f"{file.replace('_template.sv', '')}_{entry_point}.sv", "w") as f:
+                logging.info(f"Writing comms file: {file[:-3]} to {output_folder_path}")
+                for line in content:
+                    f.write(line)
 
     def compile_nodes(self):
         """ Generate Nodes from parsed SPIR-V assembly. 
