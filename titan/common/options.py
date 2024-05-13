@@ -14,8 +14,8 @@ class Options(Enum):
 def parse_options(machine_object, args):
     """ Method responsible for parsing the CLI options and assigning them to the appropriate places.
     
-        TODO:
-            This method should get replaced with Python's own ``argparse`` library.
+        Note:
+            This method was replaced with Python's own ``argparse`` library.
     """
     got_top_module = False
     dont_repeat = False

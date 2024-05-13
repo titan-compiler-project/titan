@@ -1,20 +1,44 @@
 site_name: Titan Compiler Project
+repo_url: https://github.com/titan-compiler-project/
+repo_name: titan-compiler-project
 
 theme:
   name: "material"
   palette:
     - scheme: default
       toggle:
-        icon: material/toggle-switch
+        icon: material/weather-night
         name: Switch to dark mode
     - scheme: slate
       toggle:
-        icon: material/toggle-switch-off-outline
+        icon: material/weather-sunny
         name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - content.code.copy
 
 plugins:
-- mkdocstrings
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          filters: None
 - search
+- git-revision-date-localized:
+    enable_creation_date: false
+    fallback_to_build_date: true
+    type: timeago
+- mkdoxy:
+    projects:
+      TitanComms:
+        src-dirs: titan/comms
+        full-doc: True
+        # template-dir: templates-custom
+        # Example of custom template: https://mkdoxy-demo.kubaandrysek.cz/esp/annotated/
+        doxy-cfg:
+          FILE_PATTERNS: "*.cpp *.h*"
+          RECURSIVE: True
 
 markdown_extensions:
   - admonition
@@ -52,18 +76,24 @@ nav:
     - "Synthesised Modules": "user-guide/synthesised-modules.md"
   - Reference Docs:
     - "Compiler":
+      - "tests":
+        - "test_helper.py": "reference-docs/compiler/tests/test_helper.md"
       - "common":
         - "errors.py": "reference-docs/compiler/common/errors.md"
         - "grammar.py": "reference-docs/compiler/common/grammar.md"
         - "options.py": "reference-docs/compiler/common/options.md"
         - "symbols.py": "reference-docs/compiler/common/symbols.md"
         - "type.py": "reference-docs/compiler/common/type.md"
-
-      - "ast_crawl.py": "reference-docs/compiler/ast_crawl.md"
-      - "dataflow.py" : "reference-docs/compiler/dataflow.md"
-      - "generate.py" : "reference-docs/compiler/generate.md"
-      - "machine.py" : "reference-docs/compiler/machine.md"
+      - "compiler":
+        - "helper.py": "reference-docs/compiler/compiler/helper.md"
+        - "hinting.py": "reference-docs/compiler/compiler/hinting.md"
+        - "node.py": "reference-docs/compiler/compiler/node.md"
+        - "spirv.py": "reference-docs/compiler/compiler/spirv.md"
+        - "verilog.py": "reference-docs/compiler/compiler/verilog.md"
       - "main.py" : "reference-docs/compiler/main.md"
-      - "parse.py" : "reference-docs/compiler/parse.md"
+    - "Comms Library":
+      - "TitanComms.cpp" : "reference-docs/library/TitanComms.cpp.md"
+    - "FPGA Shield": "reference-docs/pcb.md"
+    - "Potential Improvements": "reference-docs/potential-improvements.md"
   - About: "about.md"
   - License: "license.md"

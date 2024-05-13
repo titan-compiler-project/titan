@@ -1,4 +1,5 @@
 __pycache__
+.pytest_cache
 .vscode
 build
 *.spv
@@ -11,6 +12,10 @@ yosys*.txt
 *.zip
 
 .docsvenv
+site
+compiler_log.txt
+
+output/
 
 # kicad
 # For PCBs designed using KiCad: https://www.kicad.org/

@@ -15,7 +15,7 @@ class StorageType(Enum):
         depending on where they are declared. It's important to keep track of these so that the generated SPIR-V
         is correct.
     """
-    IN = auto()
-    OUT = auto()
-    FUNCTION_VAR = auto()
+    IN = "Input"
+    OUT = "Output"
+    FUNCTION_VAR = "Function"
     NONE = auto()

@@ -1,32 +1,17 @@
-from common.options import Options
-import common.options
-from common.errors import TitanErrors
+import io, logging, datetime, argparse, os, pathlib
 
-import sys, io, logging, datetime, argparse, os
-from pathlib import Path
-import machine, parse, generate, common.symbols as symbols
+from rich.logging import RichHandler
 
-import ast_crawl
+from compiler.helper import CompilerContext
+from compiler.spirv import SPIRVAssembler
+from compiler.verilog import VerilogAssember
 
-# py -3.10-64 main.py
+def run_argparse() -> argparse.Namespace:
+    """ Handles setting up and executing `argparse.ArgumentParser`.
 
-def main():
-    """ Entry point for the program.
-    
-        Calls to handle CLI options, parsing, generating and writing.
+        Returns:
+            Parsed arguments
     """
-    logging.basicConfig(
-        level=logging.DEBUG,
-        handlers=[
-            logging.FileHandler("compiler_log.txt"),
-            logging.StreamHandler()
-        ],
-        format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"
-    )
-
-    logging.info(f"--- New run, time is: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')} ---")
-    logging.debug(f"Arguments: {sys.argv}")
-
     parser = argparse.ArgumentParser(
         description = "Compile a subset of Python into SystemVerilog. Visit https://titan-compiler-project.github.io/titan for more info."
     )
@@ -34,51 +19,62 @@ def main():
     parser.add_argument("source_file", help="python source file to compile")
     parser.add_argument("-t", "--top", help="specify the top function")
     parser.add_argument("-asm", help="output the SPIR-V assembly code", action="store_true")
+    parser.add_argument("-s", help="only run the SPIR-V generation", action="store_true", dest="run_spirv_only")
+    parser.add_argument("-v", "--verbose", help="output debug messages", action="store_true")
+    parser.add_argument("-dd", "--dark-dots", help="use dark theme when creating Graphviz dot graphs", action="store_true")
+    parser.add_argument("-y", "--gen-yosys", help="generate simple yosys script to visualise module", action="store_true")
+    parser.add_argument("-nc", "--no-comms", help="skip generating relevant comms interface files (output module only)", action="store_true")
 
-    args = parser.parse_args()
-    logging.info(f"args: {args}")
-
-    machine_object = machine.Machine(args)
-    # machine_object.set_args(args)
-
-    symbol_table = symbols.SymbolTable()
-
-    # argument parse call and error handle
-    # if len(sys.argv[1:]) == 0:
-    #     logging.error("Got no arguments. Exiting.")
-    #     return -1
-    # else:
-    #     try:
-    #         common.options.parse_options(machine_object, sys.argv)
-    #     except Exception as err:
-    #         logging.error(f"{err.args[0]} ({err.args[1]})")
-    #         return -1                    
-            
-    # handle python -> spirv
-    # parse.preprocess(machine_object)
-    # parse.parse_processed_python(machine_object)
-    # generate.generate_symbols(machine_object, symbol_table)
-    # generate.generate_spirv_asm(machine_object, symbol_table)
-
-    # handle spirv -> verilog
-    # parse_result = parse.parse_spriv(machine_object)
+    return parser.parse_args()
 
 
-    logging.info(f"Generating SPIR-V from {machine_object.files[0]} ...")
-    # assumes that there is only one file
-    input_python_file = machine_object.files[0]
-    x = ast_crawl.GenerateSPIRVFromAST(input_python_file)
-    x.crawl() # generates spirv TODO: rename function probably
+def main():
+    """ Entry point for the program.
+    
+        Calls to handle CLI options, parsing, generating and writing.
 
-    if args.asm:
-        x.output_to_file(os.path.basename(machine_object.files[0])[:-3])
+    """
+    
+    args = run_argparse()
+    compiler_ctx = CompilerContext(args)
 
-    parse_result = None
-    with io.StringIO(x.create_file_as_string()) as y:
-        parse_result = parse.TitanSPIRVGrammar.spirv_body.parse_file(y)
 
-    logging.info(f"Generating RTL...")
-    generate.generate_verilog(parse_result)
+    logging.basicConfig(
+        level=logging.DEBUG if compiler_ctx.user_wants_verbose_info else logging.INFO,
+        handlers=[
+            logging.FileHandler("compiler_log.txt"),
+            # logging.StreamHandler()
+            RichHandler(show_time=False, markup=True)
+        ],
+        # format=f"[%(levelname)s] [%(module)s.%(funcName)s, line: %(lineno)d]: %(message)s"
+        format=f"%(message)s"
+    )
+
+    logging.info(f"--- New run, time is: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')} ---")
+    logging.debug(f"arguments: {args}")
+
+    logging.debug(f"output folder exists? {os.path.exists('output')}")
+    os.makedirs("output", exist_ok=True)
+
+    logging.info(f"Generating SPIR-V from {compiler_ctx.files[0]}")
+    spirv_assembler = SPIRVAssembler(compiler_ctx.files[0], disable_debug=False)
+    spirv_assembler.compile()
+
+    if compiler_ctx.user_wants_spirv_asm:
+        spirv_assembler.output_to_file(os.path.basename(compiler_ctx.files[0])[:-3])
+
+    # early exit, no need for RTL
+    if compiler_ctx.user_only_wants_spirv:
+        return
+
+    logging.info(f"Generating HDL")
+    verilog_assembler = VerilogAssember(spirv_assembler.create_file_as_string())
+    verilog_assembler.compile(os.path.basename(compiler_ctx.files[0])[:-3], 
+                              gen_yosys_script=compiler_ctx.gen_yosys_script,
+                              dark_dots=compiler_ctx.use_dark_theme_for_dots,
+                              create_comms=compiler_ctx.gen_comms
+                              )
+
 
 if __name__ == "__main__":
     main()
