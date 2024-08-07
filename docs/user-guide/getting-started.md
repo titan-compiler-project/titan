@@ -95,14 +95,52 @@ The process is likely to be similar for other FPGA vendors, I simply do not have
 
 
 ## Subset
-Please ensure that your code fits within the defined subset so that it can be compiled.
+This compiler translates a *subset* of Python, and therefore some traditional features may not be available. Please ensure that your code fits within the defined subset so that it can be compiled. Additional features will require additional compiler work to make them compatible.
 
-This subset can be viewed [here](todo)
+### Types & Type hinting
+Type hinting is required in both the function signature and when declaring a new variable with no default value, or no expression where the type can be inherited.
 
-<!-- ### Valid Features
+Supported types:
 
-- 32-bit integers & floats
+- Integers
 - Booleans
-- Type hints
-- Arithmetic operations
-- Comparison operations -->
+- Floats*
+
+Floats can be converted into SPIR-V, but additional work is needed so that correct SystemVerilog can be generated. See issue [#7](https://github.com/titan-compiler-project/titan/issues/7).
+
+Support for arrays is also limited, and requires you to define them via a decorator.
+
+
+### Functions
+Functions can be defined, with type hinted parameters and with a single return but currently they cannot be called from the main function. Recursive functions are also not yet supported. See issues [#10](https://github.com/titan-compiler-project/titan/issues/10) and [#11](https://github.com/titan-compiler-project/titan/issues/11).
+
+
+### Returns
+Only a variable can be returned - no immediate values or expressions (such as ``a + 3``).
+
+
+### Arithmetic & Comparison operations
+Addition ``+``, subtraction ``-``, division ``/``, multiplication ``*``, left & right shift ``<<``/``>>``, equal/not equal ``==``/``!=``, less than/less than or equal to ``<``/``<=``, greater than/greater than or equal to ``>``/``>=`` is supported for both integers and floats when compiling Python -> SPIR-V.
+
+Division & floating point operators may fail when compiling to SystemVerilog -- this has not been fully tested, you've been warned!
+
+
+### Classes/Objects
+Classes/Objects/other instances of OOP are not supported. This includes using dot operators to access attributes of an object.
+
+### Importing
+``import`` and ``import x as y`` statements can be processed, but it does not mean that the library itself will be included! It seems counterproductive, but it is used to only allow compatability with certain features of Numpy. These libraries will more than likely make use of unsupported syntax, requiring more work than necessary to get Titan working with it.
+
+``import x from y`` statements will also fail, again because there is no direct importing of code from external libraries.
+
+
+### Decorators
+Not implemented & reserved - these will be used to mark functions which should behave slightly differently. See issue [#8](https://github.com/titan-compiler-project/titan/issues/8). 
+
+
+### Maps/Loops
+No support at the moment. Should be implemented but requires evaluating whether the loop contains dependencies. 
+
+
+### If-statements
+Only the ternary if statement (``a if c > b else d``) is supported, no regular ``if...elif...else`` statements.
