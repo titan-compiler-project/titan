@@ -421,6 +421,93 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Subset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#types-type-hinting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Types &amp; Type hinting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Returns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic-comparison-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arithmetic &amp; Comparison operations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#classesobjects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classes/Objects
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Importing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decorators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decorators
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mapsloops" class="md-nav__link">
+    <span class="md-ellipsis">
+      Maps/Loops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      If-statements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1322,6 +1409,93 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Subset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#types-type-hinting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Types &amp; Type hinting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Returns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic-comparison-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arithmetic &amp; Comparison operations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#classesobjects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classes/Objects
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Importing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decorators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decorators
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mapsloops" class="md-nav__link">
+    <span class="md-ellipsis">
+      Maps/Loops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      If-statements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1423,22 +1597,42 @@ It generates the following SystemVerilog code:
 <h4 id="xilinxamdothers">Xilinx/AMD/Others</h4>
 <p>The process is likely to be similar for other FPGA vendors, I simply do not have access to other FPGAs to write about it.</p>
 <h2 id="subset">Subset</h2>
-<p>Please ensure that your code fits within the defined subset so that it can be compiled.</p>
-<p>This subset can be viewed <a href="todo">here</a></p>
-<!-- ### Valid Features
-
-- 32-bit integers & floats
-- Booleans
-- Type hints
-- Arithmetic operations
-- Comparison operations -->
+<p>This compiler translates a <em>subset</em> of Python, and therefore some traditional features may not be available. Please ensure that your code fits within the defined subset so that it can be compiled. Additional features will require additional compiler work to make them compatible.</p>
+<h3 id="types-type-hinting">Types &amp; Type hinting</h3>
+<p>Type hinting is required in both the function signature and when declaring a new variable with no default value, or no expression where the type can be inherited.</p>
+<p>Supported types:</p>
+<ul>
+<li>Integers</li>
+<li>Booleans</li>
+<li>Floats*</li>
+</ul>
+<p>Floats can be converted into SPIR-V, but additional work is needed so that correct SystemVerilog can be generated. See issue <a href="https://github.com/titan-compiler-project/titan/issues/7">#7</a>.</p>
+<p>Support for arrays is also limited, and requires you to define them via a decorator.</p>
+<h3 id="functions">Functions</h3>
+<p>Functions can be defined, with type hinted parameters and with a single return but currently they cannot be called from the main function. Recursive functions are also not yet supported. See issues <a href="https://github.com/titan-compiler-project/titan/issues/10">#10</a> and <a href="https://github.com/titan-compiler-project/titan/issues/11">#11</a>.</p>
+<h3 id="returns">Returns</h3>
+<p>Only a variable can be returned - no immediate values or expressions (such as <code>a + 3</code>).</p>
+<h3 id="arithmetic-comparison-operations">Arithmetic &amp; Comparison operations</h3>
+<p>Addition <code>+</code>, subtraction <code>-</code>, division <code>/</code>, multiplication <code>*</code>, left &amp; right shift <code>&lt;&lt;</code>/<code>&gt;&gt;</code>, equal/not equal <code>==</code>/<code>!=</code>, less than/less than or equal to <code>&lt;</code>/<code>&lt;=</code>, greater than/greater than or equal to <code>&gt;</code>/<code>&gt;=</code> is supported for both integers and floats when compiling Python -&gt; SPIR-V.</p>
+<p>Division &amp; floating point operators may fail when compiling to SystemVerilog -- this has not been fully tested, you've been warned!</p>
+<h3 id="classesobjects">Classes/Objects</h3>
+<p>Classes/Objects/other instances of OOP are not supported. This includes using dot operators to access attributes of an object.</p>
+<h3 id="importing">Importing</h3>
+<p><code>import</code> and <code>import x as y</code> statements can be processed, but it does not mean that the library itself will be included! It seems counterproductive, but it is used to only allow compatability with certain features of Numpy. These libraries will more than likely make use of unsupported syntax, requiring more work than necessary to get Titan working with it.</p>
+<p><code>import x from y</code> statements will also fail, again because there is no direct importing of code from external libraries.</p>
+<h3 id="decorators">Decorators</h3>
+<p>Not implemented &amp; reserved - these will be used to mark functions which should behave slightly differently. See issue <a href="https://github.com/titan-compiler-project/titan/issues/8">#8</a>. </p>
+<h3 id="mapsloops">Maps/Loops</h3>
+<p>No support at the moment. Should be implemented but requires evaluating whether the loop contains dependencies. </p>
+<h3 id="if-statements">If-statements</h3>
+<p>Only the ternary if statement (<code>a if c &gt; b else d</code>) is supported, no regular <code>if...elif...else</code> statements.</p>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-04-24T20:25:27+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-04-24</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-08-07T13:55:40+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-08-07</span>
       
     
   </small>

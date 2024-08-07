@@ -1313,10 +1313,7 @@
 
           <details class="quote">
             <summary>Source code in <code>titan/main.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
@@ -1351,7 +1348,17 @@
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Entry point for the program.</span>
 
 <span class="sd">        Calls to handle CLI options, parsing, generating and writing.</span>
@@ -1363,7 +1370,7 @@
 
 
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
-        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span> <span class="k">if</span> <span class="n">compiler_ctx</span><span class="o">.</span><span class="n">user_wants_verbose_info</span><span class="p">()</span> <span class="k">else</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span> <span class="k">if</span> <span class="n">compiler_ctx</span><span class="o">.</span><span class="n">user_wants_verbose_info</span> <span class="k">else</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
         <span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="s2">&quot;compiler_log.txt&quot;</span><span class="p">),</span>
             <span class="c1"># logging.StreamHandler()</span>
@@ -1376,20 +1383,27 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--- New run, time is: </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y %H:%M:%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> ---&quot;</span><span class="p">)</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;arguments: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;output folder exists? </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating SPIR-V from </span><span class="si">{</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating SPIR-V from </span><span class="si">{</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">spirv_assembler</span> <span class="o">=</span> <span class="n">SPIRVAssembler</span><span class="p">(</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">disable_debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">spirv_assembler</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">compiler_ctx</span><span class="o">.</span><span class="n">user_wants_spirv_asm</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">compiler_ctx</span><span class="o">.</span><span class="n">user_wants_spirv_asm</span><span class="p">:</span>
         <span class="n">spirv_assembler</span><span class="o">.</span><span class="n">output_to_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">compiler_ctx</span><span class="o">.</span><span class="n">user_only_wants_spirv</span><span class="p">():</span>
+    <span class="c1"># early exit, no need for RTL</span>
+    <span class="k">if</span> <span class="n">compiler_ctx</span><span class="o">.</span><span class="n">user_only_wants_spirv</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating RTL ...&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating HDL&quot;</span><span class="p">)</span>
     <span class="n">verilog_assembler</span> <span class="o">=</span> <span class="n">VerilogAssember</span><span class="p">(</span><span class="n">spirv_assembler</span><span class="o">.</span><span class="n">create_file_as_string</span><span class="p">())</span>
-    <span class="n">verilog_assembler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">verilog_assembler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span> 
+                              <span class="n">gen_yosys_script</span><span class="o">=</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">gen_yosys_script</span><span class="p">,</span>
+                              <span class="n">dark_dots</span><span class="o">=</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">use_dark_theme_for_dots</span><span class="p">,</span>
+                              <span class="n">create_comms</span><span class="o">=</span><span class="n">compiler_ctx</span><span class="o">.</span><span class="n">gen_comms</span>
+                              <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1454,7 +1468,10 @@
 <span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
-<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_argparse</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">:</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_argparse</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Handles setting up and executing `argparse.ArgumentParser`.</span>
 
 <span class="sd">        Returns:</span>
@@ -1469,6 +1486,9 @@
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-asm&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;output the SPIR-V assembly code&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;only run the SPIR-V generation&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;run_spirv_only&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;output debug messages&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-dd&quot;</span><span class="p">,</span> <span class="s2">&quot;--dark-dots&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use dark theme when creating Graphviz dot graphs&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;--gen-yosys&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;generate simple yosys script to visualise module&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-nc&quot;</span><span class="p">,</span> <span class="s2">&quot;--no-comms&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;skip generating relevant comms interface files (output module only)&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>

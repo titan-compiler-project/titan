@@ -937,42 +937,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#titan.compiler.helper.CompilerContext.has_user_defined_top" class="md-nav__link">
-    <span class="md-ellipsis">
-      has_user_defined_top()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#titan.compiler.helper.CompilerContext.user_only_wants_spirv" class="md-nav__link">
-    <span class="md-ellipsis">
-      user_only_wants_spirv()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#titan.compiler.helper.CompilerContext.user_wants_spirv_asm" class="md-nav__link">
-    <span class="md-ellipsis">
-      user_wants_spirv_asm()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#titan.compiler.helper.CompilerContext.user_wants_verbose_info" class="md-nav__link">
-    <span class="md-ellipsis">
-      user_wants_verbose_info()
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1335,42 +1299,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#titan.compiler.helper.CompilerContext.has_user_defined_top" class="md-nav__link">
-    <span class="md-ellipsis">
-      has_user_defined_top()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#titan.compiler.helper.CompilerContext.user_only_wants_spirv" class="md-nav__link">
-    <span class="md-ellipsis">
-      user_only_wants_spirv()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#titan.compiler.helper.CompilerContext.user_wants_spirv_asm" class="md-nav__link">
-    <span class="md-ellipsis">
-      user_wants_spirv_asm()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#titan.compiler.helper.CompilerContext.user_wants_verbose_info" class="md-nav__link">
-    <span class="md-ellipsis">
-      user_wants_verbose_info()
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1490,30 +1418,7 @@
 <span class="normal">64</span>
 <span class="normal">65</span>
 <span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CompilerContext</span><span class="p">():</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CompilerContext</span><span class="p">():</span>
 
     <span class="n">compiler_args</span><span class="p">,</span> <span class="n">name_of_top_module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
     <span class="n">options</span><span class="p">,</span> <span class="n">output_options</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">parsed_modules</span><span class="p">,</span> <span class="n">functions</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
@@ -1538,6 +1443,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_legacy_arg_setter</span><span class="p">()</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_wants_spirv_asm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">asm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_user_defined_top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_only_wants_spirv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">run_spirv_only</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_wants_verbose_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_dark_theme_for_dots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">dark_dots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen_yosys_script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">gen_yosys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen_comms</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">no_comms</span> <span class="c1"># invert so it make sense</span>
+
     <span class="k">def</span> <span class="nf">_legacy_arg_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Method to set the arguments due to legacy issues.</span>
 
@@ -1556,21 +1469,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">source_file</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">user_wants_spirv_asm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter function to see if user wants compiler to output SPIR-V assembly.</span>
-
-<span class="sd">            Returns:</span>
-<span class="sd">                True if user wants assembly, otherwise false.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">asm</span>
-
-    <span class="k">def</span> <span class="nf">has_user_defined_top</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter function to see if user defined a name for the top module.</span>
-
-<span class="sd">            Returns:</span>
-<span class="sd">                True if user defined a name, otherwise false.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">get_top_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter function to fetch top module name.</span>
@@ -1579,22 +1477,6 @@
 <span class="sd">                Name of the top module as defined by the user.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">top</span>
-
-    <span class="k">def</span> <span class="nf">user_only_wants_spirv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter function to see if user only wants to run the SPIR-V portion of the compiler. </span>
-
-<span class="sd">            Returns:</span>
-<span class="sd">                True if user wants only SPIR-V, otherwise False.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">run_spirv_only</span>
-
-    <span class="k">def</span> <span class="nf">user_wants_verbose_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter function to see if user wants verbose debugging information.</span>
-
-<span class="sd">            Returns:</span>
-<span class="sd">                True if user wants debug info, else False.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">verbose</span>
 </code></pre></div></td></tr></table></div>
             </details>
 
@@ -1760,7 +1642,15 @@
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
-<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Init function for the CompilerContext class.</span>
 
 <span class="sd">        Args:</span>
@@ -1778,6 +1668,14 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span> <span class="o">=</span> <span class="n">args</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_legacy_arg_setter</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">user_wants_spirv_asm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">asm</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">has_user_defined_top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">user_only_wants_spirv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">run_spirv_only</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">user_wants_verbose_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">verbose</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">use_dark_theme_for_dots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">dark_dots</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">gen_yosys_script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">gen_yosys</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">gen_comms</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">no_comms</span> <span class="c1"># invert so it make sense</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1806,15 +1704,7 @@ so this is a small workaround.)</p>
 
           <details class="quote">
             <summary>Source code in <code>titan/compiler/helper.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
@@ -1822,7 +1712,15 @@ so this is a small workaround.)</p>
 <span class="normal">47</span>
 <span class="normal">48</span>
 <span class="normal">49</span>
-<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">_legacy_arg_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">_legacy_arg_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Method to set the arguments due to legacy issues.</span>
 
 <span class="sd">        Automatically populates the relevant attributes, using the arguments that</span>
@@ -1887,263 +1785,19 @@ so this is a small workaround.)</p>
 
           <details class="quote">
             <summary>Source code in <code>titan/compiler/helper.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_top_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_top_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Getter function to fetch top module name.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Name of the top module as defined by the user.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">top</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-<h3 id="titan.compiler.helper.CompilerContext.has_user_defined_top" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">has_user_defined_top</span><span class="p">()</span></code>
-
-</h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Getter function to see if user defined a name for the top module.</p>
-
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>bool</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>True if user defined a name, otherwise false.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>titan/compiler/helper.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">has_user_defined_top</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Getter function to see if user defined a name for the top module.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            True if user defined a name, otherwise false.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-<h3 id="titan.compiler.helper.CompilerContext.user_only_wants_spirv" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">user_only_wants_spirv</span><span class="p">()</span></code>
-
-</h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Getter function to see if user only wants to run the SPIR-V portion of the compiler. </p>
-
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>bool</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>True if user wants only SPIR-V, otherwise False.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>titan/compiler/helper.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">user_only_wants_spirv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Getter function to see if user only wants to run the SPIR-V portion of the compiler. </span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            True if user wants only SPIR-V, otherwise False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">run_spirv_only</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-<h3 id="titan.compiler.helper.CompilerContext.user_wants_spirv_asm" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">user_wants_spirv_asm</span><span class="p">()</span></code>
-
-</h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Getter function to see if user wants compiler to output SPIR-V assembly.</p>
-
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>bool</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>True if user wants assembly, otherwise false.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>titan/compiler/helper.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">user_wants_spirv_asm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Getter function to see if user wants compiler to output SPIR-V assembly.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            True if user wants assembly, otherwise false.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">asm</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-<h3 id="titan.compiler.helper.CompilerContext.user_wants_verbose_info" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">user_wants_verbose_info</span><span class="p">()</span></code>
-
-</h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Getter function to see if user wants verbose debugging information.</p>
-
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>bool</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>True if user wants debug info, else False.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>titan/compiler/helper.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">user_wants_verbose_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Getter function to see if user wants verbose debugging information.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            True if user wants debug info, else False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiler_args</span><span class="o">.</span><span class="n">verbose</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
