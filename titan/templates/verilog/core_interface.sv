@@ -1,5 +1,6 @@
 import TitanComms::*;
 
+// @titan-core-def
 module core_interface # (
     parameter INSTRUCTION_WIDTH = 8,
     parameter ADDRESS_WIDTH = 24,
@@ -30,10 +31,13 @@ module core_interface # (
     wire addressing_inputs = (address_i >= START_ADDRESS) & (address_i <= LAST_INPUT_ADDRESS);
     wire addressing_outputs = (address_i > LAST_INPUT_ADDRESS) & (address_i <= END_ADDRESS);
     
-    // I/O memory goes here
-    // logic [VALUE_WIDTH-1:0] input_memory [0:1];  // use params to calculate required depth
-    // logic [VALUE_WIDTH-1:0] output_memory; // if only one output, we can't make instance using [0]
-
+    // examples:
+    // logic [VALUE_WIDTH-1:0] input_memory [0:1];
+    // logic [VALUE_WIDTH-1:0] output_memory;
+    
+    // @titan-inputs
+    // @titan-outputs
+    
     (*keep = 1*) logic interrupt_enabled = 0;
     logic core_done_signal;
 
@@ -46,7 +50,7 @@ module core_interface # (
 	 
     reg [VALUE_WIDTH-1:0] output_val_internal;
 
-    // Core instance goes here
+    // @titan-user-module
 
     // add_2 uut_add2 (
     //     .clock(clk_i), .a(input_memory[0]), .b(input_memory[1]), .c(output_memory), .done(core_done_signal)
@@ -62,10 +66,12 @@ module core_interface # (
         // TODO: if (stream_enabled) here instead?
         if (instruction_i == STREAM) begin
             if (stream_enabled) begin
-                input_memory[normalised_stream_write_address] <= value_i;
+                // @titan-stream-input
+                // input_memory[normalised_stream_write_address] <= value_i;
 
                 // need to replace with index if multiple outputs
-                stream_o <= output_memory;
+                // @titan-stream-output
+                // stream_o <= output_memory;
             end
         end else if (interface_enable) begin
         // if (interface_enable) begin
@@ -73,10 +79,12 @@ module core_interface # (
 
                 READ: begin
                     if (addressing_inputs) begin
+                        // @titan-read-input
                         output_val_internal <= input_memory[normalised_input_address];
                     end else if (addressing_outputs) begin
                         // only usable with multiple outputs
                         // output_val_internal <= output_memory[normalised_ouput_address];
+                        // @titan-read-output
                         output_val_internal <= output_memory;
                     end
                 end
@@ -84,14 +92,15 @@ module core_interface # (
                 WRITE: begin
                     // writing to output_memory is illegal because it would lead to multiple drivers
                     if (addressing_inputs) begin
+                        // @titan-write-input
                         input_memory[normalised_input_address] <= value_i;
                     end
                 end
 
-                BIND_INTERRUPT: begin
-                    interrupt_enabled <= 1;    
-                    input_memory[0] <= input_memory[0] + 1;
-                end
+                // BIND_INTERRUPT: begin
+                    // interrupt_enabled <= 1;    
+                    // input_memory[0] <= input_memory[0] + 1;
+                // end
 
                 BIND_READ_ADDRESS: begin
                     if (addressing_outputs) begin
