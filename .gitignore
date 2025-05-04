@@ -17,6 +17,9 @@ compiler_log.txt
 
 output/
 
+.coverage
+htmlcov/
+
 # kicad
 # For PCBs designed using KiCad: https://www.kicad.org/
 # Format documentation: https://kicad.org/help/file-formats/
