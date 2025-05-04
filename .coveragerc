@@ -3,5 +3,8 @@ omit =
     # omit everything in /usr
     /usr/*
 
+    # ignore cocotb tests
+    titan/comms/verilog/tests/*.py 
+
 [report]
 include_namespace_packages = true
