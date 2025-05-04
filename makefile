@@ -5,3 +5,7 @@ test:
 .PHONY: html
 html:
 	coverage html
+
+.PHONY: report
+report:
+	coverage report
