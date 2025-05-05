@@ -180,6 +180,16 @@ class TestNodeAssembler:
         assert "test_module" in assembler.content.keys() 
         assert isinstance(assembler.content["test_module"], node.NodeModuleData)
 
+        
+        # no two objects should be the same
+        assembler_1 = node.NodeAssembler()
+        assembler_2 = node.NodeAssembler()
+
+        assembler_1.create_module("module_1")
+        assembler_2.create_module("module_2")
+
+        assert assembler_1.content is not assembler_2.content, "new objects have identical content... how?"
+
     def test_add_body_node_to_module_fn(self, default_node_assembler: node.NodeAssembler) -> None:
         """
         Test: Can we add a node to the body of a module?
@@ -233,3 +243,80 @@ class TestNodeAssembler:
         # get
         retrieved_type_ctx = assembler.get_type_context_from_module("default_module", "%type_integer")
         assert retrieved_type_ctx is type_ctx
+
+    @pytest.mark.xfail(reason="NodeAssembler's contents do not reset - cannot confirm " \
+    "functionality of function until bugfixed")
+    def test_overwrite_body_nodes(self) -> None:
+        """
+        Test: Can we overwrite an entire list of nodes in a specific module?
+
+        Warning:
+            The function ``node.NodeAssembler._overwrite_body_nodes()`` has incorrect hinting 
+            in its signature. The expected type for the ``nodes`` parameter is 
+            ``hinting.spirv_id_and_node``, not ``List[Nodes]``.
+        """
+
+        assembler = node.NodeAssembler()
+        print(f"{assembler.content}")
+        assembler.content = {}
+        assembler.create_module("default_module")
+
+        node_dict_1 = {}
+        node_dict_2 = {}
+
+        for i in range(0, 2):
+            node_dict_1[f"%node_{i}"] = [node.Node(
+                    node.NodeContext(
+                        line_no=i, id=f"%node_{i}", operation=Operation.NOP
+                    )
+                )]
+
+
+        for i in range(3, 8):
+            node_dict_2[f"%node_{i}"] = [node.Node(
+                    node.NodeContext(
+                        line_no=i, id=f"%node_{i}", operation=Operation.NOP
+                    )
+                )]
+
+        for node_list in node_dict_1.values():
+            for node_obj in node_list:
+                assembler.add_body_node_to_module("default_module", node_obj)
+
+        assert assembler.content["default_module"].body_nodes == node_dict_1
+
+
+    def test_module_io_functions(self) -> None:
+        """
+        Test: Do the functions provided for module I/O work as expected?
+
+        Can we add I/O, check if a certain symbol belongs to I/O, and get a list/count of total I/O?
+        """
+        assembler = node.NodeAssembler()
+        assembler.create_module("default_module")
+
+        input_list = []
+        output_list = []
+
+        LOOP_MAX = 5
+
+        for i in range(0, LOOP_MAX):
+            input_list.append(f"input_{i}")
+            output_list.append(f"output_{i}")
+
+        for i in range(0, LOOP_MAX):
+            assembler.add_input_to_module("default_module", input_list[i])
+            assembler.add_output_to_module("default_module", output_list[i])
+
+        
+        assert assembler.is_symbol_an_input("default_module", input_list[2])
+        assert not assembler.is_symbol_an_input("default_module", output_list[1])
+
+        assert assembler.is_symbol_an_output("default_module", output_list[4])
+        assert not assembler.is_symbol_an_output("default_module", input_list[0])
+
+        assert assembler.get_number_of_inputs("default_module") == LOOP_MAX
+        assert assembler.get_number_of_outputs("default_module") == LOOP_MAX
+
+        assert assembler.get_list_of_inputs("default_module") == input_list
+        assert assembler.get_list_of_outputs("default_module") == output_list
