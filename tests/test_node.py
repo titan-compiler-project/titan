@@ -4,6 +4,7 @@ from tests.fixtures.node import *
 
 from titan.compiler import node
 from titan.common.symbols import Operation
+from titan.common.type import DataType
 
 
 class TestNodeContext:
@@ -167,4 +168,68 @@ class TestNode:
 
 
 class TestNodeAssembler:
-    pass
+
+    def test_create_module_fn(self) -> None:
+        """
+        Test: Is a ``NodeModuleData`` object with the correct properies being created?
+        """
+
+        assembler = node.NodeAssembler()
+        assembler.create_module("test_module")
+
+        assert "test_module" in assembler.content.keys() 
+        assert isinstance(assembler.content["test_module"], node.NodeModuleData)
+
+    def test_add_body_node_to_module_fn(self, default_node_assembler: node.NodeAssembler) -> None:
+        """
+        Test: Can we add a node to the body of a module?
+
+        Args:
+            default_node_assembler (titan.compiler.node.NodeAssembler): Pre-made node assembler
+        """
+
+        assembler = default_node_assembler # rename for easier reference
+
+        body_node = node.Node(
+            node.NodeContext(id="%body_node_1", operation=Operation.ADD)
+        )
+
+        assembler.add_body_node_to_module("default_module", body_node)
+        assert body_node in assembler.content["default_module"].body_nodes["%body_node_1"]
+        
+        body_node.operation = Operation.NOP
+        assembler.add_body_node_to_module("default_module", body_node)
+        # check if in list
+        assert body_node in assembler.content["default_module"].body_nodes["%body_node_1"]
+        # if its actually the last one added
+        assert body_node is assembler.content["default_module"].body_nodes["%body_node_1"][-1]
+        # if its got the correct operation
+        assert assembler.content["default_module"].body_nodes["%body_node_1"][-1].operation is Operation.NOP
+
+
+    def test_type_context_in_module(self, default_node_assembler: node.NodeAssembler) -> None:
+        """
+        Test: Can we add, get and check a type context object in a given module?
+        
+        Args:
+            default_node_assembler (titan.compiler.node.NodeAssembler): Pre-made node assembler
+        """
+
+        assembler = default_node_assembler
+
+        type_ctx = node.NodeTypeContext(
+            type=DataType.INTEGER, data=[], is_pointer=False,
+            alias="", is_array=False, array_dimension_id=""
+        )
+
+        # add
+        assembler.add_type_context_to_module("default_module", "%type_integer", type_ctx)
+        assert type_ctx is assembler.content["default_module"].types["%type_integer"]
+
+        # check if exists
+        assert assembler.type_exists_in_module("default_module", "%type_integer")
+        assert not assembler.type_exists_in_module("default_module", "%fake_type_that_doesnt_exist")
+
+        # get
+        retrieved_type_ctx = assembler.get_type_context_from_module("default_module", "%type_integer")
+        assert retrieved_type_ctx is type_ctx
