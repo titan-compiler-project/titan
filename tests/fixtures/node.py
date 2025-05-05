@@ -15,5 +15,5 @@ def fixture_create_base_node_ctx() -> node.NodeContext:
     return node.NodeContext(
         line_no=0, id="%base_node", type_id="%type_integer", 
         input_left=None, input_right=None, operation=Operation.NOP,
-        data=[], is_comparison=False
+        data=[], is_comparison=False, array_id="", array_index_id=""
     )
