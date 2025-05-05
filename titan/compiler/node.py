@@ -206,8 +206,9 @@ class NodeModuleData():
 class NodeAssembler():
     """ Node assembler. """
 
-    content: hinting.module_name_and_data = {}
-    declared_symbols = []
+    def __init__(self):
+        self.content: hinting.module_name_and_data = {}
+        self.declared_symbols = []
     
 
     def _overwrite_body_nodes(self, module_name: str, nodes: List[Node]):
